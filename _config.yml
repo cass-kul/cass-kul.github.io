@@ -73,5 +73,5 @@ just_the_docs:
       name: Computer Architecture and System Software
     exercises:
       name: Exercise sessions
-    # tutorials:
-    #   name: Tutorials
+    tutorials:
+      name: Tutorials
