@@ -70,8 +70,8 @@ collections:
 just_the_docs:
   collections:
     course:
-      name: Computerarchitectuur en systeemsoftware
+      name: Computer Architecture and System Software
     exercises:
       name: Exercise sessions
-    tutorials:
-      name: Tutorials
+    # tutorials:
+    #   name: Tutorials

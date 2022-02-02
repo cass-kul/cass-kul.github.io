@@ -1,33 +1,33 @@
 ---
 layout: default
-title: Cursusinformatie
+title: Course information
 nav_order: 1
 permalink: /
 ---
 
-# Algemeen
+This website is the source of all information regarding the exercise sessions of the
+Computer Architecture and System Software course.
 
-Op deze website vinden jullie alle nodige informatie terug over de *oefenzittingen* van het vak Besturingssystemen.
-De links naar iedere oefenzitting kunnen jullie terugvinden in het menu op deze pagina.
-Vergeet zeker niet de afspraken op deze website goed door te lezen om misverstanden te vermijden.
+We are trying a new approach this year by providing the exercise sessions in the format
+of web pages, please don't hesitate to give us feedback on this!
 
-# Oefenzittingen
+# Exercises
 
-In totaal zullen er dit semester 7 oefenzittingen gegeven worden.
-Gedurende de zittingen leer je het besturingssysteem xv6 gradueel kennen.
-Aan elke zitting is op voorhand een voorbereiding en nadien een permanente evaluatie gekoppeld.
-De permanente evaluatie (tesamen met deelname aan de kaartjessessies) staat op 45% van de punten van dit vak.
+There are 9 exercise sessions in total. The material available on this website contains
+both the theory, the exercises, and the solutions. The solutions are hidden until the end
+of each week.
 
-> :warning: De permanente evaluatie kan *niet* ingehaald worden in tweede zit!
+Please bring your laptops to the exercise sessions. You can work at your own pace, and don't
+be afraid of asking questions from the teaching assistant. If you don't have time to finish
+the exercises, it is recommended to finish them before starting the next session.
 
-# Deadlines
+Even if the solutions are already visible, it is strongly recommended to first write the
+solutions on your own (even using external resources, if you understand them) before you
+look at the provided solutions.
 
-| Oefenzitting  | Datum sessie | Deadline permanente evaluatie | Voorbereiding
-|:--------------|:-------------|:------------------------------|:-------------
-| OS Interfaces | 6 oktober    | 12/10 23h59 - 1 week  | xv6 boek H1
-| System calls  | 13 oktober   | 26/10 23h59 - 2 weeks | xv6 boek H2
-| Virtual Memory| 27 oktober   | 10/11 23h59 - 2 weeks | xv6 boek H3, kennis concepten `virtual memory`, `paging` en `page tables` ([video](https://www.youtube.com/watch?v=JgTXJ-ZV5Zw))
-| Traps         | 10 november  | 16/11 23h59 - 1 week  | xv6 boek H4 + H5
-| Locks         | 17 november  | **07/12 23h59 - 3 weeks** | xv6 boek H6 + H7
-| **Geen oefenzitting** | 1 december   | -  | -
-| File  systems | 8 december   | 21/12 23h59 - 2 weeks | xv6 boek H8
+# YouTube videos
+
+There are videos available from last year, where the theory of each session is explained.
+These videos might help with understanding the concepts, but watching them is not required,
+and they do not substitute working through the material yourself, as there might be new
+content included this year.
