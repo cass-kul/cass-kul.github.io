@@ -29,8 +29,11 @@ CASS                                | Machine Code         | `...0100110111010..
 Digitale Elektronica en Processoren | Digital Hardware     | Logic gates
 
 The majority of the sessions will focus on writing assembly programs from scratch.
-This first session is more theoretical, but it's very important for the later sessions
-that you understand the concepts covered now. If you have any questions, ask your
+This first session is more theoretical and might be a bit overwhelming, but understanding
+the concepts covered now will be very important for the later sessions. You can
+also come back here later to refresh your knowledge when these concepts come up in later sessions.
+
+If you have any questions, ask your
 teaching assistant or reach out to us on the Toledo forums!
 
 # Architecture basics
@@ -127,6 +130,8 @@ Hello world!
 
 The `gcc` invocation creates an executable file `hello`, which we can then run with `./hello`.
 
+> Warm-up 1: Make sure that this works on your computer!
+
 If you're curious, you can also ask the compiler to create a human-readable assembly
 file from your program (instead of the executable `hello` containing machine code). Don't worry
 if you don't exactly understand what you're seeing!
@@ -160,6 +165,8 @@ different compilers, targeting different architectures. As an example, you can s
 `RISC-V rv32gc gcc 10.2.0` on the site to see RISC-V assembly code as your output. This is a handy
 tool for quick tests, but of course for larger projects you should stick with a local compiler setup.
 
+> Warm-up 2: Check the RISC-V assembly code on Godbolt for the `hello world` program!
+
 ## Dissecting `hello world`
 
 Let's go back to the example code:
@@ -189,28 +196,85 @@ main function returns an integer value and does not take any parameters (`void`)
 The return value of the `main` function usually signals whether the execution
 was successful. `0` means success, while other values are interpreted as error codes.
 
----
-
 ## Integers in C and assembly
 
-Integers, basic arithmetic
+You can use integer variables and basic arithmetic operations in C like in many other languages.
 
-Side-by-side examples of C and RISC-V (just `c = a + b` or something).
+```c
+int a = 4;
+int b = 5;
+int c = (a + 3) * b;
+```
 
-Operating on registers, fast on-chip, later. Memroy too slow (cache inbetween).
+Every variable (`a`, `b`, `c`) in C is stored at a given memory location. By performing operations on
+these variables (such as addition or multiplication), we basically perform these operations at the values stored
+at the corresponding memory locations.
+
+> Tip for later: you can access the memory address of a variable by adding `&` in front of the variable name. For example, in the above example, `a` refers to the value `4`, but `&a` refers to the memory address where that `4` value is stored.
+
+In contrast, in RISC-V we can only perform arithmetic on values stored in registers:
+
+```armasm
+addi t0, zero, 4  # t0 = 4
+addi t1, zero, 5  # t1 = 5
+addi t2, t0, 3    # t2 = t0 + 3
+mul  t2, t2, t1   # t2 = t2 * t1
+```
+
+> Warm-up 3: Try out this example in [RARS](#)! Check whether you see the correct value in `t2` after executing the program.
 
 ## User input handling in C
 
-scanf/printf
+Programs that do not deal with any inputs and do not print any results are pretty useless.
+We have already seen how to use `printf` to write a *string literal* to the console. We can also print out
+the values of variables using `printf`. In the other direction, we can use the function `scanf` to read user
+input into variables.
 
-format strings to include variables.
+`printf` and `scanf` are functions that can take an arbitrary number of arguments. The first argument of
+these functions is called the *format string*. This specifies the format (the "shape") of the string we
+want to print out or read in. We can include *format specifiers* in this string, these are placeholders for
+the variables we want to include in the string.
 
-scanf with ampersand (later).
+If for example we want to print out the value of an `int age;` variable as part of our string, we would include the
+`%d` (decimal) format specifier in the format string as a placeholder for the value of the variable: `"I am %d years old."`.
+
+For different types of variables, we need to use different format specifiers; `%c` for characters, `%u` for unsigned integers, etc. After the format string, we include the variables as arguments to the `printf` functions in the order of
+the format specifiers.
+
+```c
+int age = 21;
+int ects = 36;
+
+printf("I am %d years old and I have %d ECTS this semester. Phew!\n", age, ects);
+```
+
+With `scanf`, there are two things you need to watch out for. First, you need to pass the *memory location*
+where you want the input to be written. In practice, this often means taking the memory address of a given
+variable:
+
+```c
+int input;
+printf("Enter your favorite number: ");
+scanf("%d", &input);
+```
+
+Second, notice how we printed the prompt to the user using `printf`, not as part of the
+`scanf` format string. Remember, the `scanf` format string describes the shape of the string
+the user has to enter! In this case, we want the user to simply enter `5`, or another decimal number,
+so the format specifier `%d` is all we have in the format string.
+
+If we want the user to enter their favorite time in the day, we could have a prompt like
+`scanf("%d:%d", &hour, &minute);`. In this case, if the user enters a string like `13:37`, the number
+13 will be saved to the `hour` variable, 37 will be saved to `minute`, and the `:` in the middle will
+be ignored.
+
+In general, if the user's input does not respect the format specified in `scanf`, strange values
+can appear in your program.
 
 ### Exercise 1
 
 Write a C program that asks the user for an integer value and prints out the square
-of this value.
+of this value, together with the original number.
 
 #### Solution
 
