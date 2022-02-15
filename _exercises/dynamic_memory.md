@@ -81,7 +81,7 @@ necessary the same as the order of declaration in the program.
 
 ## Pointer and structs
 
-# How to create a variable length array
+# Dynamic data structures
 Arrays in C are static: they must be declared with a fixed length that is known
 at compile time. This comes with some limitations, for instance if the **size is
 not known at compile time** but only determined at runtime, or when the size
@@ -91,30 +91,63 @@ Dynamic (i.e. resizeable) data structures come by default with many high-level
 programming languages, such as `List` in Python or `ArrayList` in Java, but not
 in C. Then how can we create the equivalent of a Python `List` in C?
 
-**Solution?** reserve a very large static array for every list.  
+**Solution?** Reserve a very large static array for every list.  
 **Problem**:
 - We have to allocate more than we actually need and the extra-allocated memory
   is wasted;
 - What if the list grows even bigger?
 
+In this session, we will first see how to create dynamic data structures
+starting with lists, and then generalize to any dynamic data structures.
+
 ## Linked lists
-Assume that a program reserves a big chunk of list memory:
+Assume that a program reserves a big chunk of memory that it can use to store several lists:
 ``` armasm
 .data
 list_memory: .space 1000000
 ```
 How can we use this to implement Lists?
 
-TODO:illustration
+> Hint: How can we combine multiple fixed size arrays to make a dynamically
+> growing list in `list_memory`?
 
-**Implementation:**
+<details>
+  <summary>Solution: you can click on arrow to expand but try to think about a solution first ;)</summary>
+  <blockquote>
+  A list can be implemented as a set of static arrays chained together using pointers. When the list is full, just create a new array and chain it with the previous one! This is called a linked list.
+  </blockquote>
+</details>
+
+### Illustration:
+1. **Initialization**: We use a pointer, called `list pointer` to record the
+address of the next free memory location.  
+![Empty memory with list pointer](/tutorials/img/list1.png)  
+2. **Define a new list**: Let's use arrays of size 10 as the basic building
+   block to implement our lists. Here we have defined two lists, meaning that we
+   have allocated two consecutive arrays of size 10, and moved the `list pointer`
+   to point to the next free memory location.  
+![Empty memory with list pointer](/tutorials/img/list2.png)  
+3. **Increase size of a list**: When `List 1` is full, we can extend it by
+   allocating a new array in the free memory. In order to chain both array and
+   get a list, we keep a pointer to the second array in the last cell of the
+   first array. In the end, we just need the pointer to the first array of `List
+   1` to reconstruct the whole list!  
+![Empty memory with list pointer](/tutorials/img/list3.png)
+
+
+### Implementation
+Here is the RISC-V implementation that builds the linked list `List 1`:
 1. Store list pointer in register, e.g. `s9` (random choice!)
-2. Create list:
-   - Move list pointer
-   - Return address of free space
-3. List full?
-   - Create new one and link
-   - Called a linked list
+2. Create a list:
+   - Move list pointer in `s9` to next free memory location, i.e. increment it
+     by 40 because size of allocated array = number of cells (10) * size of int
+     (4 bytes);
+   - Return a pointer to the newly allocated array (i.e. the old value of `s9`).
+3. When the list is full:
+   - Create new list and link it to the previous one
+   - Notice that `s9` might have incremented between the first and the second
+     calls to `create_list`, for instance to create a new list `List 2` like in
+     the previous illustration.
 
 ``` armasm
 .data
@@ -122,22 +155,21 @@ list_memory: .space 1000000
 .globl main
 
 .text
-create_list:
-    mv    a0, s9      #s9 keeps track of the list allocation
-    addi  s9, s9, 40
+create_list:            # s9 keeps track of next free memory location
+    mv    a0, s9        # return old value of s9 as pointer to new list
+    addi  s9, s9, 40    # update the value of list pointer in s9
     ret
 main:
-    la s9, list_memory
-    jal create_list
-    mv t0, a0 #t0 now has pointer to list
-    #expand
-    jal create_list
-    sw a0, 36(t0)
+    la s9, list_memory # Initialize list pointer s9
+    jal create_list    # Create a new list and 
+    mv t0, a0          # store a pointer to it in t0
+    [...]              # Fill the list with data
+    jal create_list    # Expand the list
+    sw a0, 36(t0)      # Link the second part of the list to the first one
 ```
 
-
-
 ## Generalize to any data structures: Heap
+
 
 ### Implementation
 ``` armasm
