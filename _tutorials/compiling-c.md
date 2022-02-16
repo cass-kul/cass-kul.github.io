@@ -61,6 +61,7 @@ In essence, you only need to:
 
 ![Open a Powershell as administrator](/tutorials/img/open-powershell.png "Screenshot to show how to open a powershell in Windows as administrator")
 ![Installing WSL](/tutorials/img/install-wsl.png "Screenshot to show how to install WSL in a Powershell terminal")
+![Opening Ubuntu](/tutorials/img/ubuntu.png "Screenshot to show how to open the Ubuntu app")
 
 At this point, you have a fully functional Ubuntu virtual machine (VM) on your Windows system. There is no graphical interface, but we also do not need that for our purposes. You can always access the current folder that is open in Ubuntu by executing the command `explorer.exe .` in the Ubuntu VM. This will open a Windows Explorer window with the folder as it is stored in Ubuntu. You can use this to work on files from Windows and then execute the compiler from the Ubuntu Terminal.
 
