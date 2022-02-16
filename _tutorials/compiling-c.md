@@ -6,6 +6,8 @@ nav_exclude: false
 has_children: false
 ---
 
+# Compiling C
+
 In CASS, we will teach you how to interact (`program`) with the CPU on the lowest layer of abstraction that it understands: Assembly.
 Since the jump from `higher-level` programming languages such as Python or Java to assembly is quite big, we first want you to have basic understanding of the C language. [The C language](https://en.wikipedia.org/wiki/C_(programming_language)) is a rather old programming language that has a closer connection to assembly than the higher-level programming languages you may know already.
 
@@ -15,7 +17,7 @@ Programs written in C can not directly be executed. Instead, they have to be `co
 For [Java](https://www.javatpoint.com/is-java-interpreted-or-compiled) and [Python](https://www.geeksforgeeks.org/python-compiled-or-interpreted/) the compilation step is mostly hidden from the developer, and a simple command is enough to execute the code.
 Thus, to compile C programs, we need to install a set of tools (a compiler) that allows us to run the generated `executable` code.
 
-Below we show you three options of how to work with C [from the Browser](), from [Windows](), and from [Linux]().
+Below we show you three options of how to work with C from the Browser, from Windows, and from Linux.
 For the first few sessions, compiling the rare C programs in the Browser may be enough for you but later, we will rely on you having access to a compiler. This is because compiling in the browser does not work with bigger projects like we will have for exercise session 6.
 
 ## A simple test program
@@ -57,6 +59,9 @@ In essence, you only need to:
 1. During installation, you will be asked for a username and password. While this choice is usually important, this installation is just a virtual machine on your Windows machine. Thus, security is not necessarily a big concern anymore. Feel free to choose a simple username/password combination like `ubuntu` for both username and password.
 1. If the ubuntu window is not already open, you can now always start it by searching for and opening the `Ubuntu` app (see screenshot).
 
+![Open a Powershell as administrator](/tutorials/img/open-powershell.png "Screenshot to show how to open a powershell in Windows as administrator")
+![Installing WSL](/tutorials/img/install-wsl.png "Screenshot to show how to install WSL in a Powershell terminal")
+
 At this point, you have a fully functional Ubuntu virtual machine (VM) on your Windows system. There is no graphical interface, but we also do not need that for our purposes. You can always access the current folder that is open in Ubuntu by executing the command `explorer.exe .` in the Ubuntu VM. This will open a Windows Explorer window with the folder as it is stored in Ubuntu. You can use this to work on files from Windows and then execute the compiler from the Ubuntu Terminal.
 
 Now you are set up with a Linux VM to work with. Keep reading below of how to set up Ubuntu to compile C programs.
@@ -70,14 +75,14 @@ In the following, any command you should enter starts with a `$` sign that you d
 Once you have the terminal open, update the system (or skip this step if you know what you're doing):
 
 ```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt autoremove -y
+$ sudo apt update && sudo apt upgrade -y
+$ sudo apt autoremove -y
 ```
 
 Then, install the `gcc` compiler package:
 
 ```bash
-sudo apt install gcc -y
+$ sudo apt install gcc -y
 ```
 
 Once you did so, you can check that gcc was installed correctly by executing (Your output may differ):

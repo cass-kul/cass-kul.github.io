@@ -12,12 +12,16 @@ color_scheme: light
 aux_links:
   "Toledo":
     - "//toledo.kuleuven.be/portal/#/home"
+  "RARS":
+    - "//github.com/TheThirdOne/rars/releases"
   "Risc-V Card":
     - "files/riscv-card.pdf"
   "Syllabus":
     - "//onderwijsaanbod.kuleuven.be/syllabi/n/H01P5BN.htm"
   "Uurrooster":
     - "//www.kuleuven.be/sapredir/uurrooster/pre_laden.htm?OBJID=55589533&OTYPE=SM&TAAL=N&SEL_JAAR=2021"
+  "Videos (last year)":
+    - "https://www.youtube.com/playlist?list=PLMXWnt556xY4Sexd5FMBc-ZF7pFb2SLnU"
 
 # Makes Aux links open in a new tab. Default is false
 aux_links_new_tab: true
