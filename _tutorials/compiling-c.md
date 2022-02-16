@@ -112,7 +112,7 @@ $ ./hello
 Hello world!
 ```
 
-If you see the `Hello world!` output, you are done with the setup! :party-popper:
+If you see the `Hello world!` output, you are done with the setup! :tada:
 
 ## Alternative: Compiling C in Windows with MinGW
 
