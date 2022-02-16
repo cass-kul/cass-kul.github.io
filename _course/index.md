@@ -10,7 +10,7 @@ permalink: /
 This website is the source of all information regarding the exercise sessions of the
 Computer Architecture and System Software course.
 
-We are trying a new approach this year by providing the exercise sessions in the format of web pages, please don't hesitate to give us feedback on this! If you find mistakes or errors, just reach out to us. You are also most welcome to create Pull Requests: The source code of the Website that you see is visible on [GitHub](https://github.com/cass-kul/cass-kul.github.io).
+We are trying a new approach this year by providing the exercise sessions in the format of web pages, please don't hesitate to give us feedback on this! If you find mistakes or errors, just reach out to us. You are also most welcome to create Pull Requests: The source code of the Website that you see is visible on [GitHub](https://github.com/cass-kul/cass-kul.github.io). Both in the GitHub repository as well as on this website, you may be able to find some pages that are hidden from the menu and that are not unlocked yet (such as future sessions or solutions). You are free to look at these pages, but please be aware that we will be actively working on each session up until the Monday of the session's week - so be careful when roaming around as the pages may not be final yet!
 
 ## Exercises
 
