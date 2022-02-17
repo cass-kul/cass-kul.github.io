@@ -5,3 +5,18 @@ blockquote {
   padding: 0.5em 10px;
   quotes: "\201C""\201D""\2018""\2019";
 }
+
+@media (min-width: 80rem) {
+  .side-bar {
+    width: calc((100% - 1280px) / 2 + 300px);
+    min-width: 300px; } }
+
+@media (min-width: 80rem) {
+  .main {
+    max-width: 1000px;
+    margin-left: calc( (100% - 1280px) / 2 + 300px ); } }
+
+@media (min-width: 80rem){
+.site-nav, .site-header, .site-footer {
+  width: 300px;
+} }
