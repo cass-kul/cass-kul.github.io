@@ -15,7 +15,7 @@ aux_links:
   "RARS":
     - "//github.com/TheThirdOne/rars/releases"
   "Risc-V Card":
-    - "files/riscv-card.pdf"
+    - "/files/riscv-card.pdf"
   "Syllabus":
     - "//onderwijsaanbod.kuleuven.be/syllabi/n/H01P5BN.htm"
   "Uurrooster":

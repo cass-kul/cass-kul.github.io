@@ -39,7 +39,7 @@ The website [Goodbolt](https://godbolt.org/) allows you to write C code on the l
 There are several configurations for you to choose from and the most important ones for this course will be:
 
 - `x86-64 gcc 11.2` : Assembly for an x86-64 CPU. This will most likely be the architecture that you compile to when you want to run code on your own machine (if you don't have a newer ARM-based Mac for example)
-- `RISC-V rv32gc gcc 10.2.0` : Assembly for a RISC-V CPU in the `rv32gc` configuration. For the sake of the uses of the goodbolt website, you can stick to this configuration if you want to see how C is compiled to RISC-V code.
+- `RISC-V rv32gc gcc 10.2.0` : Assembly for a RISC-V CPU in the `rv32gc` configuration. When using godbolt to see how compiled C code looks in RISC-V, you can use this configuration.
 
 Note, that these configurations may differ widely and you will understand in some weeks why that may be the case. For now, it is enough to just stick to the two mentioned configurations but feel free to play around with other configurations as well.
 
