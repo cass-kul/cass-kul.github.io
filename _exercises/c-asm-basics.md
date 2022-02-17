@@ -45,30 +45,31 @@ teaching assistant or reach out to us on the Toledo forums!
 # Architecture basics
 
 Modern computers are made up of several hardware components. Most of these follow the so-called
-von Neummann architecture. This means that the random access memory (RAM) contains both
+*von Neummann* architecture. This means that the random access memory (RAM) contains both
 program code and the data this program operates on. (This is in contrast to Harvard
 architectures, where the instructions and data are stored in separate memory modules).
 
-The computer's operation is sometimes called the `fetch, decode, execute cycle`.
+The computer's operation is sometimes called the `fetch`, `decode`, `execute` cycle.
 Instructions are fetched from RAM, decoded by the control unit, then executed in the
 arithmetic and logic unit (ALU). Finally, the result of the computation might be written back
 to RAM.
 
-The computations are usually performed on values stored in registers. These allow a small number of
-values to be stored inside the CPU. This enables much faster computations than if the values
-would have to be fetched from RAM. In fact, in later sessions we will see how caches are used
-to speed up accesses to values that are not stored in registers and would have to be fetched from
-RAM.
-
-These designs are called `stored-program computers`, highlighting that the code that is
-executed is stored in memory. These instructions are stored in [machine code](#) format, which
+These designs are called *stored-program computers*, highlighting that the code that is
+executed is stored in memory. These instructions are stored in **machine code** format, which
 is usually compiled from a high-level program by a compiler.
 
-Machine code refers to the binary format of instructions that the CPU can execute. These are usually
-simple instructions, such as addition or subtraction (of [register](#) values), loading or storing values in memory.
-The assembly language representation of these instructions is called the `mnemonic form`.
-An `assembler` program can compile the mnemonic programs into machine code. You will see this in the
-[RARS](#) environment.
+The computations are usually performed on values stored in **registers**. These allow a small number of
+values to be stored inside the CPU. Accessing register
+is much faster than accessing RAM, so registers enable much faster computations
+than if the values were fetched directly from RAM. In fact, in later sessions we will see how caches are used
+to speed up accesses to values that are not stored in registers and have to be fetched from
+RAM.
+
+**Machine code** refers to the binary format of instructions that the CPU can execute. These are usually
+simple instructions, such as addition or subtraction (of register values), loading or storing values in memory.
+The assembly language representation of these instructions is called the **mnemonic form**.
+An **assembler** program can compile the mnemonic programs into machine code. You will see this in the
+[RARS](/tutorials/rars) environment.
 
 - Machine code: 0x500293
 - Mnemonic format: `addi t0, zero, 5`
@@ -114,7 +115,7 @@ of certain variables, not only their values.
 
 ## Compiling C and running assembly
 
-Let's test your [C compiler setup](#) with a simple `hello world` example.
+Let's test your [C compiler setup](/tutorials/compiling-c) with a simple `hello world` example.
 
 ```c
 #include <stdio.h>
@@ -193,7 +194,7 @@ In this case, we include the `stdio.h` *header*, this includes functions related
 input/output (STanDard I/O).
 
 We use the `printf` function from `stdio.h` to print the text "Hello world" followed
-by a line break. Later in this session, we will see how to print variable values
+by a line break (`\n`). Later in this session, we will see how to print variable values
 as part of our string.
 
 C programs always have to contain a `main` function. This is where the execution will
@@ -241,7 +242,7 @@ these functions is called the *format string*. This specifies the format (the "s
 want to print out or read in. We can include *format specifiers* in this string, these are placeholders for
 the variables we want to include in the string.
 
-If for example we want to print out the value of an `int age;` variable as part of our string, we would include the
+If for example we want to print out the value of an `int age` variable as part of our string, we would include the
 `%d` (decimal) format specifier in the format string as a placeholder for the value of the variable: `"I am %d years old."`.
 
 For different types of variables, we need to use different format specifiers; `%c` for characters, `%u` for unsigned integers, etc. After the format string, we include the variables as arguments to the `printf` functions in the order of
@@ -338,7 +339,7 @@ important for example when passing arguments to a library function, or saving th
 that same function call. You also don't want those function calls to overwrite important data that
 you store in registers at the time of calling.
 
-The rules for the register usage are called `calling conventions`, and we will deal with them in more
+The rules for the register usage are called *calling conventions*, and we will deal with them in more
 detail in later sessions.
 
 ## Breakdown of assembly instructions
@@ -351,7 +352,7 @@ mul  t2, t2, t1   # t2 = t2 * t1
 ```
 
 We can already learn something from these instructions:
-1. The instruction always starts with the desired operation (`addi`, `mul`).
+1. The instruction always starts with the desired operation (`addi`, `mul`) called the **mnemonic**, followed by its **operands**.
 2. If there is a destination register (where the result is written), it is the first parameter of the instruction.
 3. The subsequent parameters are used for the operation, and they can be either other registers (`t2`, `t1`) or immediate values (`3`). The `i` at the end of `addi` also refers to this immediate value (adding two register values would use the `add` instruction).
 
@@ -360,14 +361,14 @@ Later in the course we will also see the other two types used for jump and branc
 
 When working with RARS, you might notice that after compiling your code, certain instructions
 are assembled into two consecutive machine code instructions, or your instruction is switched out
-for another. This happens when you use `pseudo-instructions`. These instructions are part of the ISA,
+for another. This happens when you use *pseudo-instructions*. These instructions are part of the ISA,
 but they do not have a machine code representation. Instead, they are implemented using other instructions,
 which are automatically substituted by the assembler.
 
 One example is the `mv t0, t1` instruction (copy `t1` into `t0`), which is implemented using the
 `addi t0, t1, 0` instruction (adding `0` to the value in `t1` and writing it to `t0`).
 You can also see how the `lw` (load word) instruction is translated to two separate instructions in
-the [RARS tutorial](#).
+the [RARS tutorial](/tutorials/rars).
 
 ## Pointers in C
 
@@ -379,7 +380,7 @@ You can use the `&` operator to get the memory address of a given variable. Noti
 used this syntax in `scanf`, where we needed to specify *where in memory* the user input should be written.
 Later we will see other examples where the memory addresses play an important role in how C operates.
 
-Given the importance of addresses, C allows us to store them in special variables called *pointers*
+Given the importance of addresses, C allows us to store them in special variables called **pointers**
 (*pointing* to a memory location). These variables have an asterisk in their type to indicate that they
 are pointing towards a value with a given type:
 
@@ -415,7 +416,11 @@ The answer is yes! `p` is a variable, it needs to store its value (the address o
 in memory, so it necessarily has its own address, which you can get with `&p`.
 
 So what type of variable do you need to use if you want to store *the address* of `p`?
-`int **x`!
+<details>
+  <summary>Solution: </summary>
+<code class="language-plaintext highlighter-rouge">int **x</code>
+</details>
+
 
 ## Memory segments in assembly
 
@@ -423,7 +428,7 @@ So far, we have only used registers to store values in assembly. But in many cas
 values in memory (e.g., if we have more variables than the number of available registers). This is of
 course also possible in assembly.
 
-A program is made up of multiple memory segments. The C compiler manages this for us transparently,
+A program is made up of multiple **memory segments**. The C compiler manages this for us transparently,
 but when writing assembly, we need to note these explicitly. If you go back to the [first assembly example](#compiling-c-and-running-assembly)
 we've seen, you'll see the string `"Hello world"` is stored in `.section .rodata`.
 
@@ -440,7 +445,7 @@ main:
     mul  t2, t2, t1
 ```
 
-Notice that we've also added `main:` to our program. This is called a label, and it can be used to
+Notice that we've also added `main:` to our program. This is called a **label**, and it can be used to
 point to a certain instruction or data in memory. In the x86 example above, you can also find a `main:` label,
 but also `.LC0:`, which points to the string literal.
 
@@ -524,7 +529,7 @@ variants in C:
 - `long`: signed integer, at least 32 bits
 - `unsigned long`, `long long`, `unsigned long long`...
 
-For floating point numbers, you can use `float` and `double`(where the latter has double the precision).
+For floating point numbers, you can use `float` and `double` (where the latter has double the precision).
 
 Characters can be stored in the `char` type. This is 1 byte in size, so it stores the character in the [ASCII](asciitable.com/)
 encoding.
