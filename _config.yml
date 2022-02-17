@@ -79,3 +79,6 @@ just_the_docs:
       name: Exercise sessions
     tutorials:
       name: Tutorials
+
+kramdown:
+  toc_levels: "1..3"

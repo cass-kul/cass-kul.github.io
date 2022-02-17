@@ -8,17 +8,17 @@ has_children: false
 
 # Compiling C
 
-In CASS, we will teach you how to interact (`program`) with the CPU on the lowest layer of abstraction that it understands: Assembly.
-Since the jump from `higher-level` programming languages such as Python or Java to assembly is quite big, we first want you to have basic understanding of the C language. [The C language](https://en.wikipedia.org/wiki/C_(programming_language)) is a rather old programming language that has a closer connection to assembly than the higher-level programming languages you may know already.
+In CASS, we will teach you how to interact with (*program*) the CPU on the lowest layer of abstraction that it understands: assembly code.
+Since the jump from *higher-level* programming languages such as Python or Java to assembly is quite big, we first want you to have a basic understanding of the C language. [The C language](https://en.wikipedia.org/wiki/C_(programming_language)) is a language that has a closer connection to assembly than the higher-level programming languages you may know already.
 
 ## Running C programs
 
-Programs written in C can not directly be executed. Instead, they have to be `compiled` first. `Compilation` is the step of transforming programming code into a language that the CPU understands : Assembly.
+Programs written in C can not directly be executed. Instead, they have to be *compiled* first. *Compilation* is the step of transforming programming code into a language that the CPU understands: assembly.
 For [Java](https://www.javatpoint.com/is-java-interpreted-or-compiled) and [Python](https://www.geeksforgeeks.org/python-compiled-or-interpreted/) the compilation step is mostly hidden from the developer, and a simple command is enough to execute the code.
-Thus, to compile C programs, we need to install a set of tools (a compiler) that allows us to run the generated `executable` code.
+Thus, to compile C programs, we need to install a set of tools (a compiler) that allows us to run the generated *executable* code.
 
-Below we show you three options of how to work with C from the Browser, from Windows, and from Linux.
-For the first few sessions, compiling the rare C programs in the Browser may be enough for you but later, we will rely on you having access to a compiler. This is because compiling in the browser does not work with bigger projects like we will have for exercise session 6.
+Below, we show you three options of how to work with C from the browser, from Windows, and from Linux.
+For the first few sessions, compiling the rare C programs in the browser may be enough for you, but later we will rely on you having access to a compiler. This is because compiling in the browser does not work with bigger projects like we will have for exercise session 6.
 
 ## A simple test program
 
@@ -33,15 +33,15 @@ int main(void) {
 }
 ```
 
-## Compiling C in the Browser
+## Compiling C in the browser
 
-The website [Goodbolt](https://godbolt.org/) allows you to write C code on the left and visualize the compiled assembly instructions on the right. This is very useful if you just want to see how a C program looks like in assembly.
+The website [Godbolt](https://godbolt.org/) allows you to write C code on the left and visualize the compiled assembly instructions on the right. This is very useful if you just want to see how a C program looks like in assembly.
 There are several configurations for you to choose from and the most important ones for this course will be:
 
-- `x86-64 gcc 11.2` : Assembly for an x86-64 CPU. This will most likely be the architecture that you compile to when you want to run code on your own machine (if you don't have a newer ARM-based Mac for example)
+- `x86-64 gcc 11.2` : Assembly for an x86-64 CPU. This will most likely be the architecture that you compile to when you want to run code on your own machine (if you don't have a newer ARM-based Mac for example). When you use this compiler, you can also see the output of your program by clicking the "Output (0/0)" button at the bottom of the screen.
 - `RISC-V rv32gc gcc 10.2.0` : Assembly for a RISC-V CPU in the `rv32gc` configuration. When using godbolt to see how compiled C code looks in RISC-V, you can use this configuration.
 
-Note, that these configurations may differ widely and you will understand in some weeks why that may be the case. For now, it is enough to just stick to the two mentioned configurations but feel free to play around with other configurations as well.
+Note, that these configurations may differ widely, and you will understand in some weeks why that may be the case. For now, it is enough to just stick to the two mentioned configurations but feel free to play around with other configurations as well.
 
 ## Compiling C in Windows 10 with Windows Subsystem for Linux (WSL)
 
@@ -86,7 +86,7 @@ Then, install the `gcc` compiler package:
 $ sudo apt install gcc -y
 ```
 
-Once you did so, you can check that gcc was installed correctly by executing (Your output may differ):
+Once you did so, you can check that gcc was installed correctly by executing the following: (Your output may differ.)
 
 ```bash
 $ gcc --version
