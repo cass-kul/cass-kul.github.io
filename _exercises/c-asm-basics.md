@@ -11,7 +11,7 @@ has_toc: false
 {: .no_toc .text-delta }
 
 1. TOC
-{:toc .toc_levels 1..2}
+{:toc}
 
 # Introduction
 
@@ -70,7 +70,7 @@ The assembly language representation of these instructions is called the `mnemon
 An `assembler` program can compile the mnemonic programs into machine code. You will see this in the
 [RARS](#) environment.
 
-- Machine code: 01010101
+- Machine code: 0x500293
 - Mnemonic format: `addi t0, zero, 5`
 
 ## Instruction set architectures (ISAs)
@@ -371,48 +371,131 @@ the [RARS tutorial](#).
 
 ## Pointers in C
 
-Are C variables always stored in registers? What if we have too many? Storing them in memory. How can we see where they are stored?
+As mentioned [before](#integers-in-c-and-assembly), variables in C are stored in memory locations.
+Of course, now we see that to perform operations on these values, first they need to be loaded into
+registers (usually using the `lw` instruction).
 
-virtual address, every byte has separate addresses
+You can use the `&` operator to get the memory address of a given variable. Notice that we have already
+used this syntax in `scanf`, where we needed to specify *where in memory* the user input should be written.
+Later we will see other examples where the memory addresses play an important role in how C operates.
 
-Pointers
+Given the importance of addresses, C allows us to store them in special variables called *pointers*
+(*pointing* to a memory location). These variables have an asterisk in their type to indicate that they
+are pointing towards a value with a given type:
 
-go back to scanf
+```c
+int a = 5;    // a regular integer, stored somewhere in memory, `a` stores the value 5
+int *p = &a;  // a pointer to an integer value, `p` stores the memory location of `a`
+```
 
-example with separate colors
+We can print out the value of a pointer using the `%p` format specifier:
 
-use of star: *j is always an int
+```c
+printf("The address of `a`: %p, its value: %d\n", p, *p);
+// The address of `a`: 0x7ffdb1dfa11c, its value: 5
+```
 
-compiler warnings maybe?
+Notice that we can also get the value of the pointed memory location by using `*p`.
+So while writing `p` gives us the address of `a`, writing `*p` gives us the
+value *at the pointed address*. We can also use this to change the value at that address:
 
-Interactive example
+```c
+int a = 5;
+int *p = &a;
+*p = 6;
+printf("a = %d\n", a);
+// a = 6
+```
+
+Pointers will allow us to change the values of variables that we do not have direct access to.
+We will see examples of this later.
+
+You might be wondering: `p` is also a variable, right? So does it also have an address?
+The answer is yes! `p` is a variable, it needs to store its value (the address of `a`) somewhere
+in memory, so it necessarily has its own address, which you can get with `&p`.
+
+So what type of variable do you need to use if you want to store *the address* of `p`?
+`int **x`!
 
 ## Memory segments in assembly
 
-So can we store variables in memory from assembly?
+So far, we have only used registers to store values in assembly. But in many cases, we want to store
+values in memory (e.g., if we have more variables than the number of available registers). This is of
+course also possible in assembly.
 
-Memory segments, example with a `word`.
+A program is made up of multiple memory segments. The C compiler manages this for us transparently,
+but when writing assembly, we need to note these explicitly. If you go back to the [first assembly example](#compiling-c-and-running-assembly)
+we've seen, you'll see the string `"Hello world"` is stored in `.section .rodata`.
 
-data: space in ram, with initial value (loader will do this)
+### The `.text` section
 
-labels, globl main, rars starts there (otherwise line 1)
+In RISC-V assembly, we will make use of two segments. The program code (the instructions) are
+stored in the `.text` section. If you only write instructions in RARS, it will automatically put
+them in this section, this is why our programs have worked so far. But it's good practice to always define it:
 
-load address, load word
+```armasm
+.text
+main:
+    addi t2, t0, 3
+    mul  t2, t2, t1
+```
 
-an exercise here?
+Notice that we've also added `main:` to our program. This is called a label, and it can be used to
+point to a certain instruction or data in memory. In the x86 example above, you can also find a `main:` label,
+but also `.LC0:`, which points to the string literal.
 
-## Other data types
+`main:` is a special label, RARS will start execution from here if it can find it. This is useful if you have
+a longer file, and you don't necessarily want RARS to start executing from the first line. (This will be useful
+for example when you will define multiple functions in the same file).
 
-Basic ones, char, float, double
+To enable external programs to also use these labels, you can use the `.globl` directive. For example,
+writing `.globl main` will allow other programs to start executing your program from the `main:` label.
+We will always add this directive when working in RARS.
 
-comparison with register sizes
+```armasm
+.globl main
+.text
+main:
+    addi t2, t0, 3
+```
 
-Size of data types: godbolt
+### The `.data` section
 
-### Exercise 1 (2/1)
+We can store variables in the `.data` section. These will work very similar to C variables, but there is
+a weaker notion of data types in assembly. For integers, we will usually reserve a word (32 bits) of memory,
+which corresponds to the size of `int` in C in most cases (the size of an `int` in C does not have a defined
+size in the specification).
+
+We also need to use a label to give a name to our word in memory, otherwise it would be difficult to
+refer back to it.
+
+```armasm
+.data
+    a: .word 5
+.text
+    la t0, a
+    lw t1, (t0)
+    addi t1, t1, 3
+    sw t1, (t0)
+```
+
+When reserving a `word`, we can also give it an initial value in memory. In the above example,
+we chose to give our variable `a` the initial value 5. In our program, we first load the address
+of `a` into `t0` (`la`), then load the value at the address contained in `t0` (so the address of `a`)
+into `t1`. After increasing this value by 3, we write it back to the original memory location.
+
+If you want to reserve space in the data section at the byte granularity (not full words),
+you can use the `.space N` keyword, where `N` is the number of bytes you want to reserve.
+For example, you can reserve 4 bytes of space with `empty: .space 4`. In this case,
+you can't provide initial values for the memory, you need to store a value in it first
+from your program.
+
+### Exercise 2
 
 Write a RISC-V program that calculates the following: `c = a^2 + b^2`.
 Use the data section to reserve memory for `a`, `b`, and `c`.
+Use the debugging features in RARS (memory viewer, register contents) to make sure
+that your program works as intended!
 
 #### Solution
 
@@ -431,7 +514,25 @@ Use the data section to reserve memory for `a`, `b`, and `c`.
     sw t2, (a2)       # *a2 = t2;
 ```
 
-### Exercise 2 (1/3)
+## Other data types
+
+So far, we've only seen integers in C. Already with integers, you can come across many
+variants in C:
+
+- `int`: signed integer, at least 16 bits in size
+- `unsigned int`: unsigned integer (non-negative values)
+- `long`: signed integer, at least 32 bits
+- `unsigned long`, `long long`, `unsigned long long`...
+
+For floating point numbers, you can use `float` and `double`(where the latter has double the precision).
+
+Characters can be stored in the `char` type. This is 1 byte in size, so it stores the character in the [ASCII](asciitable.com/)
+encoding.
+
+In your C programs, you can find the precise size of a data type or a variable (in bytes) with the `sizeof()` function:
+`sizeof(int)` or `sizeof(a)`.
+
+### Exercise 3
 
 Write a C program that asks the user for an integer. Print the address, the value
 and the size in bytes of this integer. Now store the address of this integer in a pointer.
@@ -454,7 +555,7 @@ int main(void) {
 }
 ```
 
-### Exercise 3 (1/1)
+### Exercise 4
 
 Write a C program that asks the user for a positive integer and iteratively computes the
 factorial of this integer.
@@ -482,13 +583,54 @@ int main(void) {
 
 # Branches
 
-What are branches, how to use them in assembly, also to create loops.
+In C, you can create conditional branches and loops like in other languages:
 
-Interactive example?
+```c
+if (a != b) {
+    a = b;
+} else {
+    calculate(a);
+}
+```
 
-### Exercise 4 (2/3)
+```c
+while (a <= b) {
+    a++;
+}
+```
 
-Translate the previous program to RISC-V. You don't have to ask for user input,
+In assembly, constructing these control structures is a bit more tricky. We will
+once again need to make use of the labels that were previously introduced.
+In the branch and jump instructions we include these labels as jump targets.
+
+```armasm
+loop:
+    addi t0, t0, 1
+    j loop
+```
+
+The above is a simple example of an infinite loop; `j loop` will always jump back
+to the instruction following the `loop:` label, so the `t0` register will be incremented
+forever.
+
+This is of course not very useful, so there are many instructions that perform
+conditional branching.
+
+```armasm
+    mv t0, zero
+    addi t1, zero, 5
+loop:
+    addi t0, t0, 1
+    bne t0, t1, loop
+```
+
+In this example, we used the `bne` instruction, which only jumps to the `loop:` label
+if the two register operands are not equal. You can find other useful instruction on the
+[RISC-V card](#).
+
+### Exercise 5
+
+Translate the program from exercise 4 to RISC-V. You don't have to ask for user input,
 store the input integer in the data section of the memory.
 
 #### Solution
@@ -507,7 +649,7 @@ loop:                    # do {
 end:
 ```
 
-### Exercise 5 (2/4)
+### Exercise 6
 
 Write a RISC-V program that calculates: `c = a^b`.
 Make sure that your solution works for all `b >= 0`!
@@ -532,59 +674,3 @@ loop:
 end:
     sw t2, (a2)         # *a2 = t2;
 ```
-
-# Functions
-
-The whole stack also here?
-
-start from main
-
-recursive functions
-
-# Static arrays
-
-First example in C, with loop
-
-Contiguous memory region of those values. Variable stores the first element's adres.
-
-Amount of elements with sizeof
-
-Index notation
-
-Also strings: array of characters, terminating null byte: inconvenient to keep track of sizes
-Example with puts?
-
-use pointer to first character for string
-
-string literals
-
-# Arrays in assembly
-
-### Exercise 5 from session 1 (although this is pretty boring)
-
-### Exercise 6 from session 1
-
-## Branches in assembly
-
-### Exercise 2 from session 2 (also not fun)
-
-### Exercise 5 from session 2
-
-### Exercise 6 from session 2
-
-### Exercise 7 from session 2
-
-Before next: explain sizeof array
-
-### Exercise 2 from session 1
-
-# Structs
-
-collection of different data types, with identifiers
-
-padding
-
-point operator
-arrow ooperator
-
-### Exercise 4 from session 1
