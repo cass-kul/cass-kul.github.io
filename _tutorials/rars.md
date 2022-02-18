@@ -34,29 +34,29 @@ your system.
 
 
 ## How to use
-1. Write your RISC-V assembly program in the `Edit` window.
-   - Define a `.text` section for code with a `main` function
-   - Make your `main` function visible to other files (and to the simulator) with `.globl main`
-   - Don't forget to activate `Settings > "Initialize program counter to global main if defined"`
+1. Write your RISC-V assembly program in the `Edit` window:
+   - Define a `.text` section for code with a `main` function,
+   - Make your `main` function visible to other files (and to the simulator) with `.globl main`,
+   - Don't forget to activate `Settings > "Initialize program counter to global main if defined"`.
 
    ![A program written in RARS](/tutorials/img/rars_program.png "Example of program wirtten in RARS")
 
-2. Assemble your program.
+2. Assemble your program:
    - Once your program is ready, you can assemble it using the wrench icon (or `run > Assemble`).
 
-3. Execute your program from the `Execute` window.
-   - Execute the whole program using the first green arrow
-   - Other arrows can be used for single stepping instructions
-   - Memory and registers contents are displayed during/after execution
+3. Execute your program from the `Execute` window,
+   - Execute the whole program using the first green arrow,
+   - Other arrows can be used for single stepping instructions;
+   - Memory and registers contents are displayed during/after execution.
 
-**Example** of the last program ready to execute. Notice that the `Data
-Segment` window holds the values `2` (`a`) and `3` (`b`) at addresses
+Here is an illustration of the program above, ready to execute. Notice that the
+`Data Segment` window holds the values `2` (`a`) and `3` (`b`) at addresses
 `0x10010000` and `0x10010000+4`:
 
    ![Example of program ready to execute](/tutorials/img/rars_execute1.png "Example of program ready to execute in RARS")
 
-**Result** of the execution of the last program. Notice that the `Data Segment`
-window holds the values `9` (`a * b + b`) `0x10010000+8`:
+Here is the result of the execution: the `Data Segment` window now holds the
+value `9` (`a * b + b`) at address `0x10010000+8`:
 
    ![Result of the execution of the previous
    program](/tutorials/img/rars_execute_final.png "Result of the execution of

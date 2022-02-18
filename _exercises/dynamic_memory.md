@@ -121,18 +121,18 @@ How can we use this to implement Lists?
 ### Illustration:
 1. **Initialization**: We use a pointer, called `list pointer` to record the
 address of the next free memory location.  
-![Empty memory with list pointer](/tutorials/img/list1.png)  
+![Empty memory with list pointer](/exercises/img/list1.png)  
 2. **Define a new list**: Let's use arrays of size 10 as the basic building
    block to implement our lists. Here we have defined two lists, meaning that we
    have allocated two consecutive arrays of size 10, and moved the `list pointer`
    to point to the next free memory location.  
-![Empty memory with list pointer](/tutorials/img/list2.png)  
+![Empty memory with list pointer](/exercises/img/list2.png)  
 3. **Increase size of a list**: When `List 1` is full, we can extend it by
    allocating a new array in the free memory. In order to chain both array and
    get a list, we keep a pointer to the second array in the last cell of the
    first array. In the end, we just need the pointer to the first array of `List
    1` to reconstruct the whole list!  
-![Empty memory with list pointer](/tutorials/img/list3.png)
+![Empty memory with list pointer](/exercises/img/list3.png)
 
 
 ### Implementation
