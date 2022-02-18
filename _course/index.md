@@ -48,3 +48,9 @@ and they do not substitute working through the material yourself, as there might
 content included this year.
 
 You can find all videos on [Youtube](https://www.youtube.com/playlist?list=PLMXWnt556xY4Sexd5FMBc-ZF7pFb2SLnU). Note, that we changed the exercises slightly to make the introduction to C and assembly easier, so there are already differences to last year. For example, some exercises and their solutions that are presented on the Youtube channel are shuffled around or are different this year. Nonetheless, the videos can be a good addition if you prefer the video style to a Website.
+
+## Other useful resources
+
+There are lots of other alternative resources out there that teach you the same concepts as this course does. If you find a resource that you liked exceptionally well, why not reach out to us or create a Pull Request for the website so that we can expand the list below? Just be aware that we can't verify that 100% of the information on the resources below is indeed correct, we just quickly checked that they look good to give you options when studying for the course.
+
+- [Edd Yerburgh: A collection of notes and references for self-studying computer science](https://notes.eddyerburgh.me/computer-architecture)
