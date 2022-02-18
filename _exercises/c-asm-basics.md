@@ -229,7 +229,7 @@ addi t2, t0, 3    # t2 = t0 + 3
 mul  t2, t2, t1   # t2 = t2 * t1
 ```
 
-> Warm-up 3: Try out this example in [RARS](#)! Check whether you see the correct value in `t2` after executing the program.
+> Warm-up 3: Try out this example in [RARS](/tutorials/rars)! Check whether you see the correct value in `t2` after executing the program.
 
 ## User input handling in C
 
@@ -284,20 +284,12 @@ can appear in your program.
 Write a C program that asks the user for an integer value and prints out the square
 of this value, together with the original number.
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```c
-#include <stdio.h>
-
-int main(void) {
-    int n;
-    printf("Your number: ");
-    scanf("%d", &n);
-    int square = n * n;
-    printf("The square of %d is %d\n", n, square);
-    return 0;
-}
+{% include_relative c-asm-basics/sol1.c %}
 ```
+{% endif %}
 
 # Registers in RISC-V
 
@@ -503,22 +495,12 @@ Use the data section to reserve memory for `a`, `b`, and `c`.
 Use the debugging features in RARS (memory viewer, register contents) to make sure
 that your program works as intended!
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```armasm
-.data
-    a: .word 3
-    b: .word 4
-    c: .space 4
-.text
-    lw t0, a          # t0 = *a;
-    lw t1, b          # t1 = *b;
-    la a2, c          # a2 = c;
-    mul t0, t0, t0    # t0 = t0 * t0;
-    mul t1, t1, t1    # t1 = t1 * t1;
-    add t2, t0, t1    # t2 = t0 + t1;
-    sw t2, (a2)       # *a2 = t2;
+{% include_relative c-asm-basics/sol2.S %}
 ```
+{% endif %}
 
 ## Other data types
 
@@ -544,22 +526,12 @@ Write a C program that asks the user for an integer. Print the address, the valu
 and the size in bytes of this integer. Now store the address of this integer in a pointer.
 Then print the address, the value and the size in bytes of this pointer.
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```c
-#include <stdio.h>
-
-int main(void) {
-    int num;
-    printf("Your number: ");
-    scanf("%d", &num);
-    printf("Address: %p, value: %d, size: %lu\n", &num, num, sizeof(num));
-
-    int *pointer = &num;
-    printf("Address: %p, value: %p, size: %lu\n", &pointer, pointer, sizeof(pointer));
-    return 0;
-}
+{% include_relative c-asm-basics/sol3.c %}
 ```
+{% endif %}
 
 ### Exercise 4
 
@@ -568,24 +540,12 @@ factorial of this integer.
 
 > Hint: loops work the same way in C as they do in many other languages.
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```c
-#include <stdio.h>
-
-int main(void) {
-    int n;
-    int fac = 1;
-    printf("Your number: ");
-    scanf("%d", &n);
-    while (n > 0) {
-        fac *= n;
-        n--;
-    }
-    printf("The factorial is %d\n", fac);
-    return 0;
-}
+{% include_relative c-asm-basics/sol4.c %}
 ```
+{% endif %}
 
 # Branches
 
@@ -639,44 +599,22 @@ if the two register operands are not equal. You can find other useful instructio
 Translate the program from exercise 4 to RISC-V. You don't have to ask for user input,
 store the input integer in the data section of the memory.
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```armasm
-.data
-    number:  .word 5
-.text
-    lw t0, number        # t0 = *number;
-    mv t1, t0            # t1 = t0;
-loop:                    # do {
-    addi t1, t1, -1      #     t1--;
-    ble t1, zero, end    #     if (t1 <= 0) { goto end; }
-    mul t0, t0, t1       #     t0 *= t1;
-    j loop               # } while (true);
-end:
+{% include_relative c-asm-basics/sol5.S %}
 ```
+{% endif %}
 
 ### Exercise 6
 
 Write a RISC-V program that calculates: `c = a^b`.
 Make sure that your solution works for all `b >= 0`!
 
+{% if site.solutions.show_session_1 %}
 #### Solution
-
 ```armasm
-.data
-    a: .word 2
-    b: .word 1
-    c: .space 4
-.text
-    lw t0, a            # t0 = *a;
-    lw t1, b            # t1 = *b;
-    la a2, c            # a2 = c;
-    addi t2, zero, 1    # t2 = 1;
-loop:
-    beqz t1, end        # while (t1 != 0) {
-    mul t2, t2, t0      #     t2 = t2 * t0;
-    addi t1, t1, -1     #     t1--;
-    j loop              # }
-end:
-    sw t2, (a2)         # *a2 = t2;
+{% include_relative c-asm-basics/sol6.S %}
 ```
+{% endif %}
+
