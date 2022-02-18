@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Session 4: Dynamic memory"
-nav_order: 1
+nav_order: 4
 nav_exclude: false
 has_children: false
 has_toc: false
