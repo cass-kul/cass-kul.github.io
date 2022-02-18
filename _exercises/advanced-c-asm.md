@@ -3,6 +3,7 @@ layout: default
 title: "Session 2: Advanced C & assembly"
 nav_order: 2
 nav_exclude: true
+search_exclude: true
 has_children: false
 has_toc: false
 ---

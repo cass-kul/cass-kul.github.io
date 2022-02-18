@@ -3,6 +3,7 @@ layout: default
 title: "Session 1: C & assembly basics"
 nav_order: 1
 nav_exclude: false
+search_exclude: false
 has_children: false
 has_toc: false
 ---
