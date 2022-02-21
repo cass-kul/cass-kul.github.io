@@ -27,7 +27,7 @@ a bit more complicated:
 Once you have Java installed, download the JAR file of the [last RARS
 release](https://github.com/TheThirdOne/rars/releases/tag/continuous).
 
-To execute it, simply `run java -jar rars_xxxxxx.jar` (replace x with the
+To execute it, simply run `java -jar rars_xxxxxx.jar` (replace x with the
 numbers of your specific file) when your terminal is in the same folder as the
 JAR file. Double clicking the jar may equally work depending on how you set up
 your system.
