@@ -2,10 +2,24 @@
 layout: default
 title: "Session 3: Functions and the Stack"
 nav_order: 3
-nav_exclude: true
+nav_exclude: false
 search_exclude: true
 has_children: false
 has_toc: false
+gallery_images:
+    - stack-album/convention-example-11.png
+    - stack-album/convention-example-12.png
+    - stack-album/convention-example-13.png
+    - stack-album/convention-example-14.png
+    - stack-album/convention-example-15.png
+    - stack-album/convention-example-16.png
+    - stack-album/convention-example-17.png
+    - stack-album/convention-example-18.png
+    - stack-album/convention-example-19.png
+    - stack-album/convention-example-20.png
+    - stack-album/convention-example-21.png
+    - stack-album/convention-example-22.png
+    - stack-album/convention-example-23.png
 ---
 
 ## Table of contents
@@ -32,7 +46,7 @@ Let's first take a look at functions in C. Below you see an example program with
 <td>
 {% highlight c %}
 // Include convenient library functions
-#include <stdio.h>
+# include <stdio.h>
 // Module function for easy reuse
 int sum(int a, int b)
 {
@@ -64,7 +78,7 @@ $ -
 
 You already know functions from other languages than C, they are very useful to bundle common tasks or make the program simpler to think about. In essence, functions allow for **abstraction** and **modularization** (via *parameters* and *return* values).
 
-But how can we do this in assembly? There is almost no concept of a `function` or `procedure` in assembly. If languages like C are compiled to assembly code, how do they transform their functions to assembly code then? 
+But how can we do this in assembly? There is almost no concept of a `function` or `procedure` in assembly. If languages like C are compiled to assembly code, how do they transform their functions to assembly code then?
 The answer is simple and slightly difficult at the same time:
 
 1. Functions can be implemented using **common low-level primitives** such as **labels**, **jumps**, and **registers**. Doing this is simple and you may already have done so intuitively during the last sessions.
@@ -75,8 +89,7 @@ The answer is simple and slightly difficult at the same time:
 > :bulb: TL;DR: The official calling conventions are [here on the official RISC-V website](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf) and you can find the short version on the [RISC-V card](/files/riscv-card.pdf) that you will also have access to in the exam.
 
 If the above explanation did not fully click for you yet, don't worry. Let's go step by step and understand why conventions are useful and help us write code that can be used across programs and teams.
-Let's take a look at the partial assembly code below. We already created a `main` and a `sum` label 
-
+Let's take a look at the partial assembly code below. We already created a `main` and a `sum` label
 
 ```armasm
 .globl main
@@ -97,11 +110,11 @@ resume:
 
 ```
 
-> Warm-up 1: Write a simple program in RARS that adds the two numbers `a` and `b` and stores it in `number`.
+> :fire:  Warm-up 1: Write a simple program in RARS that adds the two numbers `a` and `b` and stores it in `number`.
 
 ![Problems that arise when using functions in assembly code](calling-conventions-problem.png "Problems that arise when using functions in assembly code")
 
-Which registers did you use to load the two numbers? What would have happened to your program if the code in `sum` would use different registers? Things would not work. Thus, the calling conventions of RISC-V demand that some registers are to be used for `input parameters` and `returns`, others (callee save) are to **be restored** by the called function, and even others (caller save) can be **safely overwritten** by the called function.
+Which registers did you use to load the two numbers? What would have happened to your program if the code in `sum` would use different registers? Things would not work. Thus, [the calling conventions of RISC-V](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf) demand that some registers are to be used for `input parameters` and `returns`, others (callee save) are to **be restored** by the called function, and even others (caller save) can be **safely overwritten** by the called function.
 
 Register number             | Register name | Use                   | Note
 --------:------             | ------:------ | :------------         | :-------------
@@ -116,28 +129,60 @@ If you take a look at the [RISC-V card linked at the top of the website](/files/
 
 ![Calling conventions solve interface issues](calling-conventions-solution.png "Calling conventions solve interface issues")
 
-> Warm-up 2: Change your program to adhere to these register conventions as if the `sum` label was a function.
+> :fire:  Warm-up 2: Change your program to adhere to these register conventions as if the `sum` label was a function.
 
+> :fire:  Warm-up 3: Read the [official calling conventions of RISC-V](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf). Since we will not be making use of floating point registers (`ft0` to `ft11`), Section 18.3 applies to us and in this course we will just try to fit all parameters into the argument registers as it is explained there before utilizing the stack.
 
-
-Let us now take a look at what happens if we run out of registers and how can we solve this by using memory.
+The official calling conventions talk about passing some function parameters via the stack. Let us now take a look at what happens if we run out of registers and how can we solve this by using the stack.
 
 # Memory: The stack
 
-It is easy to think of cases where the 32 registers we have are not enough. You may already have come to a situation where this is the case but for any larger program, we definitely need to store data in memory.
-You already worked with variables stored in the `.data` section: We can declare a region in memory that we then use to back up or restore data from. But defining specific variables is also not enough for cases where we do not know how many variables we will need.
+It is easy to think of cases where the 32 registers we have are not enough. You may already have come to a situation where this is the case but for any larger program, we definitely need to store data in memory. Similarly, if the calling conventions only define 8 registers to pass function arguments, what happens if we want to pass more data to a function than fits into these 8 registers?
+You already worked with variables stored in the `.data` section: We could declare a region in memory that we then use to back up or restore data from. But defining specific variables is also not enough for cases where we do not know how many variables we will need.
+This is where a data structure could be useful where we dynamically add and remove data from, depending on what we need.
 
 ## Understanding a stack
 
 A stack is a simple data structure that grows in one direction and that works after the Last-in-First-Out (LIFO) principle. The idea is as simple as a pile of books where you are only ever able to pick up the top-most book. You can throw more books on the pile but have to pick them up again to reach the books at the bottom of the pile.
-To realize a stack in assembly, we can just 
+To realize a simple stack in assembly, we can just define a large memory region in the data section like this:
 
-> :warning: Add exercise where they use own stack in data section
+```armasm
+.data
+    stack: .word 500
+.text
+main:
+    ...
+```
 
-> :warning: Introduce stack pointer that takes over self-made stack. Change exercise to use SP
+Now to use this stack, we would do the following actions:
 
+1. Load the address of the stack into a register
+1. When we want to push data on the stack:
+    1. Put data at the address that the register points to
+    1. Increment the pointer by the size of the data you just added so that there is again free space at the stack address
+1. When we want to pop data from the stack, we:
+    1. Decrement the pointer by the size of the last data element
+    1. Read the content of the data stored at the current stack pointer
 
-## Excurse: The stack grows downwards !?!
+If you are now unsure about what the size of the data is that you want to put or retrieve from the stack, take a look again at the calling conventions or at the RISC-V sheet, both contain a list of common datatypes and their size in bytes in our RISC-V 32-bit configuration.
+
+> :fire: Warm-up 4: Expand the example above with simple code that loads the address of the stack into a register, pushes two integers (4 and 5 for example) and then pops these integers again.
+
+This simple stack that you have written can already help you to overcome all challenges that we described above:
+
+- If we run out of registers, we can temporarily push the variables onto the stack. As long as we as developers remember where we can find the data and how many variables we pushed after this variable, we can always find it again.
+- If we want to send complex data to a function or want to exceed the 8 registers that we can use to send function arguments, we can use such a stack and simply pass the pointer to the data on the stack.
+- One additional issue we did not discuss yet is the problem of **program control flow**. What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. Thus, it would be a good idea to also put the *return address* (`ra`, `x1`) on the stack.
+
+At this point, it may not surprise you anymore to hear that RISC-V actually has a built-in instructions to deal with the stack, has a dedicated register that is called the **stack pointer** and that the calling conventions heavily rely on these mechanisms:
+
+- The **stack pointer** (`sp` or `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
+- In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excurse below for more details.
+- To push data to the stack, you use `addi sp,sp,−4` (by decrementing the stack pointer), to pop data you use `addi sp,sp,4`. Note, that this only changes the pointer, you still need to read or write the data to the stack pointer.
+
+> :fire: Warm-up 5: Change your code from the last warm-up to use the `SP` and the provided stack.
+
+## Excurse: The stack grows downwards !?
 
 > :warning: The stack controlled by the stack pointer in RISC-V grows **downwards** ! It is still a stack but instead of adding a variable *on top* of the older one, you place the variable **below** the older one in memory. This means that when your last element on the stack is at address `0x100`, the next item of size 4 bytes will be at address `0x100 - 0x004 = 0x0FC` (and **not** at `0x104`).
 
@@ -167,17 +212,183 @@ Both the stack and the heap can grow during the execution of programs. Since we 
 
 </details>
 
-
 # Using the stack for function calls
 
-> Explanation and little exercises
+Calling a function means multiple things at once:
+
+1. We jump to a new address (or label) and expect the code there to execute for a few instructions.
+1. We may want to provide some input to the called function
+1. We may expect some return values from the called function
+1. The function is expected to jump back, also called *return*, to the code that originally called it
+1. Any registers that are marked as caller-save must be saved before the function call and restored afterwards
+1. Any registers that are marked as callee-save must remain untouched by the called function
+
+We have already discussed which registers are callee- and caller-save. However we did not discuss how these registers are then to be saved on the stack or in what order we should save them.
+The graphic on the RISC-V cheat sheet shows the convention of how to do this. The first thing to do when calling a function is to save the caller-save parameters on the stack. Since this procedure logically belongs to the caller function, it does not matter in which order you save the registers that you need to save, as long as you make sure that you back up all registers marked as caller-save on the stack.
+The next step to do when calling a function is to push the arguments to the function on the stack that do not fit into registers.
+When jumping to the function, we then fill the `ra` register with the address of the instruction that should be returned to. Most often, this will be the instruction after the jump to the function. This is why there is a special instruction in RISC-V, called the `jal` instruction that first places the address of the next instruction into the ra register and then jumps to the given address.
 
 # Complete calling conventions
 
-> Revisit all stuff for first exercise
+> The complete list of things to do when calling a function is as follows:
+>
+> 1. Push all caller-save registers to the stack. If not all caller-save registers have been used, we do not need to save all (e.g. only save `t0` and `t1` if `t2-7` are unused)
+> 1. Push function parameters that do not fit in registers onto the stack
+> 1. Place all function parameters that belong into registers in the registers `a0` to `a7`
+> 1. Call the function either via `jal` or via another instruction as long as the return address is filled with the next instruction after the jump
+>
+> In the called function, do the following:
+>
+> 1. Back up the return address register `ra` as a first thing on the stack
+> 1. Back up other callee-save registers that will be used by this function. Unused registers can be skipped if this function does not need them (e.g. if we do not touch `s0-s7`, we can skip saving them)
+> 1. Perform function tasks
+> 1. Place function return in `a0` and `a1`.
+> 1. Restore callee-save registers and `ra`
+> 1. Return to parent function via `ret` (or simply jump to `ra`)
+
+Below, you can find a series of images that walk you through an example program and the usage of the stack (click or slide through the images).
+
+{% include gallery.html images=page.gallery_images ratio_image="stack-album/convention-ratios.png" %}
+
+<details closed markdown="block">
+  <summary>
+    Show stack example code
+  </summary>
+  {: .text-delta .text-blue-000 }
+
+```armasm
+{% include_relative functions-stack/stack-example.asm %}
+```
+
+</details>
+
+### Exercise 1
+
+Convert the following code to Risc-V assembly.
+Assume that `main()` does not return like common functions.
+Why is this assumption necessary right now?
+Use Risc-V calling conventions.
+
+```c
+{% include_relative functions-stack/ex1.c %}
+```
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/sol1.asm %}
+```
+
+{% endif %}
 
 # Additional exercises
- 
-> additional exercises
+
+### Exercise 2
+
+We have compiled the function `func` from the code example below to Risc-V 32-bit (RV32I) using gcc.
+The compiled function can be found below.
+Translate the main function manually to Risc-V.
+Follow the calling conventions to pass all arguments correctly.
+
+```c
+{% include_relative functions-stack/ex2.c %}
+```
+
+```armasm
+{% include_relative functions-stack/ex2.asm %}
+```
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/sol2.asm %}
+```
+
+{% endif %}
+
+### Exercise 3
+
+Fix the function `sum_fixme` in the below program.
+Only add code at the designated `TODO`-points, don't modify the existing code.
+Use the stack to make sure *caller-save* registers are saved by the *caller* and *callee-save* registers are saved by the *callee*.
+Note that `sum_fixme` acts both as a caller and a callee at different times. Your solution is correct if the execution terminates with
+
+- no errors;
+- the value 3 in `a0`;
+- the value `0xdeadbeef` in `s0`.
+
+```armasm
+{% include_relative functions-stack/ex3.asm %}
+```
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/sol3.asm %}
+```
+
+{% endif %}
+
+### Exercise 4
+
+Consider the following recursive function which calculates `n!`.
+
+```c
+{% include_relative functions-stack/ex4.c %}
+```
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/sol4.asm %}
+```
+
+{% endif %}
 
 # Bonus : Tail recursion
+
+A [*tail call*](https://en.wikipedia.org/wiki/Tail_call) occurs whenever the last instruction of a subroutine (before the return) calls a different subroutine.
+Compilers can take advantage of tail calls to reduce memory usage. This is because for tail calls, no additional stack frame needs to be entered. Instead, we can simply overwrite the function parameters, jump to the function and execute from there by reusing the original function stack frame.
+This is possible since we do not expect to be returned to and instead refer to our original caller that is on our stack frame. Thus, when the called function returns, it will not return to us but directly to the function that called the tail function.
+
+The benefit of tail calls is that they are very light on stack usage. where before, recursions add a stack frame for each recursion depth, tail recursion can do so with a single stack frame for any recursion depth.
+
+> :bulb: The call `fact(n-1)` in the previous exercise is **not** a tail call. Why not?
+
+<details closed markdown="block">
+  <summary>
+    Solution
+  </summary>
+  {: .text-gamma .text-blue-000 }
+
+The calculation of the factorial is done after the recursive function returned. Thus, the recursive function call is **not** the last instruction in the function.
+
+</details>
+
+### Bonus exercise
+
+We have converted the factorial program to use tail recursion.
+Translate this program to Risc-V.
+Try to avoid using the call stack during the `fact_tail` implementation. Why is this possible?
+
+```c
+{% include_relative functions-stack/ex5.c %}
+```
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/sol5.asm %}
+```
+
+{% endif %}
