@@ -323,7 +323,8 @@ which are located inside the CPU.
 All registers `x0-x31` are given a standard name that refers to their conventional usage
 (you can use these names when writing RISC-V assembly in RARS). These can be found
 [here](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md#general-registers)
-in full. For example, the first register, `x0`, is referred to as `zero` because reading from it
+in full. You can also find the short description and names of all registers on the [RISC-V card](/files/riscv-card.pdf).
+For example, the first register, `x0`, is referred to as `zero` because reading from it
 always returns `0` and writes to it are ignored.
 
 Number | Name | Role
@@ -398,16 +399,31 @@ int a = 5;    // a regular integer, stored somewhere in memory, `a` stores the v
 int *p = &a;  // a pointer to an integer value, `p` stores the memory location of `a`
 ```
 
+We can visualize the memory layout the following way (ignore `x` for now):
+
+<center>
+<img src="/exercises/img/pointers.png" alt="Pointer example" />
+</center>
+
+In the picture, each cell represents a location in memory, the addresses of these locations are
+displayed in gray in the top right corner. When we create a variable in C (identifier in blue, bottom left),
+it will get assigned to one of these locations. The contents of the memory location are displayed in the middle.
+
+Integer values are displayed in green, while pointers are in shades of red. Pointing to a memory location (visualized
+as an arrow) simply means storing the address of that cell.
+
 We can print out the value of a pointer using the `%p` format specifier:
 
 ```c
 printf("The address of `a`: %p, its value: %d\n", p, *p);
-// The address of `a`: 0x7ffdb1dfa11c, its value: 5
+// The address of `a`: 0x0101, its value: 5
 ```
 
 Notice how we got the value of the pointed memory location by using `*p`.
 So while writing `p` gives us the address of `a`, writing `*p` gives us the
-value *at the pointed address*. We can also use this to change the value at that address:
+value *at the pointed address*. Writing the asterisk is the equivalent of following
+an arrow in the picture above to arrive at the pointed value.
+We can also use this to change the value at that address:
 
 ```c
 int a = 5;
@@ -420,14 +436,20 @@ printf("a = %d\n", a);
 Pointers will allow us to change the values of variables that we do not have direct access to.
 We will see examples of this later.
 
-You might be wondering: `p` is also a variable, right? So does it also have an address?
-The answer is yes! `p` is a variable, it needs to store its value (the address of `a`) somewhere
+As you can see, `p` is also a variable, it also has an address:
+`p` needs to store its value (the address of `a`) somewhere
 in memory, so it necessarily has its own address, which you can get with `&p`.
 
-So what type of variable do you need to use if you want to store *the address* of `p`?
+So what type of variable do you need to use if you want to store *the address* of `p` (in variable `x` in the example above)?
 <details>
   <summary>Solution</summary>
 <code class="language-plaintext highlighter-rouge">int **x = &p;</code>
+<p>If you see a variable with a pointer type, and you want to find out what type of value it points to,
+a handy trick is to cover the asterisk closest to the name. This will give you the type of the variable the pointer
+points to. For example, with <code class="language-plaintext highlighter-rouge">int *p = &a;</code>, by covering the asterisk,
+we see that it points to an integer variable (<code class="language-plaintext highlighter-rouge">a</code>). With <code class="language-plaintext highlighter-rouge">int **x = &p;</code>,
+when we cover the last asterisk, we still have <code class="language-plaintext highlighter-rouge">int *</code>
+remaining, so we know x points to an integer pointer (<code class="language-plaintext highlighter-rouge">p</code>)!</p>
 </details>
 
 
@@ -541,6 +563,9 @@ In your C programs, you can find the precise size of a data type or a variable (
 Write a C program that asks the user for an integer. Print the address, the value
 and the size in bytes of this integer. Now store the address of this integer in a pointer.
 Then print the address, the value and the size in bytes of this pointer.
+
+> In the [picture](#pointers-in-c) demonstrating pointers, we have made some simplifications
+> regarding the sizes of variables. Can you see what wasn't realistic in that example?
 
 {% if site.solutions.show_session_1 %}
 #### Solution
