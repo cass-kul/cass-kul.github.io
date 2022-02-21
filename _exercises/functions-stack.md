@@ -2,7 +2,7 @@
 layout: default
 title: "Session 3: Functions and the Stack"
 nav_order: 3
-nav_exclude: false
+nav_exclude: true
 search_exclude: true
 has_children: false
 has_toc: false
