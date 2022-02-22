@@ -15,8 +15,8 @@ and execute and step through the programs that you have written in assembly.
 
 ## Install instructions
 Make sure you have at least Java 8 installed. Most Linux distributions have
-something like `openjdk-8-jdk` in Ubuntu. If you are running Windows it is again
-a bit more complicated:
+something like `openjdk-8-jdk` in Ubuntu. If you are running Windows it is a bit
+more complicated:
 
     Download Java: https://java.com/en/download/
     Run the installer
@@ -43,21 +43,37 @@ your system.
 
 2. Assemble your program:
    - Once your program is ready, you can assemble it using the wrench icon (or `run > Assemble`).
+   - Before you can assemble your program, you have to save it!
 
 3. Execute your program from the `Execute` window,
    - Execute the whole program using the first green arrow,
-   - Other arrows can be used for single stepping instructions;
+   - Other arrows can be used for single stepping instructions,
    - Memory and registers contents are displayed during/after execution.
 
-Here is an illustration of the program above, ready to execute. Notice that the
-`Data Segment` window holds the values `2` (`a`) and `3` (`b`) at addresses
-`0x10010000` and `0x10010000+4`:
+The pictures below illustrate the execution of the program defined above. You
+may notice that some instruction of your program (in the `Source` column) are
+translated to multiple RISC-V instructions (in the `Basic` column). This is
+because these source instructions are **pseudo instruction** (basically
+syntactic sugar) that are converted to a sequence of RISC-V instruction by the
+assembler.
+
+The `Data Segment` window holds the values `2` (corresponding to variable `a`)
+at address `0x10010000`, and `3` (corresponding to variable `b`) at addresses
+`0x10010000+4`. The prefix `0x` indicates that the following number is given in
+hexadecimal. Note that you can change the display of the data segment to decimal
+numbers by unchecking the `Hexadecimal Values` box at the bottom of the window.
 
    ![Example of program ready to execute](/tutorials/img/rars_execute1.png "Example of program ready to execute in RARS")
 
-Here is the result of the execution: the `Data Segment` window now holds the
-value `9` (`a * b + b`) at address `0x10010000+8`:
+At the end of the execution, the `Data Segment` window holds the value `9`
+(corresponding to `a * b + b`) at address `0x10010000+8`:
 
    ![Result of the execution of the previous
    program](/tutorials/img/rars_execute_final.png "Result of the execution of
    the previous program")
+
+
+## FAQ
+
+- **Why can't I click on the wrench icon / why can't I assemble my program?**  
+  Make sure that you have saved your program before you try to assemble it.
