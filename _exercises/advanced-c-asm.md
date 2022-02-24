@@ -8,58 +8,318 @@ has_children: false
 has_toc: false
 ---
 
-# Functions
+# Introduction
 
-The whole stack also here?
+After the more theory-oriented session 1, this time we will dive into more
+complicated exercises (after covering a few more concepts). Of course, if anything
+is unclear, you can check back with the [previous exercise](/exercises/c-asm-basics),
+ask your teaching assistant, or post in the Toledo forums!
 
-start from main
+Let's start off by practicing everything you've learned about RISC-V in the previous
+session.
 
-recursive functions
+### Exercise 1
 
-# Static arrays
+Take the following C code:
 
-First example in C, with loop
+```c
+switch (operation) {
+    case 0: result = a + b; break;
+    case 1: result = a - b; break;
+    case 2: result = a + 5; break;
+    case 3: result = b + 5; break;
+}
+```
 
-Contiguous memory region of those values. Variable stores the first element's adres.
+Convert this code into RISC-V assembly!
+Assume that the variables `operation`, `a`, and `b` are integers stored in memory (the data segment).
+You can store the result in the `a0` register.
 
-Amount of elements with sizeof
+> :bulb: Tip: If at first you're scared of the `switch` statement, don't be!
+> Think about how you would convert it into consecutive `if` statements in C.
 
-Index notation
+# Functions in C
 
-Also strings: array of characters, terminating null byte: inconvenient to keep track of sizes
-Example with puts?
+We will briefly introduce functions in C, but the detailed description of how to
+translate them into assembly will be the topic of the [third session](/exercises/functions-stack).
 
-use pointer to first character for string
+You probably remember that every C program must contain the `int main(void)` function,
+this is where the execution will start. Remember that the starting `int` means that
+the function will return an integer value, while `(void)` shows that the function
+does not take any arguments.
 
-string literals
+You can use the same syntax to define your own functions in your file:
 
-# Arrays in assembly
+```c
+int difference(int, int);
 
-### Exercise 5 from session 1 (although this is pretty boring)
+int main(void) {
+    int x = 5;
+    int y = 13;
+    int d = difference(x, y);
+    // ...
+}
 
-### Exercise 6 from session 1
+int difference(int a, int b) {
+    if (a >= b) {
+        return a - b;
+    } else {
+        return b - a;
+    }
+}
+```
 
-## Branches in assembly
+## Function declarations
 
-### Exercise 2 from session 2 (also not fun)
+What is the role of the first line in the example above?
 
-### Exercise 5 from session 2
+```c
+int difference(int, int);
+```
 
-### Exercise 6 from session 2
+The compiler moves linearly in the file, it needs to already know the functions
+when using them (in `main` or in other functions).
+For this reason, it's sometimes necessary to include the function declaration on
+top of the file.
 
-### Exercise 7 from session 2
+In the example above, it would have also been fine to just move the function definition
+above `main`, in which case you don't need the declaration on the first line anymore.
+(But think of an example where two functions call each other, in that case one of them
+has to go above the other!)
 
-Before next: explain sizeof array
+> :pencil: When you include a header file, such as `#include <stdio.h>`, that file
+> also [contains](https://www.tutorialspoint.com/c_standard_library/stdio_h.htm) a list of function declarations, just like this one! This is how your
+> compiler knows the list of functions implemented by the standard library.
 
-### Exercise 2 from session 1
+### Exercise 2
+
+Write a C program that computes the factorial of every number between 1 and 10.
+Avoid duplicating code (use loops and functions where applicable).
 
 # Structs
 
-collection of different data types, with identifiers
+We often want to group different variables into one object. For example if our
+program handles user data, and we want to store the name and age of each user,
+it's a lot more convenient to group these two variables into one object.
 
-padding
+This is possible in C using structs.
 
-point operator
-arrow ooperator
+```c
+struct person {
+    int age;
+    char *name;
+};
+
+int main(void) {
+    struct person John;
+    John.age = 42;
+    John.name = "John";
+}
+```
+
+You can refer to the variables inside the struct using the `.` operator. These values
+are going to be placed in consecutive memory by the compiler, but sometimes the compiler
+leaves some empty space between the different fields (e.g., for optimization reasons). This is called
+**padding**.
+
+If you have a pointer to a struct, you can still refer to the fields of the pointed object:
+
+```c
+void birthday(struct person *sp) {
+    (*sp).age += 1;
+}
+```
+
+This notation is a bit cumbersome, so you can replace it with the `->` operator:
+
+```c
+void birthday(struct person *sp) {
+    sp->age += 1;
+}
+```
 
 ### Exercise 4 from session 1
+
+Define a struct containing a float, double, long, string and a
+single char. Print the size of the struct. Create a new instance of this struct
+and print the addresses of each field. Draw the memory lay-out chosen by
+the compiler. Did the compiler introduce padding1? If so, where and how
+much?
+
+# Static arrays
+
+We have already seen integer variables in both C and assembly. How can we create
+an array of many integers? Let's say for example, that we want to store how many
+classes we have on each day. We could of course just declare a variable for each
+day (`int monday, tuesday, ...;`), but this would get out of hand quickly if we
+want to perform an operation on all variables.
+
+We can instead create an array with a fixed number of elements:
+
+```c
+int classes[7] = {4, 3, 1, 4, 2, 0, 0};
+```
+
+> :pencil: You might be wondering: isn't it redundant to first declare that the array
+> will contain 7 elements, then list 7 elements? You're right, you can omit the number
+> from between the square brackets: `int pair[] = {32, 64};`.
+>
+> You can also
+> omit elements from the list on the right side (if you first specify the length of the array): `int classes_two[7] = {4, 3, 1, 4, 2};`.
+> This array will be the same as the `classes` array declared above. If you specify fewer elements
+> in the list than the number on the left, the remaining elements will be initialized to
+> zero.
+
+## Representation in memory
+
+Arrays are a collection of homogeneous elements, and they are stored contiguously in memory.
+The array from above would have the following representation in memory:
+
+image
+
+When we create an array, the variable itself will point to the first element of the array.
+It has some special properties, but for the purposes of this course we can think of it as
+a regular pointer. This means for example that we can copy it to another pointer:
+
+```c
+int classes[7] = {4, 3, 1, 4, 2, 0, 0};
+int *copy = classes;
+```
+
+## Elements of the array
+
+So now we know that the `classes` variable points to the first element of the array. That means that if
+we want to read or write that value, we can just write `*classes`, as we've done with other pointers.
+
+But how can we access the other elements of the array? Since we know that they are placed next to each
+other in memory, we can simply add an offset to the pointer to access further elements! If we want to get the
+third element of the array, we can write `*(classes + 2)`, because we know that we have to move 2 places to the right in
+memory compared to the first element.
+
+So for example, if we want to change the value stored for Thursday, we can just write:
+
+```c
+*(classes + 3) = 5;
+```
+
+This notation is a bit verbose, so C allows us to shorten it using the index notation:
+```c
+classes[3] = 5;
+```
+
+Of course, you can also use a variable to index into an array. If you want to iterate over all
+the elements of the array, this is a very handy way of doing it:
+
+```c
+for (int i = 0; i < 7; ++i) {
+    printf("%d ", classes[i]);
+}
+```
+
+With regular arrays, it's problematic to detect how long an array is. If all the information we have available
+is the starting address, how can we tell where the last value of the array is?
+
+In the example above, we explicitly iterated over 7 values, because we know that the week has 7 days.
+But what happens if we want to write a function that operates on arrays of varying sizes?
+
+A possible option is to designate a special value as a termination indicator: if our arrays can only contain
+positive numbers, we can use a special 0 or negative number as the last value of the array. This way, we can just
+iterate over the values of the array until we encounter that special value. This, however, only works if
+the possible values are limited. If our array can contain any integers, what can we do?
+
+### Exercise 2 from session 1
+
+Write a C program that prints the array `1, 2, 3, 4, 5` on a single
+line separated by spaces. Ask the user for an integer, multiply all elements
+of the original array with this integer and print the array again. Now define
+a function to print the array to avoid duplicating your code. Don’t hard-
+code the size of the array in the code.
+
+Hint: Don't be discouraged if your solution is ugly, you can ask the teaching assistant whether it's correct! :)
+
+## Strings
+
+How can strings be represented in C? If you think about it, strings are just arrays of characters,
+that's also how C handles them. One advantage of characters in the ASCII encoding is that they have a
+limited set of valid values, so we will be able to use the approach outlined above for indicating the end
+of strings.
+
+In C, we always use a null byte `\0` to indicate the end of strings. All the functions in the standard library
+that operate on strings will expect to see a null byte at the end of the strings they receive as parameters.
+
+That means that if we want to create a string containing the word "hello", we need to write the following:
+
+```c
+char hello[] = {'h', 'e', 'l', 'l', 'o', '\0'};
+```
+
+Notice that this means that we use one extra byte to store the string, compared to the number of characters!
+
+C also has special syntax for strings (that we have seen before) to make it easier to work with them.
+
+```c
+char hello[] = "hello";
+```
+
+This will allocate the same array as the example before, complete with the terminating null byte.
+
+### Exercise 6 from session 1
+
+Write a C program that asks the user for a string and outputs
+the length of the string.
+You can use
+the function `fgets` to read a whole string from the console.
+
+First write a version using the function strlen
+declared in the header string.h. Then create a second version where strlen
+is not used. Note that the last character of the string will be the line feed
+(hex 0x0a).
+
+### Exercise 5 from session 1 (although this is pretty boring)
+
+Write a C program that asks the user for a string.  Print the hex-
+adecimal representation of each character in the string in order. Verify the
+output using an ASCII table (https://ascii.cl/). Hint: use the format
+string “%02x”. The last printed character will be the line feed (hex 0x0a).
+
+# Arrays in assembly
+
+In RISC-V assembly, there is no strong notion of arrays in memory. But since we
+know that arrays are just consecutive values in memory, we can implement them the
+same way in assembly:
+
+```armasm
+.data
+    array: .word 1, 2, 3, 4
+```
+
+### Exercise 5 from session 2
+
+Write a RISC-V program that multiplies all numbers in an
+array with a constant number without using the mul instruction.
+
+For strings, we again have special syntax:
+
+```armasm
+.data
+    str: .string "hello"
+```
+
+This string notation behaves the same way as in C, complete with the terminating
+zero byte.
+
+### Exercise 6 from session 2
+
+In exercise 6 of the first exercise session we wrote a C program
+to find the length of a string without using strlen. Translate this C program
+to RISC-V. The string can be provided in the data section. The resulting
+length can be stored in register a0.
+
+### Exercise 7 from session 2
+
+Write a program in RISC-V that searches for a given zero-terminated
+substring in a string and returns 1 if it is present, 0 if it isn’t. Define the
+strings in the data section and place the result in register a0. First write
+a solution assuming that the characters of the string are 32-bit words (use
+.word instead of .string). What changes if the characters are bytes (using
+.string)? In what way does this affect performance?
