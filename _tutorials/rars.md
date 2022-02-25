@@ -32,6 +32,7 @@ numbers of your specific file) when your terminal is in the same folder as the
 JAR file. Double clicking the jar may equally work depending on how you set up
 your system.
 
+> :warning: Do *not* run RARS from inside the wsl Linux windows. Instead, open it by double clicking or run the `java` command in windows `cmd` shell.
 
 ## How to use
 1. Write your RISC-V assembly program in the `Edit` window:
