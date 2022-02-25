@@ -22,6 +22,7 @@ more complicated:
     Run the installer
     Add Java to your PATH environment variables
         (My Computer > Properties > Advanced > Environment Variables > Path)
+        (In a Dutch System, Environment Variables is called Omgevingsvariabelen)
         Lots of documentation is online how to do this. One example is https://explainjava.com/java-path/
 
 Once you have Java installed, download the JAR file of the [last RARS
