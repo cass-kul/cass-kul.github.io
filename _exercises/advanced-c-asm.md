@@ -160,7 +160,7 @@ the function to update it.
 
 ### Exercise 3
 
-Define a struct containing a float, double, long, string, and a
+Define a struct containing a float, double, long, string (i.e. `char *`), and a
 single char. Print the size of the struct. Create a new instance of this struct
 and print the addresses of each field. Draw the memory lay-out chosen by
 the compiler. Did the compiler introduce padding? If so, where and how
