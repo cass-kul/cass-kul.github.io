@@ -31,11 +31,11 @@ The 9 sessions will have the following contents:
 | Week   | Session name |
 | :----- | :----------- |
 | Feb 21 | C & assembly basics |
-| Feb 28 | RISC-V |
-| Mar 7  | Functions and the Stack |
-| Mar 14 | Dynamic Memory |
-| Mar 28 | Operating Systems |
-| Apr 25 | Large exercise: Linked Lists |
+| Feb 28 | Advanced C & assembly |
+| Mar 7  | Functions and the stack |
+| Mar 14 | Dynamic memory |
+| Mar 28 | Operating systems |
+| Apr 25 | Large exercise: linked lists |
 | May 2  | Caches |
 | May 9  | Microarchitecture |
 | May 16 | Recap and Q&A |

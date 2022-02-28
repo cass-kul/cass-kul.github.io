@@ -2,8 +2,8 @@
 layout: default
 title: "Session 2: Advanced C & assembly"
 nav_order: 2
-nav_exclude: true
-search_exclude: true
+nav_exclude: false
+search_exclude: false
 has_children: false
 has_toc: false
 ---
@@ -21,7 +21,7 @@ complicated exercises (after covering a few more concepts). Of course, if anythi
 is unclear, you can check back with the [previous exercise](/exercises/c-asm-basics),
 ask your teaching assistant, or post in the Toledo forums!
 
-Let's start off by practicing everything you've learned about RISC-V in the previous
+Let's start off by practicing everything you've learned about RISC-V assembly in the previous
 session.
 
 ### Exercise 1
@@ -83,9 +83,9 @@ What is the role of the first line in the example above?
 int difference(int, int);
 ```
 
-The compiler moves linearly in the file, it needs to already know the functions
+The compiler moves linearly in the file, it needs to already know the *signature* (return type, parameters) of functions
 when using them (in `main` or in other functions).
-For this reason, it's sometimes necessary to include the function declaration on
+For this reason, it's sometimes necessary to include the function declaration at the
 top of the file.
 
 In the example above, it would have also been fine to just move the function definition
@@ -120,10 +120,11 @@ int main(void) {
     struct person John;
     John.age = 42;
     John.name = "John";
+    // ...
 }
 ```
 
-You can refer to the variables inside the struct using the `.` operator. These values
+You can refer to the variables inside the struct with the `.` operator. These values
 are going to be placed in consecutive memory by the compiler, but sometimes the compiler
 leaves some empty space between the different fields (e.g., for optimization reasons). This is called
 **padding**.
@@ -154,22 +155,22 @@ Whenever we call a function, the parameters passed to that function are copied.
 If we pass the struct itself, the function will operate on a copy of it. We can
 update the fields of this copy, but those changes will not be reflected in the
 original struct. This is why we need to pass a pointer (= create a copy of the pointer),
-because that will point to the location of the original struct, which will allow
+because by pointing to the location of the original struct, we allow
 the function to update it.
 </details>
 
 ### Exercise 3
 
-Define a struct containing a float, double, long, string (i.e. `char *`), and a
+Define a struct containing a float, double, long, integer *pointer*, and a
 single char. Print the size of the struct. Create a new instance of this struct
-and print the addresses of each field. Draw the memory lay-out chosen by
+and print the addresses of each field. Draw the memory layout chosen by
 the compiler. Did the compiler introduce padding? If so, where and how
 much?
 
 # Fixed-length arrays
 
 We have already seen integer variables in both C and assembly. How can we create
-an array of many integers? Let's say for example, that we want to store how many
+an array of many integers? Let's say, for example, that we want to store how many
 classes we have on each day. We could of course just declare a variable for each
 day (`int monday, tuesday, ...;`), but this would get out of hand quickly if we
 want to perform an operation on all variables.
@@ -202,7 +203,7 @@ The array from above would have the following (partial) representation in memory
 Notice two things: first, in this example, `int` values take up 4 bytes in memory: the
 first integer is stored in bytes `0x100-0x103`, the second in `0x104-0x107`, and
 so on. Second, this example uses [big-endian](https://nl.wikipedia.org/wiki/Endianness) notation for demonstration purposes, while the x86 and RISC-V
-architectures uses little-endian representation.
+architectures use little-endian representation.
 
 When we create an array, the variable (`classes`) itself will point to the first element of the array.
 It has some special properties, but for the purposes of this course we can think of it as
@@ -220,7 +221,7 @@ So now we know that the `classes` variable points to the first element of the ar
 we want to read or write that value, we can just write `*classes`, as we've done with other pointers.
 
 But how can we access the other elements of the array? Since we know that they are placed next to each
-other in memory, we can simply add an offset to the pointer to access further elements! If we want to get the
+other in memory, we can simply add an offset to the starting pointer to access further elements! If we want to get the
 third element of the array, we can write `*(classes + 2)`, because we know that we have to move 2 places to the right in
 memory compared to the first element.
 
@@ -254,6 +255,8 @@ for (int i = 0; i < 7; ++i) {
 }
 ```
 
+## Where do arrays end?
+
 With regular arrays, it's problematic to detect how long an array is. If all the information we have available
 is the starting address, how can we tell where the last value of the array is?
 
@@ -278,14 +281,15 @@ Hint: Don't be discouraged if your solution looks ugly, you can ask the teaching
 ## Strings
 
 How can strings be represented in C? If you think about it, strings are just arrays of characters,
-that's also how C handles them. One advantage of characters in the [ASCII encoding](https://www.asciitable.com/) (that C uses) is that they have a
+that's also how C handles them. One advantage of characters in the [ASCII encoding](https://www.asciitable.com/)
+(used by C) is that they have a
 limited set of valid values, so we will be able to use the approach outlined above for indicating the end
 of strings.
 
 In C, we always use a null byte `\0` to indicate the end of strings. All the functions in the standard library
 that operate on strings will expect to see a null byte at the end of the strings they receive as parameters.
 
-That means that if we want to create a string containing the word "hello", we need to write the following:
+That means that if we want to create a string containing the word `hello`, we need to write the following:
 
 ```c
 char hello[] = {'h', 'e', 'l', 'l', 'o', '\0'};
@@ -306,9 +310,9 @@ This will allocate the same array as the example before, complete with the termi
 Write a C program that asks the user for a string and outputs
 the length of the string.
 You can use
-the function `fgets` to read a whole string from the console.
+the function `fgets` [with the parameter `stdin`](http://www.cplusplus.com/reference/cstdio/fgets/) to read a whole string from the console.
 
-First write a version using the function `strlen`
+First, write a version using the function `int strlen(char *)`
 declared in the header `string.h`. Then create a second version where `strlen`
 is not used. Note that the last character of the string will be the line feed
 (hex `0x0a`).
@@ -322,9 +326,9 @@ string `%02x`.
 
 # Arrays in assembly
 
-In RISC-V assembly, there is no strong notion of arrays in memory. But since we
+In RISC-V assembly, there is no strong notion of arrays. But since we
 know that arrays are just consecutive values in memory, we can implement them the
-same way in assembly. You can use comma-separated values to reserve consecutive
+same way in assembly as they work in C. You can use comma-separated values to reserve consecutive
 words in memory:
 
 ```armasm
@@ -353,12 +357,12 @@ zero byte.
 
 Translate the C program calculating the length of a string without `strlen` from exercise 5
 to RISC-V. The string can be provided in the data section. The resulting
-length can be stored in register a0.
+length can be stored in register `a0`.
 
 ### Exercise 9
 
 Write a RISC-V program that searches for a given zero-terminated
-substring in a string (e.g., `loss` in `blossom`) and returns 1 if it is present, 0 if it isn’t. Define the
+substring in a string (e.g., `"loss"` in `"blossom"`) and returns 1 if it is present, 0 if it isn’t. Define the
 strings in the data section and place the result in register `a0`. First, write
 a solution assuming that the characters of the string are 32-bit words (use
 `.word` instead of `.string`). What changes if the characters are bytes (using
