@@ -569,6 +569,12 @@ Then print the address, the value and the size in bytes of this pointer.
 
 {% if site.solutions.show_session_1 %}
 #### Solution
+
+In the picture, integers and pointers are stored as a single byte (the memory cells
+have addresses that increase by 1), whereas according to the [standard](#other-data-types)
+they should be at least 2 bytes long. This program will tell you exactly how many
+bytes these types use on your computer.
+
 ```c
 {% include_relative c-asm-basics/sol3.c %}
 ```
