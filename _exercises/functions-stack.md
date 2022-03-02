@@ -2,7 +2,7 @@
 layout: default
 title: "Session 3: Functions and the Stack"
 nav_order: 3
-nav_exclude: true
+nav_exclude: false
 search_exclude: true
 has_children: false
 has_toc: false
@@ -45,16 +45,17 @@ Let's first take a look at functions in C. Below you see an example program with
 <tr>
 <td>
 {% highlight c %}
-// Include convenient library functions
+// Include I/O library functions (printf)
 # include <stdio.h>
-// Module function for easy reuse
-int sum(int a, int b)
-{
+// Modular function for easy reuse
+// This allows us to calculate the sum of two numbers.
+// We thus encapsulate the sum calculation and can reuse it
+// at different locations in our code.
+int sum(int a, int b){
     return a + b;
 }
 // Main function where the program starts
-int main()
-{
+int main(void){
     int n;
     printf("Enter a number:\n");
     scanf("%d", &n);
@@ -65,12 +66,11 @@ int main()
 </td>
 <td>
 {% highlight bash %}
-$ - gcc sum.c -o sum
-$ - ./sum
+$ gcc sum.c -o sum
+$ ./sum
 Enter a number:
 5
 Result: n+2=7
-$ -
 {% endhighlight %}
 </td>
 </tr>
@@ -78,11 +78,11 @@ $ -
 
 You already know functions from other languages than C, they are very useful to bundle common tasks or make the program simpler to think about. In essence, functions allow for **abstraction** and **modularization** (via *parameters* and *return* values).
 
-But how can we do this in assembly? There is almost no concept of a `function` or `procedure` in assembly. If languages like C are compiled to assembly code, how do they transform their functions to assembly code then?
+But how can we do this in assembly? There is almost no concept of a `function` in assembly. If languages like C are compiled to assembly code, how do they transform their functions to assembly code then?
 The answer is simple and slightly difficult at the same time:
 
 1. Functions can be implemented using **common low-level primitives** such as **labels**, **jumps**, and **registers**. Doing this is simple and you may already have done so intuitively during the last sessions.
-1. *However*, making sure that you can **always** and **deterministically** reuse or call a function requires some effort. You may already have experienced that different developers use different registers to do the same thing. What if you use register `x5` to pass a parameter to a function but the other developer expects the parameter in `x6`? What happens if we run out of registers? These and other situations require for a clear set of **conventions** that we expect everyone to adhere to - even (or especially) compilers! This is the slightly difficult part of functions in assembly.
+1. *However*, making sure that you can **always** and **deterministically** reuse or call a function requires some effort. You may already have experienced that different developers use different registers to do the same thing. What if you use register `t0` to pass a parameter to a function but the other developer expects the parameter in `t1`? What happens if we run out of registers? These and other situations require for a clear set of **conventions** that we expect everyone to adhere to - even (or especially) compilers! This is the slightly difficult part of functions in assembly.
 
 # First steps towards common calling conventions
 
@@ -106,7 +106,8 @@ sum:
     # Add the two numbers and put them in a register for main to find.
 
 resume:
-    sw a0, number
+    la t6, number
+    sw a0, 0(t0)
 
 ```
 
@@ -172,11 +173,11 @@ This simple stack that you have written can already help you to overcome all cha
 
 - If we run out of registers, we can temporarily push the variables onto the stack. As long as we as developers remember where we can find the data and how many variables we pushed after this variable, we can always find it again.
 - If we want to send complex data to a function or want to exceed the 8 registers that we can use to send function arguments, we can use such a stack and simply pass the pointer to the data on the stack.
-- One additional issue we did not discuss yet is the problem of **program control flow**. What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. Thus, it would be a good idea to also put the *return address* (`ra`, `x1`) on the stack.
+- One additional issue we did not discuss yet is the problem of **program control flow**. What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. Thus, it would be a good idea to also put the *return address* (`ra` / `x1`) on the stack.
 
 At this point, it may not surprise you anymore to hear that RISC-V actually has a built-in instructions to deal with the stack, has a dedicated register that is called the **stack pointer** and that the calling conventions heavily rely on these mechanisms:
 
-- The **stack pointer** (`sp` or `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
+- The **stack pointer** (`sp` / `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
 - In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excurse below for more details.
 - To push data to the stack, you use `addi sp,sp,−4` (by decrementing the stack pointer), to pop data you use `addi sp,sp,4`. Note, that this only changes the pointer, you still need to read or write the data to the stack pointer.
 
@@ -264,10 +265,10 @@ Below, you can find a series of images that walk you through an example program 
 
 ### Exercise 1
 
-Convert the following code to Risc-V assembly.
+Convert the following code to RISC-V assembly.
 Assume that `main()` does not return like common functions.
 Why is this assumption necessary right now?
-Use Risc-V calling conventions.
+Use RISC-V calling conventions.
 
 ```c
 {% include_relative functions-stack/ex1.c %}
@@ -287,9 +288,9 @@ Use Risc-V calling conventions.
 
 ### Exercise 2
 
-We have compiled the function `func` from the code example below to Risc-V 32-bit (RV32I) using gcc.
+We have compiled the function `func` from the code example below to RISC-V 32-bit (RV32I) using gcc.
 The compiled function can be found below.
-Translate the main function manually to Risc-V.
+Translate the main function manually to RISC-V.
 Follow the calling conventions to pass all arguments correctly.
 
 ```c
@@ -343,6 +344,10 @@ Consider the following recursive function which calculates `n!`.
 {% include_relative functions-stack/ex4.c %}
 ```
 
+1. Convert this function to RISC-V.
+1. Consider the call fact(3); . What is the state of stack when it reaches its maximum size (at the deepest level of recursion)?
+1. In [exercise 2 of the previous session](/exercises/advanced-c-asm/#exercise-2) you implemented an iterative factorial function. Compare both factorial implementations in terms of memory usage. Which implementation do you prefer?
+
 {% if site.solutions.show_session_3 %}
 
 #### Solution
@@ -353,7 +358,7 @@ Consider the following recursive function which calculates `n!`.
 
 {% endif %}
 
-# Bonus : Tail recursion
+# Excurse : Tail recursion
 
 A [*tail call*](https://en.wikipedia.org/wiki/Tail_call) occurs whenever the last instruction of a subroutine (before the return) calls a different subroutine.
 Compilers can take advantage of tail calls to reduce memory usage. This is because for tail calls, no additional stack frame needs to be entered. Instead, we can simply overwrite the function parameters, jump to the function and execute from there by reusing the original function stack frame.
@@ -373,10 +378,10 @@ The calculation of the factorial is done after the recursive function returned. 
 
 </details>
 
-### Bonus exercise
+### Excurse exercise
 
 We have converted the factorial program to use tail recursion.
-Translate this program to Risc-V.
+Translate this program to RISC-V.
 Try to avoid using the call stack during the `fact_tail` implementation. Why is this possible?
 
 ```c
