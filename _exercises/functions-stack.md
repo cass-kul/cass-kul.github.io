@@ -247,6 +247,9 @@ When jumping to the function, we then fill the `ra` register with the address of
 > 1. Restore callee-save registers and `ra`
 > 1. Return to parent function via `ret` (or simply jump to `ra`)
 
+With this complete calling conventions list, you should now understand the below image as you also find it on the RISC-V card:
+![Call stack diagram](call-stack-diagram.png "Call stack diagram")
+
 Below, you can find a series of images that walk you through an example program and the usage of the stack (click or slide through the images).
 
 {% include gallery.html images=page.gallery_images ratio_image="stack-album/convention-ratios.png" %}
