@@ -85,7 +85,7 @@ kramdown:
 
 solutions:
   show_session_1: true
-  show_session_2: false
+  show_session_2: true
   show_session_3: false
   show_session_4: false
   show_session_5: false
