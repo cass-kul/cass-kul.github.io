@@ -107,11 +107,21 @@ sum:
 
 resume:
     la t6, number
-    sw a0, 0(t0)
+    sw a0, 0(t6)
 
 ```
 
 > :fire:  Warm-up 1: Write a simple program in RARS that adds the two numbers `a` and `b` and stores it in `number`.
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/warmup1.asm %}
+```
+
+{% endif %}
 
 ![Problems that arise when using functions in assembly code](calling-conventions-problem.png "Problems that arise when using functions in assembly code")
 
@@ -130,7 +140,17 @@ If you take a look at the [RISC-V card linked at the top of the website](/files/
 
 ![Calling conventions solve interface issues](calling-conventions-solution.png "Calling conventions solve interface issues")
 
-> :fire:  Warm-up 2: Change your program to adhere to these register conventions as if the `sum` label was a function.
+> :fire:  Warm-up 2: Change your program to adhere to the register conventions above as if the `sum` label was a function.
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/warmup2.asm %}
+```
+
+{% endif %}
 
 > :fire:  Warm-up 3: Read the [official calling conventions of RISC-V](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf). Since we will not be making use of floating point registers (`ft0` to `ft11`), Section 18.3 applies to us and in this course we will just try to fit all parameters into the argument registers as it is explained there before utilizing the stack.
 
@@ -168,6 +188,16 @@ Now to use this stack, we would do the following actions:
 If you are now unsure about what the size of the data is that you want to put or retrieve from the stack, take a look again at the calling conventions or at the RISC-V sheet, both contain a list of common datatypes and their size in bytes in our RISC-V 32-bit configuration.
 
 > :fire: Warm-up 4: Expand the example above with simple code that loads the address of the stack into a register, pushes two integers (4 and 5 for example) and then pops these integers again.
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/warmup4.asm %}
+```
+
+{% endif %}
 
 This simple stack that you have written can already help you to overcome all challenges that we described above:
 
