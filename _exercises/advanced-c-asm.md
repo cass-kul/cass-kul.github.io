@@ -44,6 +44,13 @@ You can store the result in the `a0` register.
 > :bulb: Tip: If at first you're scared of the `switch` statement, don't be!
 > Think about how you would convert it into consecutive `if` statements in C.
 
+{% if site.solutions.show_session_1 %}
+#### Solution
+```armasm
+{% include_relative 2-advanced-c-asm/sol1.S %}
+```
+{% endif %}
+
 # Functions in C
 
 In this session, we will briefly introduce functions in C, but the detailed description of how to
@@ -101,6 +108,13 @@ has to go above the other!)
 
 Write a C program that computes the factorial of every number between 1 and 10.
 Avoid duplicating code (use loops and functions where applicable).
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+```c
+{% include_relative 2-advanced-c-asm/sol2.c %}
+```
+{% endif %}
 
 # Structs
 
@@ -166,6 +180,32 @@ single char. Print the size of the struct. Create a new instance of this struct
 and print the addresses of each field. Draw the memory layout chosen by
 the compiler. Did the compiler introduce padding? If so, where and how
 much?
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+```c
+{% include_relative 2-advanced-c-asm/sol3.c %}
+```
+
+The memory layout might be different on your computer, but here is an example execution:
+
+```
+The size of the struct is 40 bytes
+f: 0x7ffe33ed6b20
+d: 0x7ffe33ed6b28
+l: 0x7ffe33ed6b30
+p: 0x7ffe33ed6b38
+c: 0x7ffe33ed6b40
+```
+
+To know whether padding was introduced, we need to know the real sizes of the data
+types. There's one thing we can immediately notice: the size of a char is
+always 1 byte, and here it is the last element of the struct, placed at
+byte `0x..40`. But the struct has a size of 40 bytes, so the last byte that belongs to it
+in hexadecimal is `0x..20 + 0x27 (39 in decimal) = 0x..47`, meaning there are 7 unused bytes after the
+character.
+
+{% endif %}
 
 # Fixed-length arrays
 
@@ -278,6 +318,13 @@ a function to print the array to avoid duplicating your code. Don’t hardcode t
 
 Hint: Don't be discouraged if your solution looks ugly, you can ask the teaching assistant whether it's correct! :)
 
+{% if site.solutions.show_session_1 %}
+#### Solution
+```c
+{% include_relative 2-advanced-c-asm/sol4.c %}
+```
+{% endif %}
+
 ## Strings
 
 How can strings be represented in C? If you think about it, strings are just arrays of characters,
@@ -312,10 +359,17 @@ the length of the string.
 You can use
 the function `fgets` [with the parameter `stdin`](http://www.cplusplus.com/reference/cstdio/fgets/) to read a whole string from the console.
 
-First, write a version using the function `int strlen(char *)`
+First, write a version using the function `unsigned long strlen(char *)`
 declared in the header `string.h`. Then create a second version where `strlen`
 is not used. Note that the last character of the string will be the line feed
 (hex `0x0a`).
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+```c
+{% include_relative 2-advanced-c-asm/sol5.c %}
+```
+{% endif %}
 
 ### Exercise 6
 
@@ -323,6 +377,16 @@ Modify the program above so that it prints the hexadecimal
 representation of each character in the string in order. Verify the
 output using an ASCII table. Hint: use the format
 string `%02x`.
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+
+We add one extra line in our function:
+
+```c
+{% include_relative 2-advanced-c-asm/sol6.c %}
+```
+{% endif %}
 
 # Arrays in assembly
 
@@ -340,6 +404,17 @@ words in memory:
 
 Write a RISC-V program that multiplies all numbers in an
 array with a constant number without using the `mul` instruction.
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+
+In this program, we move in reverse order of the elements to avoid explicitly
+needing to take care of which element we're dealing with.
+
+```armasm
+{% include_relative 2-advanced-c-asm/sol7.S %}
+```
+{% endif %}
 
 ## Strings in assembly
 
@@ -359,6 +434,13 @@ Translate the C program calculating the length of a string without `strlen` from
 to RISC-V. The string can be provided in the data section. The resulting
 length can be stored in register `a0`.
 
+{% if site.solutions.show_session_1 %}
+#### Solution
+```armasm
+{% include_relative 2-advanced-c-asm/sol8.S %}
+```
+{% endif %}
+
 ### Exercise 9
 
 Write a RISC-V program that searches for a given zero-terminated
@@ -367,3 +449,20 @@ strings in the data section and place the result in register `a0`. First, write
 a solution assuming that the characters of the string are 32-bit words (use
 `.word` instead of `.string`). What changes if the characters are bytes (using
 `.string`)?
+
+{% if site.solutions.show_session_1 %}
+#### Solution
+
+A possible solution for comparing strings:
+
+```armasm
+{% include_relative 2-advanced-c-asm/sol9.S %}
+```
+
+If we compare words instead of characters in a string, we need to be careful with
+two things:
+
+1. Using `lw` instead of `lbu` to load individual words (instead of characters)
+2. Increasing the array pointers by 4 (one word is 4 bytes long)
+
+{% endif %}
