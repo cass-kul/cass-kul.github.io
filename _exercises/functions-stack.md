@@ -255,7 +255,7 @@ Before jumping to the function, we fill the `ra` register with the return addres
 
 > The complete list of things to do when calling a function is as follows:
 >
-> 1. Push caller-saved registers that you need to reuse to the stack (e.g. only save `t0` and `t1` if `t2-7` are unused)
+> 1. Push caller-saved registers that you need to reuse to the stack (e.g. if you only reuse `t0` and `t1` you need to save them but you don't need to save `t2-7`)
 > 1. Push function parameters that do not fit in registers onto the stack
 > 1. Place all function parameters that belong into registers in the registers `a0` to `a7`
 > 1. Call the function either via `jal` (or via another instruction as long as you make sure to store the return address to `ra`)
