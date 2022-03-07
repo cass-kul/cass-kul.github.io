@@ -228,9 +228,9 @@ At this point, it may not surprise you anymore to hear that RISC-V actually has 
 
 - The **stack pointer** (`sp` / `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
 - In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excursion below for more details.
-- To **push** data (e.g. `t0`) to the stack: first use `addi sp, sp, −4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, sp` to write `t0` to the stack.
+- To **push** data (e.g. `t0`) to the stack: first use `addi sp, sp, −4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, 0(sp)` to write `t0` to the stack.
 - To **pop** data from the stack (e.g. in `t0`): first load the data at the top
-  of the stack using `lw t0, sp`; then update the stack pointer using `addi sp, sp, 4`.
+  of the stack using `lw t0, 0(sp)`; then update the stack pointer using `addi sp, sp, 4`.
 
 > :fire: Warm-up 5: Change your code from the last warm-up to use the `sp` register and the provided stack.
 
