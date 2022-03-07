@@ -114,9 +114,9 @@ resume:
 > :fire: Warm-up 1: Extend the program above to sum the two numbers `a` and `b` and store it in `number`.
 
 ![Problems that arise when using functions in assembly code](calling-conventions-problem.png "Problems that arise when using functions in assembly code")
- What would have happened to your program if the code in `sum` would use different registers?  
-Which registers did you use in the main to load `a` and `b`? What would have
-happened to your program if the code in `sum` would use different registers? It
+
+Which registers did you use in the main to load `a` and `b`? What would
+happen to your program if the code in `sum` used different registers? It
 would no longer work. This is why [the calling conventions of
 RISC-V](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf) assign
 different roles for different registers:
@@ -153,18 +153,18 @@ The official calling conventions talk about passing some function parameters via
 
 # Memory: the stack
 
-It is easy to think of cases where the 32 registers we have are not enough. You may already have come to a situation where this is the case but for any larger program, we definitely need to store data in memory. Similarly, if the calling conventions only define 8 registers to pass function arguments, what happens if we want to pass more data to a function than fits into these 8 registers?
+It is easy to think of cases where the 32 registers we have are not enough. You may already have come to a situation where this is the case, but for any larger program, we definitely need to store data in memory. Similarly, if the calling conventions only define 8 registers to pass function arguments, what happens if we want to pass more data to a function than fits into these 8 registers?
 You already worked with variables stored in the `.data` section: in a similar way, we could declare a region in memory that we use to back up or restore data from. However, defining specific variables is still not enough for cases where we do not know how many variables we will need.
 In this case, what we need is a data structure where we *dynamically* add and remove data from, depending on what we need.
 
-## Understanding a stack
+## Understanding the stack
 
 A stack is a simple data structure that grows in one direction and that works according to the Last-in-First-Out (LIFO) principle. The idea is as simple as a tower of books where you are only ever able to pick up the top-most book. You can place more books on top of the tower, but have to pick them up again to reach the books at the bottom.
 To realize a simple stack in assembly, we can just define a large memory region in the data section like this:
 
 ```armasm
 .data
-    stack: .word 500
+    stack: .space 500
 .text
 main:
     # ...
@@ -174,8 +174,8 @@ Now to use this stack, we would do the following actions:
 
 1. Load the address of the stack into a register
 1. When we want to push data on the stack:
-    1. Put data at the address that the register points to
-    1. Increment the pointer by the size of the data you just added, so that the register points to free space again
+    1. Store data at the address that the register points to
+    1. Increment the pointer by the size of the data we just added, so that the register points to free space again
 1. When we want to pop data from the stack, we:
     1. Decrement the pointer by the size of the last data element
     1. Read the content of the data stored at the current stack pointer
@@ -188,16 +188,17 @@ This simple stack that you have written can already help you to overcome all cha
 
 - If we run out of registers, we can temporarily push the variables onto the stack. As long as we as developers remember where we can find the data and how many variables we pushed after this variable, we can always find it again.
 - If we want to send complex data to a function or want to exceed the 8 registers that we can use to send function arguments, we can use such a stack and simply pass the pointer to the data on the stack.
-- One additional issue we did not discuss yet is the problem of **program control flow**. Where should the function jump at the end? What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. Thus, it would be a good idea to also put the *return address* (`ra` / `x1`) on the stack.
+- One additional issue we did not discuss yet is the problem of **program control flow**. Where should the function jump at the end? What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. This is handled by the *return address* register (`ra` / `x1`), which also needs to backed up to the stack during nested function calls.
 
-## Manipulate the stack in RISC-V
-At this point, it may not surprise you anymore to hear that RISC-V actually has a dedicated register that is called the **stack pointer** and that the calling conventions heavily rely on these mechanisms:
+## Manipulating the stack in RISC-V
+
+At this point, it may not surprise you anymore to hear that RISC-V actually has a dedicated register called the **stack pointer**, and that the calling conventions heavily rely on these mechanisms:
 
 - The **stack pointer** (`sp` / `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
-- In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excurse below for more details.
-- To **push** data (e.g. `t0`) to the stack: first use `addi sp,sp,−4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, sp` to write `t0` to the stack.
+- In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excursion below for more details.
+- To **push** data (e.g. `t0`) to the stack: first use `addi sp, sp, −4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, sp` to write `t0` to the stack.
 - To **pop** data from the stack (e.g. in `t0`): first load the data at the top
-  of the stack using `lw t0, sp`; then update the stack pointer using `addi sp,sp,4`.
+  of the stack using `lw t0, sp`; then update the stack pointer using `addi sp, sp, 4`.
 
 > :fire: Warm-up 5: Change your code from the last warm-up to use the `sp` register and the provided stack.
 
@@ -242,13 +243,12 @@ Calling a function means multiple things at once:
 1. Any registers that are marked as caller-save must be saved before the function call and restored afterwards (if we want to preserve their value)
 1. Any registers that are marked as callee-save must remain untouched by the called function
 
-We have already discussed which registers are callee- and caller-saved. However we did not discuss how these registers should be saved on the stack or in what order we should save them.
-The first thing to do when calling a function is to save the caller-saved registers on the stack. 
+We have already discussed which registers are callee- and caller-saved. However, we did not discuss how these registers should be saved on the stack or in what order we should save them.
+The first thing to do when calling a function is to save the caller-saved registers on the stack.
 Since this procedure logically belongs to the caller function, it does not matter in which order you save the registers as long as you make sure that you restore them in the same order after returning from the function.
-=======
 
 The next step to take when calling a function is to push on the stack the arguments that do not fit into registers.
-Before jumping to the function, we fill the `ra` register with the return address: the address of the instruction that we want to execute when returning from the function. Most often, this will be the instruction after the jump to the function. This is why there is a special instruction in RISC-V, called the `jal` instruction that first places the address of the next instruction into the `ra` register and then jumps to the given address.
+Before jumping to the function, we fill the `ra` register with the return address: the address of the instruction that we want to execute when returning from the function. Most often, this will be the instruction after the jump to the function. This is why there is a special instruction in RISC-V, called the `jal` (jump and link) instruction, that first places the address of the next instruction into the `ra` register and then jumps to the given address.
 
 
 # Summary: Complete calling conventions
@@ -318,7 +318,7 @@ The compiled function can be found below.
 Translate the main function manually to RISC-V.
 Follow the calling conventions to pass all arguments correctly.
 
-> :bulb: The nice thing about calling convention is that you don't have to
+> :bulb: The nice thing about calling conventions is that you don't have to
 > understand the assembly code of `func` to be able to write the assembly code
 > of `main`!
 
