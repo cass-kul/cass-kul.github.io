@@ -184,6 +184,7 @@ A stack is a simple data structure that grows in one direction and that works ac
 To realize a simple stack in assembly, we can just define a large memory region in the data section like this:
 
 ```armasm
+.globl main
 .data
     stack: .space 500
 .text
@@ -232,6 +233,16 @@ At this point, it may not surprise you anymore to hear that RISC-V actually has 
   of the stack using `lw t0, sp`; then update the stack pointer using `addi sp, sp, 4`.
 
 > :fire: Warm-up 5: Change your code from the last warm-up to use the `sp` register and the provided stack.
+
+{% if site.solutions.show_session_3 %}
+
+#### Solution
+
+```armasm
+{% include_relative functions-stack/warmup5.asm %}
+```
+
+{% endif %}
 
 ## Excursion: The stack grows downwards!?
 
