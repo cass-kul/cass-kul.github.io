@@ -3,11 +3,11 @@ unsigned int fact_tail(unsigned int n, unsigned int result) {
     return fact_tail(n - 1, n * result);
 }
 
-unsigned int fact(unsigned int n){
+unsigned int fact(unsigned int n) {
     return fact_tail(n, 1);
 }
 
-int main(){
+int main(void) {
     int n = 5;
     int r;
     r = fact(n);
