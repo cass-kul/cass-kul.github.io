@@ -112,6 +112,23 @@ resume:
 
 ```
 
+> :pencil: The instruction `sw a0, 0(t6)` means the following: take the memory address
+> contained in the register `t6`, add `0` to it, and store the value from `a0` at that memory location. You can of course
+> substitute `0` for other integer values, adding zero is equivalent to writing `sw a0, (t6)`.
+>
+> This is useful if you want to access variables that are located next to each other in memory, and especially
+> for iterating over arrays. Using this technique, you can iterate over a fixed-length array without
+> having to change any registers. If the address of the start of the (integer) array is stored in `t0`, you can
+> overwrite different elements of the array by changing this offset:
+> ```armasm
+li t3, 5  # we want to overwrite the first 3 elements of the array with 5
+sw t3, 0(t0)  # array[0] = 5
+sw t3, 4(t0)  # array[1] = 5
+sw t3, 8(t0)  # array[2] = 5
+```
+>
+> Here we change the offset by 4 bytes each time because integers take up 4 bytes in memory.
+
 > :fire: Warm-up 1: Extend the program above to sum the two numbers `a` and `b` and store it in `number`.
 
 {% if site.solutions.show_session_3 %}
