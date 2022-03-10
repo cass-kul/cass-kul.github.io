@@ -377,8 +377,7 @@ The compiled function can be found below.
 Translate the main function manually to RISC-V.
 Follow the calling conventions to pass all arguments correctly.
 
-> For this exercise, you will have to rely on the [official RISC-V calling
-> conventions]((https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf)).
+> For this exercise, you will have to rely on the [official RISC-V calling conventions](https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf).
 > They define the size of the C types and how to pass values that do not fit in
 > a single register!
 
