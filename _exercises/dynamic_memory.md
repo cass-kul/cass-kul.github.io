@@ -442,12 +442,12 @@ RISC-V:
   top pointer in `a0`. This can be considered the address of the stack.
 - `stack_push`: Adds a new element to the top of the stack. Provide the address
   of a stack in `a0`. Provide the value to be pushed on the stack in `a1`.
-  Allocate enough heap memory to store the new value. You will also need to
-  allocate heap memory to store a reference to the previous top (why?). Make
-  sure to modify the top pointer to point to your newly pushed element.
+  Allocate enough heap memory to store the new value and to store a reference to
+  the previous top. Make sure to modify the top pointer to point to your newly
+  pushed element.
 - `stack_pop`: Removes and returns the top element from a stack. Provide a stack
-  address in `a0`. Return the popped element in `a0`. Make sure to correctly
-  update the top pointer of the stack.
+  address in `a0`. Return the value of the popped element in `a0`. Make sure to
+  correctly update the top pointer of the stack.
   
 <center>
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
@@ -478,15 +478,26 @@ this approach?
 {% include_relative dynamic_memory/ex4.asm %}
 ```
 
-{% if site.solutions.show_session_4 %}
+<details closed markdown="block">
+  <summary>Solution:</summary>  {: .text-gamma .text-blue-000 }
+  <blockquote>
 
-#### Solution
-
-```armasm
-{% include_relative dynamic_memory/sol4.asm %}
-```
-
-{% endif %}
+Allocating dynamic memory on the stack is not possible:
+1. The `sp` register is callee-save, so the `allocate_stack` function breaks
+   calling convention
+2. That also means that when you call `allocate_stack`, your function will break
+   calling convention if it doesn't restore the stack pointer
+3. If you do restore the stack pointer, you are also deallocating dynamic memory
+   that has been reserved in this function. In theory, yes, you can allocate on
+   the stack. But then the allocated dynamic memory can never live longer than
+   the function itself, since you need to restore the stack pointer (deallocate
+   the memory) before returning. That makes a simple function such as the
+   `stack_create` or `stack_push` from previous exercises impossible to write.
+   They simply can't return addresses to newly allocated stack space - it has to
+   be deallocated first!
+ 
+</blockquote>
+</details>
 
 ### Exercise 5
 Can you come up with an allocator function that allows you to free previously

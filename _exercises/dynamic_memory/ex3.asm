@@ -11,7 +11,7 @@ allocate_space:
 
 stack_create:   #TODO
 
-stack_puch:     #TODO
+stack_push:     #TODO
 
 stack_pop:      #TODO
 
