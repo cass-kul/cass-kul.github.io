@@ -352,6 +352,12 @@ allocate_list:          # Assume s9 keeps track of next free memory location
     ret
 ```
 
+> :warning: Notice that the function `allocate_list` breaks the calling
+> conventions because it modifies the callee-saved register `s9` and does not
+> restore its value. For simplicity, in this session, we will consider that `s9`
+> is a special register that holds the address for allocating dynamic memory and
+> therefore it should not be modified by any other function than our allocator.
+
 When the list is full, we need to:
 - Allocate a new array by calling `allocate_list`
 - Link it to the previous one by storing the address of the newly created array
