@@ -19,16 +19,16 @@ gallery_images:
 {:toc}
 
 # Introduction
-In the previous sessions, you have seen how to allocate *static* amounts of
+In the previous sessions, you have seen how to allocate fixed (*static*) amounts of
 memory to store programs variables or arrays in the `.data` section. In this
 session, you will learn how to *dynamically allocate memory* for data structures
-that can be resized at runtime (like for instance Python `Lists` or Java
-`ArrayLists`).
+that can be resized at runtime (for instance, Python lists or Java
+`ArrayList`s).
 
 ## Recap: pointers in C
 In the [first exercise session](/exercises/c-asm-basics/#pointers-in-c), you had
 an introduction to pointers in C. This is a quick reminder about how to use
-pointers. In this session we will use pointers a lot so, if necessary, you can
+pointers. In this session we will use pointers a lot, so, if necessary, you can
 come back to the explanations in the [first exercise
 session](/exercises/c-asm-basics/#pointers-in-c) or ask your teaching assistant
 for more explanations.
@@ -38,24 +38,24 @@ variable `i` can be obtained with `&i`. For instance, if an integer `i` is
 stored in the memory at address `0x7f698878`, then `&i` returns `0x7f698878`.
 
 A **pointer** is a variable that stores an *address*. For instance, a pointer
-that points to the variable `i` is declared with `int* j = &i`, meaning `j`
+that points to the variable `i` is declared with `int *j = &i`, meaning `j`
 contains the address of `i`. A pointer can be **dereferenced** to access the
 corresponding data. In C, dereferencing the pointer `j` is written `*j` and
 returns the value at the address pointed by `j` (here the value of `i`).
 
-Here is an example of a C program using pointers. Remember that `%p` is used  to print pointers:
+Here is an example of a C program using pointers. Remember that `%p` is used to print pointers:
 <table>
 <tr>
-<th>Code pointers.c</th>
+<th>pointers.c</th>
 <th>Output</th>
 </tr>
 <tr>
 <td>
 {% highlight c %}
 #include <stdio.h>
-int main() {
+int main(void) {
    int i = 5;
-   int* j = &i;
+   int *j = &i;
    int k = *j;
    printf("  Value of i: %i\n", i);
    printf("Address of i: %p\n", &i);
@@ -81,7 +81,7 @@ Address of k: 0x7f69887c
 </tr>
 </table>
 
-Using the information that were printed, we can reconstruct the memory layout of the program during the execution:
+Using the information that was printed, we can reconstruct the memory layout of the program during the execution:
 
 | Address    | Value      | Program variable |
 |:----------:|:----------:|:----------------:|
@@ -102,16 +102,16 @@ think about it, it does not really make sense to try to multiply pointers or add
 two pointers to each other. Thus, only a few arithmetic operations are allowed
 on pointers:
 - Increment/decrement pointers
-- Add/substract integers to pointers
-- Substract two pointers of the same type (we won't detail this use case but if
+- Add/subtract integers to pointers
+- Subtract two pointers of the same type (we won't detail this use case but if
   you're interested you can have a look at this [external
-  ressource](https://www.geeksforgeeks.org/pointer-arithmetics-in-c-with-examples/))
-  
+  resource](https://www.geeksforgeeks.org/pointer-arithmetics-in-c-with-examples/))
+
 In the following program, we increment a `char` pointer and an `int` pointer and print the resulting value:
 ``` c
 #include <stdio.h>
 
-int main() {
+int main(void) {
   int a = 1;
   char *c = "abcd";
   int *p = &a;
@@ -119,7 +119,7 @@ int main() {
   printf("c + 1 = %p, p + 1 = %p\n", c + 1, p + 1);
 }
 ```
-Suppose the first `printf` prints `c = 0x50000044, p = 0x80000044`.  
+Suppose the first `printf` prints `c = 0x50000044, p = 0x80000044`.
 What output do you expect for the second `printf`?
 
 > :fire: Warm-up 1: Try to run this program on your computer. Does the output
@@ -144,9 +144,9 @@ increases its value by 1 (because the size of a `char` is 1 byte) whereas
 incrementing a pointer of type `int *` or `char **` increases its value by 4
 (because the size of `int` or `char *` is 4 bytes).
 
-More generally, if you have a pointer `type* p` and an integer `n`, `p + n`
+More generally, if you have a pointer `type *p` and an integer `n`, `p += n`
 actually increases the value of the pointer `p` by `n * sizeof(type)`.
-The same rule holds when substracting a pointer with an integer `p - n`
+The same rule holds when subtracting a pointer with an integer: `p -= n`
 decreases the value of the pointer `p` by `n * sizeof(type)`.
 
 > :crystal_ball: As we will see in the next section, pointer arithmetic is
@@ -167,9 +167,9 @@ of the array, just like with a pointer! In that sense, an array is a bit similar
 to a pointer to the first element of the array.
 
 > :warning: Contrary to pointers, arrays variables cannot be modified (they are
-> immutable). Hence, you can not do `a = a + 1`
+> immutable). Hence, you can not do `a = a + 1`.
 
-However, it is possible to define a pointer `int*  p = a` to iterate through the
+However, it is possible to define a pointer `int *p = a` to iterate through the
 array:
 
 <table>
@@ -182,12 +182,12 @@ array:
 {% highlight c %}
 #include <stdio.h>
 
-int main() {
+int main(void) {
   int a[] = {1, 2, 3, 4};
   unsigned int size = 4;
-  int* p = a; // NOT &a as a is already the address of the first element!
+  int *p = a; // NOT &a as a is already the address of the first element!
 
-  for(i = 0; i < size; i++) { // Iterate until p has reached the last element of the array
+  for (int i = 0; i < size; i++) { // Iterate until p has reached the last element of the array
     printf("%p -> %d\n", p, *p);
     p = p + 1;
   }
@@ -205,6 +205,7 @@ int main() {
 </tr>
 </table>
 
+<!--
 ## Pointer and structs
 It is also possible to define a pointer to a struct. For instance, if you have the following structure:
 ``` c
@@ -217,9 +218,9 @@ s.age = 13
 ```
 You can use `struct person *p` to define a pointer to `s`.
 
-A first solution to access the elements of the struct through `p`, is to
-dereference the pointer before accessing the element of the struct: `(*p).age`.  
-However, because working with pointer on structs is very common in C, the language defines
+A first solution to access the elements of the struct through `p` is to
+dereference the pointer before accessing an element of the struct: `(*p).age`.
+However, because working with pointers to structs is very common in C, the language defines
 a dedicated operator, `->`, to facilitate accessing struct elements through
 pointers. Thus, `p->age` is equivalent to `(*p).age`.
 
@@ -229,7 +230,7 @@ void print_person(struct person *p) {
   printf("Age: %d, Grade: %d\n", p->age, p->grade);
 }
 
-int main() {
+int main(void) {
   struct person s;
   struct person *p;
   p = &s;
@@ -239,10 +240,11 @@ int main() {
   print_person(p);
 }
 ```
+-->
 
 ### Exercise 1
 Consider the following C function, where `in1`, `in2` and `out` are all pointers
-to arrays of `n` integers. Translate this function to RISC-V.
+to arrays of `n` integers. What does the function do? Translate this function to RISC-V.
 
 ```c
 {% include_relative dynamic_memory/ex1.c %}
@@ -258,7 +260,8 @@ to arrays of `n` integers. Translate this function to RISC-V.
 
 ### Exercise 2
 The following C function compares two strings. It returns 1 if they are equal
-and 0 if they are not. Translate this function to RISC-V.
+and 0 if they are not. Notice how we don't need to pass the length of the strings for this function!
+Translate this function to RISC-V.
 
 ```c
 {% include_relative dynamic_memory/ex2.c %}
@@ -282,15 +285,16 @@ Dynamic (i.e. resizeable) data structures come by default with many high-level
 programming languages, such as `List` in Python or `ArrayList` in Java, but not
 in C. Then how can we create the equivalent of a Python `List` in C?
 
-**Solution?** Reserve a very large static array for every list.  
+A possible solution is to reserve a very large static array for every list.
+
 **Problem**:
 - We have to allocate more than we actually need and the extra-allocated memory
   is wasted;
 - What if the list grows even bigger?
 
 In the next sections, we will first see how to create dynamic data structures
-starting with [lists](/exercises/dynamic_memory/#linked-lists), and then
-[generalize](/exercises/dynamic_memory/#generalize-to-any-data-structures-heap)
+starting with [lists](#linked-lists), and then
+[generalize](#generalize-to-all-data-structures-the-heap)
 to any dynamic data structures.
 
 ## Linked lists
@@ -306,25 +310,24 @@ Assume that a program reserves a big chunk of memory that it can use to store se
 <details closed markdown="block">
   <summary>Solution:</summary>  {: .text-gamma .text-blue-000 }
   <blockquote>
-  A list can be implemented as a set of static arrays chained together using pointers. When one of the array is full, just create a new array and chain it with the previous one! This is called a linked list.
+  A list can be implemented as a set of static arrays chained together using pointers. When one of the arrays is full, just create a new array and chain it with the previous one! This is called a linked list.
   </blockquote>
 </details>
 
 Let's illustrate the concept of linked lists with a running example:
-1. **Initialization**: We use a pointer, called `list pointer` to record the
-address of the next free memory location. (This is a bit similar to the stack pointer that you've seen in  the last session.)  
-![Empty memory with list pointer](/exercises/img/list1.png)  
+1. **Initialization**: We use a pointer, called *list pointer* to record the
+address of the next free memory location. (This is a bit similar to the stack pointer that you've seen in the last session.)
+![Empty memory with list pointer](/exercises/img/list1.png)
 2. **Define a new list**: We will use arrays of size 10 as the basic building
    block to implement our lists. Here we have defined two lists, meaning that we
-   have allocated two consecutive arrays of size 10, and moved the `list
-   pointer`
-   to point to the next free memory location.  
-![Empty memory with list pointer](/exercises/img/list2.png)  
+   have allocated two consecutive arrays of size 10, and moved the *list pointer*
+   to point to the next free memory location.
+![Empty memory with list pointer](/exercises/img/list2.png)
 3. **Increase size of a list**: When `List 1` is full, we can extend it by
-   allocating a new array in the free memory. In order to chain both array and
+   allocating a new array in the free memory. In order to chain both arrays and
    get a list, we keep a pointer to the second array in the last cell of the
    first array. In the end, we just need the pointer to the first array of `List
-   1` to reconstruct the whole list!  
+   1` to reconstruct the whole list!
 ![Empty memory with list pointer](/exercises/img/list3.png)
 
 
@@ -341,9 +344,9 @@ Then, to create a list we need to:
   the next free memory location. This means increasing the value of `s9` by
   the size of the array (40);
 - Return a pointer to the newly allocated array (i.e. the old value of `s9`).
-   
+
 ``` armasm
-allocate_list:       # Assume s9 keeps track of next free memory location
+allocate_list:          # Assume s9 keeps track of next free memory location
     mv    a0, s9        # Return old value of s9 as a pointer to new list
     addi  s9, s9, 40    # Update the value of list pointer in s9
     ret
@@ -353,10 +356,10 @@ When the list is full, we need to:
 - Allocate a new array by calling `allocate_list`
 - Link it to the previous one by storing the address of the newly created array
   in the last cell of the previous array.
-Assuming the pointer to the list is located in `s0` it can be achieved with the following code:
+Assuming the pointer to the previous list is located in `s0`, this can be achieved with the following code:
 
 ```armasm
-jal allocate_list  # Allocate new array
+jal allocate_list   # Allocate new array
 sw a0, 36(s0)       # Link the second part of the list to the first one
 ```
 
@@ -375,12 +378,12 @@ sw a0, 36(s0)       # Link the second part of the list to the first one
 ```
 </details>
 
-We now have a dedicated memory to store list and an allocator to make our lists
-grow (almost) as large as we want! However, our solution only restricts to lists
-while there exists many more useful data structures. Let's see how we can extend
+We now have a dedicated memory to store lists and an allocator to make our lists
+grow (almost) as large as we want! However, our solution only allows lists,
+while there are many more useful data structures. Let's see how we can extend
 our solution to work with other data structures.
 
-## Generalize to any data structures: Heap
+## Generalize to all data structures: the heap
 In the RISC-V memory layout, illustrated below, the `.data` segment is used to
 store statically allocated data (such as C arrays or constants) while the `heap`
 segment holds dynamically allocated data structures like lists, trees, etc.
@@ -406,7 +409,7 @@ to the function:
 
 ``` armasm
 allocate_space:      # Assume that s9 keeps track of the next free memory location in the heap
-    mv    t0, a0     # The size to allocate is provided as an argument to the function 
+    mv    t0, a0     # The size to allocate is provided as an argument to the function
     mv    a0, s9     # Return old value of s9 as a pointer to the new allocated space
     add   s9, s9, t0 # Update the value of heap pointer in s9
     ret
@@ -417,9 +420,9 @@ Finally, we can re-implement our simple list allocator using our new
 
 ``` armasm
 allocate_list:
-    li     a0, 40
     addi   sp, sp, -4
     sw     ra, (sp)
+    li     a0, 40
     jal    allocate_space
     lw     ra, (sp)
     addi   sp, sp, 4
@@ -427,7 +430,7 @@ allocate_list:
 
 main:
     la     s9, heap
-    jal     allocate_list
+    jal    allocate_list
 ```
 
 ### Exercise 3
@@ -438,7 +441,7 @@ allocator `allocate_space` given below and write the following functions in
 RISC-V:
 - `stack_create`: Creates a new, empty stack. This function allocates enough
   heap memory to store a pointer to the top of the stack. Since the stack is
-  empty, have the top pointer point to the address 0. Return the address of this
+  empty, have the top pointer point to the address 0 (this is called a *null pointer*). Return the address of this
   top pointer in `a0`. This can be considered the address of the stack.
 - `stack_push`: Adds a new element to the top of the stack. Provide the address
   of a stack in `a0`. Provide the value to be pushed on the stack in `a1`.
@@ -448,7 +451,7 @@ RISC-V:
 - `stack_pop`: Removes and returns the top element from a stack. Provide a stack
   address in `a0`. Return the value of the popped element in `a0`. Make sure to
   correctly update the top pointer of the stack.
-  
+
 <center>
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
 </center>
@@ -480,13 +483,12 @@ this approach?
 
 <details closed markdown="block">
   <summary>Solution:</summary>  {: .text-gamma .text-blue-000 }
-  <blockquote>
 
 Allocating dynamic memory on the stack is not possible:
 1. The `sp` register is callee-save, so the `allocate_stack` function breaks
-   calling convention
+   the calling conventions.
 2. That also means that when you call `allocate_stack`, your function will break
-   calling convention if it doesn't restore the stack pointer
+   the calling conventions if it doesn't restore the stack pointer.
 3. If you do restore the stack pointer, you are also deallocating dynamic memory
    that has been reserved in this function. In theory, yes, you can allocate on
    the stack. But then the allocated dynamic memory can never live longer than
@@ -495,8 +497,7 @@ Allocating dynamic memory on the stack is not possible:
    `stack_create` or `stack_push` from previous exercises impossible to write.
    They simply can't return addresses to newly allocated stack space - it has to
    be deallocated first!
- 
-</blockquote>
+
 </details>
 
 ### Exercise 5
