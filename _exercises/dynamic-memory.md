@@ -438,19 +438,30 @@ Create a dynamic [stack data
 structure](https://www.tutorialspoint.com/data_structures_algorithms/stack_algorithm.htm)
 on the heap (see the illustration below for an example). Use the simple
 allocator `allocate_space` given below and write the following functions in
-RISC-V:
-- `stack_create`: Creates a new, empty stack. This function allocates enough
-  heap memory to store a pointer to the top of the stack. Since the stack is
-  empty, have the top pointer point to the address 0 (this is called a *null pointer*). Return the address of this
-  top pointer in `a0`. This can be considered the address of the stack.
-- `stack_push`: Adds a new element to the top of the stack. Provide the address
-  of a stack in `a0`. Provide the value to be pushed on the stack in `a1`.
-  Allocate enough heap memory to store the new value and to store a reference to
-  the previous top. Make sure to modify the top pointer to point to your newly
-  pushed element.
-- `stack_pop`: Removes and returns the top element from a stack. Provide a stack
-  address in `a0`. Return the value of the popped element in `a0`. Make sure to
-  correctly update the top pointer of the stack.
+RISC-V (consider that `stack_pointer` is the type of the pointer to the `top`
+pointer):
+- `stack_pointer stack_create(void)`: Creates a new, empty stack: basically it
+  allocate space for the `top` pointer.
+  1. Allocates enough heap memory to store a pointer to the top of the stack.
+  2. Since the stack is empty, initialize this `top` pointer to `0`: (this is
+  called a *null pointer*).
+  3. Return the address of this `top` pointer in `a0`. This can be considered the
+  address of the stack (in the main you should keep this pointer in a safe
+  place, it is the pointer that you will use to reconstruct the whole stack!).
+- `void stack_push(stack_pointer, int)`: Adds a new element at the top of the
+  stack.
+  1. The function takes the address of the `top` pointer in `a0` and the value to
+  be pushed on the stack in `a1`.
+  2. It allocates enough heap memory to store the new value and to store a
+  reference to the previous top.
+  3. It updates 
+  3. It also modifies the `top` pointer to point to the newly allocated element.
+- `int stack_pop(stack_pointer)`: Removes and returns the top element from a stack.
+  1. The function takes the `top` pointer in `a0`.
+  2. It updates the `top` pointer to point to the element before the actual top
+     element.
+  3. Finally, it return the value of the popped element in `a0`.
+Don't forget the calling conventions!
 
 <center>
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
