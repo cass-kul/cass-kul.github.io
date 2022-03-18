@@ -1,5 +1,8 @@
 <!-- Taken from https://www.cssscript.com/gallery-swiper-box/ -->
 <!-- and modified to fit our needs -->
+<!-- Use this for the first gallery on a page. Example usage: -->
+<!-- include gallery.html images=page.gallery_images ratio_image="album/ratio.png" -->
+
 <style>
     .mygal {border:1px solid black;}
 </style>
@@ -10,43 +13,48 @@
 <span id="count">0/0</span>
 </div>
 <script>
-    
-    var myItems = [
+    var galleryItems = [
         {% for file in include.images %}
         '<div class="myitem"><img src="{{ file }}" /></div>',
         {% endfor %}
     ];
     
-    var mySwipe = new SwiperBox({
-        items: myItems,
+    var gallerySwipe = new SwiperBox({
+        items: galleryItems,
         ratio: "{{ include.ratio_image }}",
     });
-    mySwipe.HTMLElement.style.width = "100%";
-    mySwipe.HTMLElement.classList.add("mygal");
-    document.getElementById("gallery").appendChild(mySwipe.HTMLElement);
-    var count = document.getElementById("count");
-    count.innerText = "1/" + myItems.length;
 
-    mySwipe.onClick = function(index,elem) {
-        if(index == myItems.length-1) {
-            mySwipe.GoTo(1);
-        } else {
-            mySwipe.swiptoLeft();  
-        }
-        UpdateCounter(null);
-    };
-
-    function UpdateCounter(e) {
-        var index = mySwipe.numx;
-        if(index == 0) {
-            count.innerText = "1/" + myItems.length;
-        } else {
-            count.innerText = (index + 1) + "/" + myItems.length;
-        }
-    };
-
-    mySwipe.HTMLElement.addEventListener("touchend", UpdateCounter, true);
-    mySwipe.HTMLElement.addEventListener("mouseout", UpdateCounter, true);
     
+    function addGallery(id_name, count_name, swipe, items_length) {
+
+        swipe.HTMLElement.style.width = "100%";
+        swipe.HTMLElement.classList.add("mygal");
+        document.getElementById(id_name).appendChild(swipe.HTMLElement);
+        var count = document.getElementById(count_name);
+        count.innerText = "1/" + items_length;
+
+        swipe.onClick = function(index,elem) {
+            if(index == items_length-1) {
+                swipe.GoTo(1);
+            } else {
+                swipe.swiptoLeft();  
+            }
+            UpdateCounter(null);
+        };
+
+        function UpdateCounter(e) {
+            var index = swipe.numx;
+            if(index == 0) {
+                count.innerText = "1/" + items_length;
+            } else {
+                count.innerText = (index + 1) + "/" + items_length;
+            }
+        };
+        
+        
+        swipe.HTMLElement.addEventListener("touchend", UpdateCounter, true);
+        swipe.HTMLElement.addEventListener("mouseout", UpdateCounter, true);
+    }
+    addGallery("gallery", "count", gallerySwipe, galleryItems.length);
 
 </script>

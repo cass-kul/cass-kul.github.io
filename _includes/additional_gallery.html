@@ -1,0 +1,24 @@
+<!-- Taken from https://www.cssscript.com/gallery-swiper-box/ -->
+<!-- and modified to fit our needs -->
+<!-- Use this for any gallery after the first. Example usage: -->
+<!--  include gallery.html name=second images=page.gallery_images ratio_image="album/ratio.png"  -->
+<!-- Note the additional name field -->
+
+<div id="{{ include.name }}.gallery">
+<span id="{{ include.name }}.count">0/0</span>
+</div>
+<script>
+    var {{ include.name }}Items = [
+        {% for file in include.images %}
+        '<div class="myitem"><img src="{{ file }}" /></div>',
+        {% endfor %}
+    ];
+    
+    var {{ include.name }}Swipe = new SwiperBox({
+        items: {{ include.name }}Items,
+        ratio: "{{ include.ratio_image }}",
+    });
+
+    addGallery("{{ include.name }}.gallery", "{{ include.name }}.count", {{ include.name }}Swipe, {{ include.name }}Items.length);
+
+</script>
