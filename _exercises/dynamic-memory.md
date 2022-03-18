@@ -467,8 +467,8 @@ pointer):
   be pushed on the stack in `a1`.
   2. It allocates enough heap memory to store the new value and to store a
   reference to the previous top.
-  3. It updates 
-  3. It also modifies the `top` pointer to point to the newly allocated element.
+  3. It initializes the newly allocated element (first word to value, second word to address of previous top)
+  4. It updates the `top` pointer to point to the newly allocated element.
 - `int stack_pop(stack_pointer)`: Removes and returns the top element from a stack.
   1. The function takes the `top` pointer in `a0`.
   2. It updates the `top` pointer to point to the element before the actual top
