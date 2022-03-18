@@ -11,6 +11,13 @@ gallery_images:
     - album/generalized_dynamic_alloc-2.png
     - album/generalized_dynamic_alloc-3.png
     - album/generalized_dynamic_alloc-4.png
+ex3_images:
+    - album/stack_exercise-1.png
+    - album/stack_exercise-2.png
+    - album/stack_exercise-3.png
+    - album/stack_exercise-4.png
+    - album/stack_exercise-5.png
+    - album/stack_exercise-6.png
 ---
 ## Table of contents
 {: .no_toc .text-delta }
@@ -469,9 +476,11 @@ pointer):
   3. Finally, it return the value of the popped element in `a0`.
 Don't forget the calling conventions!
 
-<center>
+{% include additional_gallery.html name=ex3 images=page.ex3_images ratio_image="album/ex3_ratio.png" %}
+
+<!-- <center>
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
-</center>
+</center> -->
 
 ```armasm
 {% include_relative dynamic-memory/ex3.asm %}
