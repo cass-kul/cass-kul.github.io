@@ -16,7 +16,7 @@ main:
 	# WARNING! We are using the stack pointer here!
 	# This means that we need to make space on the stack
 	#  BEFORE we store the integers.
-	addi t0, t0, -8 # Stack grows downwards
+	addi sp, sp, -8 # Stack grows downwards
 	sw t1, 0(sp)
 	sw t2, 4(sp)
 
