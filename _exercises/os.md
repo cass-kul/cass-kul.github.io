@@ -20,13 +20,17 @@ During previous sessions, you learned how to write small functions and programs.
 ## The Operating System
 The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernels acts as a *layer* for input and output requests from software and handles memory.
 
-![The kernel connects applications to hardware](kernel.drawio.png "The kernel connects applications to hardware")
+<center>
+<img src="/exercises/os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
+</center>
 
 The OS also provides a form of security. Different program processes are isolated form eachother when they are running at the same time. It is also not possible to overwrite the code of your OS.
 
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
-![Rings have different levels of privilege](rings.drawio.png "Rings have different levels of privilege")
+<center>
+<img src="/exercises/os/rings.drawio.png" alt="Rings have different levels of privilege" />
+</center>
 
 RISC-V offers three privilege levels or *modes*:
 * **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the exeucution of any instruction is allowed.
@@ -155,7 +159,7 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 {% endif %}
 
 # The Heap - Revisited
-During the last sessoin, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
+During the last session, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
 
 In order to tackle this problem, a big chunk of memory was reserved in the `.data` section that could be used to dynamically request and allocate memory. We used register `s9` to keep track of the next free memory location in the heap. A simple allocator function could be used to request memory from the *heap* and increase the address of the first free memory location with the amount of bytes that was requested:
 
@@ -170,14 +174,16 @@ allocate_space:    # Assume that s9 keeps track of the next free memory location
   ret
 ```
 
-This approach has following problems:
+This approach has the following problems:
 - We arbitrarily have to choose the size of the *heap* in the `.data` section. When this size is too small, the program may run out of heap memory too quick. Choosing this size too big may waste memory that is actually not required for the program.
 - We had to violate the RISC-V *calling conventions* in order to keep track of the next free memory location in the *heap* (`s9`).
 
 ## The OS to the rescue
 For every program that you run in RARS, a fixed address space is provided by the RARS OS for the program's process. For 32bit RARS, the process layout is as follows:
 
-![32bit RARS process layout](process_layout.drawio.png "32bit RARS process layout")
+<center>
+<img src="/exercises/os/process_layout.drawio.png" alt="32bit RARS process layout" />
+</center>
 
 The `.text` sections contains the program's code. Every *jump* or *branch* that you write will land in this section. The `.data` section contains the global variables that you declared in advance. The *heap* and *stack* are both dynamic regions: their size can grow and shrink when required. The OS reserves just enough memory for the program to run. When the processes requires more memory, more memory can dynamically be requested from the *heap* region, which is initially empty, through a system call. This is in contrast with our approach that reserved a *heap* in the `.data` section: we might have reserved a lot of bytes that the process would never even use or need, which would be a waste of memory.
 
