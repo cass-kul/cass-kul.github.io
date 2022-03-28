@@ -329,7 +329,7 @@ As mentioned before, an interrupt will be handled *as soon as possible* when the
 A **trap handler** comes in action whenever a trap is raised. It's a set of instructions (like a function) that deal with the interrupt or exception. The address of a trap handler is stored in a `tvec` (*Trap Vector*) register. The CPU jumps to the address of the trap handler and continues executing the instructions of the trap handler. Each *mode* has its own `tvec` register:
 - `utvec`: User Trap Vector (user mode)
 - `stvec`: Supervisor Trap Vector (supervisor mode)
-- `utvec`: Machine Trap Vector (machine mode)
+- `mtvec`: Machine Trap Vector (machine mode)
 
 A **Control Status Register** (CSR) is special purpose register for trap handling. It contains information specific to trap handling:
 - `ustatus`: keeps track of and controls the current operating state of the CPU.
