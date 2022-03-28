@@ -2,8 +2,8 @@
 layout: default
 title: "Session 5: Operating Systems"
 nav_order: 5
-nav_exclude: true
-search_exclude: true
+nav_exclude: false
+search_exclude: false
 has_children: false
 has_toc: false
 ---
