@@ -148,6 +148,16 @@ You entered: 2
 
 Write a program which reads the name of the user from the keyboard. Afterwards, display a greeting message dialog with content *“Welcome [name]”*. Make sure your program does not crash when the user presses cancel or gives long inputs. Instead, display an appropriate error message dialog. *Hint*: Take a look at system calls 54, 55 and 59.
 
+> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and are simply ending with a zero byte (0x00). This is because Strings are simply a group of characters (1 byte each). However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word has 32 byte. Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
+> When you place a string before data that should be word aligned, you may encounter an error when you want to access this data. The solution to this error is an [assembler directive](https://github.com/TheThirdOne/rars/wiki/Assembler-Directives) to tell the assembler to align the next item in the data section according to the word boundary like this:
+> ```armasm
+> .data
+> str1: .string "Message 1" # May exceed word boundary
+> str2: .string "Message 2" # May exceed word boundary
+> .align 2	# Align next item to the word boundary
+> heap: .space 100000
+> ```
+
 {% if site.solutions.show_session_5 %}
 
 #### Solution
