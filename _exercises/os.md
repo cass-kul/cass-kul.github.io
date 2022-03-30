@@ -386,7 +386,7 @@ end:
  	ecall		   # exit (4)
 
 ```
-The `main` function first loads the address of the custom trap handler in `utvec` and enables trap handing in user mode. Next, a misaligned load instruction is used to trigger the trap. The custom handler moves the cause of the trap to `a0` and jumps to `end`. The instruction below `end:` exit the program with a status code that reflects the cause of the trap (`a0`).
+The `main` function first loads the address of the custom trap handler in `utvec` and enables trap handing in user mode. Next, a misaligned load instruction is used to trigger the trap. The custom handler moves the cause of the trap to `a0` and jumps to `end`. The instructions below `end:` exit the program with a status code that reflects the cause of the trap (`a0`).
 
 ## Exercise 3
 Write a custom user-mode exception handler. The exception handler should do nothing but jump over the faulting instruction. Make sure the handler does not modify any regular registers (Hint: use `uscratch`). Do not forget to enable custom trap handling in user mode (`csrrsi zero, ustatus, 1`) before triggering the trap.
