@@ -2,8 +2,8 @@
 layout: default
 title: "Session 5: Operating Systems"
 nav_order: 5
-nav_exclude: true
-search_exclude: true
+nav_exclude: false
+search_exclude: false
 has_children: false
 has_toc: false
 ---
@@ -18,15 +18,19 @@ has_toc: false
 During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **Operating System (OS)** in order to interact with any hardware (E.g.: a mouse or keyboard).
 
 ## The Operating System
-The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernels acts as a *layer* for input and output requests from software and handles memory.
+The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
 
-![The kernel connects applications to hardware](kernel.drawio.png "The kernel connects applications to hardware")
+<center>
+<img src="/exercises/os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
+</center>
 
-The OS also provides a form of security. Different program processes are isolated form eachother when they are running at the same time. It is also not possible to overwrite the code of your OS.
+The OS also provides a form of security. Different program processes are isolated form each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
 
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
-![Rings have different levels of privilege](rings.drawio.png "Rings have different levels of privilege")
+<center>
+<img src="/exercises/os/rings.drawio.png" alt="Rings have different levels of privilege" />
+</center>
 
 RISC-V offers three privilege levels or *modes*:
 * **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the execution of any instruction is allowed.
@@ -144,6 +148,16 @@ You entered: 2
 
 Write a program which reads the name of the user from the keyboard. Afterwards, display a greeting message dialog with content *“Welcome [name]”*. Make sure your program does not crash when the user presses cancel or gives long inputs. Instead, display an appropriate error message dialog. *Hint*: Take a look at system calls 54, 55 and 59.
 
+> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and are simply ending with a zero byte (0x00). This is because Strings are simply a group of characters (1 byte each). However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word has 32 byte. Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
+> When you place a string before data that should be word aligned, you may encounter an error when you want to access this data. The solution to this error is an [assembler directive](https://github.com/TheThirdOne/rars/wiki/Assembler-Directives) to tell the assembler to align the next item in the data section according to the word boundary like this:
+> ```armasm
+> .data
+> str1: .string "Message 1" # May exceed word boundary
+> str2: .string "Message 2" # May exceed word boundary
+> .align 2	# Align next item to the word boundary
+> heap: .space 100000
+> ```
+
 {% if site.solutions.show_session_5 %}
 
 #### Solution
@@ -155,7 +169,7 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 {% endif %}
 
 # The Heap - Revisited
-During the last sessoin, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
+During the last session, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
 
 In order to tackle this problem, a big chunk of memory was reserved in the `.data` section that could be used to dynamically request and allocate memory. We used register `s9` to keep track of the next free memory location in the heap. A simple allocator function could be used to request memory from the *heap* and increase the address of the first free memory location with the amount of bytes that was requested:
 
@@ -170,14 +184,16 @@ allocate_space:    # Assume that s9 keeps track of the next free memory location
   ret
 ```
 
-This approach has following problems:
+This approach has the following problems:
 - We arbitrarily have to choose the size of the *heap* in the `.data` section. When this size is too small, the program may run out of heap memory too quick. Choosing this size too big may waste memory that is actually not required for the program.
 - We had to violate the RISC-V *calling conventions* in order to keep track of the next free memory location in the *heap* (`s9`).
 
 ## The OS to the rescue
 For every program that you run in RARS, a fixed address space is provided by the RARS OS for the program's process. For 32bit RARS, the process layout is as follows:
 
-![32bit RARS process layout](process_layout.drawio.png "32bit RARS process layout")
+<center>
+<img src="/exercises/os/process_layout.drawio.png" alt="32bit RARS process layout" />
+</center>
 
 The `.text` sections contains the program's code. Every *jump* or *branch* that you write will land in this section. The `.data` section contains the global variables that you declared in advance. The *heap* and *stack* are both dynamic regions: their size can grow and shrink when required. The OS reserves just enough memory for the program to run. When the processes requires more memory, more memory can dynamically be requested from the *heap* region, which is initially empty, through a system call. This is in contrast with our approach that reserved a *heap* in the `.data` section: we might have reserved a lot of bytes that the process would never even use or need, which would be a waste of memory.
 
@@ -292,7 +308,7 @@ Suppose you press a key on your keyboard which is connected to your computer. Th
 | 10-15 | *Reserved for future standard use*  |
 | >= 16 | *Reserved for platform use*         |
 
-**Exceptions** are usually raised when something goes wrong in a faulty program. The execution of the program has to be halted and the error has to be resolved if possible. Exceptions have to be handled *immediately*. This is different from interrupt; an OS will handle an interrupt *as soon as possible*. Exception are not only raised when something goes wrong; the `ecall` in RARS is a special kind of exception (see code 8-9 in following table) to handle system calls.
+**Exceptions** are usually raised when something goes wrong in a faulty program. The execution of the program has to be halted and the error has to be resolved if possible. Exceptions have to be handled *immediately*. This is different from an interrupt; an OS will handle an interrupt *as soon as possible*. Exceptions are not only raised when something goes wrong; the `ecall` in RARS is a special kind of exception (see code 8-9 in following table) to handle system calls.
 
 | Code  | Description                        |
 |-------|------------------------------------|
@@ -323,7 +339,7 @@ As mentioned before, an interrupt will be handled *as soon as possible* when the
 A **trap handler** comes in action whenever a trap is raised. It's a set of instructions (like a function) that deal with the interrupt or exception. The address of a trap handler is stored in a `tvec` (*Trap Vector*) register. The CPU jumps to the address of the trap handler and continues executing the instructions of the trap handler. Each *mode* has its own `tvec` register:
 - `utvec`: User Trap Vector (user mode)
 - `stvec`: Supervisor Trap Vector (supervisor mode)
-- `utvec`: Machine Trap Vector (machine mode)
+- `mtvec`: Machine Trap Vector (machine mode)
 
 A **Control Status Register** (CSR) is special purpose register for trap handling. It contains information specific to trap handling:
 - `ustatus`: keeps track of and controls the current operating state of the CPU.
