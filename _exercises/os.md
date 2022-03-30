@@ -29,7 +29,7 @@ A **Central Processing Unit (CPU)** usually offers different *modes*. These mode
 ![Rings have different levels of privilege](rings.drawio.png "Rings have different levels of privilege")
 
 RISC-V offers three privilege levels or *modes*:
-* **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the exeucution of any instruction is allowed.
+* **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the execution of any instruction is allowed.
 
 * **Supervisor Mode**: Supervisor mode allows the execution of most instructions, but not all of them. This mode is typically used when the kernel executes.
 
