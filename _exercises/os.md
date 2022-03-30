@@ -18,13 +18,13 @@ has_toc: false
 During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **Operating System (OS)** in order to interact with any hardware (E.g.: a mouse or keyboard).
 
 ## The Operating System
-The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernels acts as a *layer* for input and output requests from software and handles memory.
+The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
 
 <center>
 <img src="/exercises/os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
 </center>
 
-The OS also provides a form of security. Different program processes are isolated form eachother when they are running at the same time. It is also not possible to overwrite the code of your OS.
+The OS also provides a form of security. Different program processes are isolated form each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
 
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
@@ -33,7 +33,7 @@ A **Central Processing Unit (CPU)** usually offers different *modes*. These mode
 </center>
 
 RISC-V offers three privilege levels or *modes*:
-* **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the exeucution of any instruction is allowed.
+* **Machine Mode**: Machine mode is usually used during the boot of a machine. It has full access to the machine and the execution of any instruction is allowed.
 
 * **Supervisor Mode**: Supervisor mode allows the execution of most instructions, but not all of them. This mode is typically used when the kernel executes.
 
