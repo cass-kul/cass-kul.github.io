@@ -308,7 +308,7 @@ Suppose you press a key on your keyboard which is connected to your computer. Th
 | 10-15 | *Reserved for future standard use*  |
 | >= 16 | *Reserved for platform use*         |
 
-**Exceptions** are usually raised when something goes wrong in a faulty program. The execution of the program has to be halted and the error has to be resolved if possible. Exceptions have to be handled *immediately*. This is different from interrupt; an OS will handle an interrupt *as soon as possible*. Exception are not only raised when something goes wrong; the `ecall` in RARS is a special kind of exception (see code 8-9 in following table) to handle system calls.
+**Exceptions** are usually raised when something goes wrong in a faulty program. The execution of the program has to be halted and the error has to be resolved if possible. Exceptions have to be handled *immediately*. This is different from an interrupt; an OS will handle an interrupt *as soon as possible*. Exceptions are not only raised when something goes wrong; the `ecall` in RARS is a special kind of exception (see code 8-9 in following table) to handle system calls.
 
 | Code  | Description                        |
 |-------|------------------------------------|
