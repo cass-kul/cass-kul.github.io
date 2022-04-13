@@ -476,7 +476,7 @@ pointer):
   3. Finally, it return the value of the popped element in `a0`.
 Don't forget the calling conventions!
 
-{% include additional_gallery.html name=ex3 images=page.ex3_images ratio_image="album/ex3_ratio.png" %}
+{% include additional_gallery.html name=ex3 images=page.ex3_images ratio_image="album/stack_exercise-ratio.png" %}
 
 <!-- <center>
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
