@@ -17,7 +17,7 @@ has_toc: false
 
 # Introduction
 In this session you will make one big exercise as a recap of everything that you have learned about RISC-V and C up to now.
-In  [session 4]([dynamic-memory.md](https://cass-kul.github.io/exercises/dynamic-memory/#dynamic-data-structures) we already briefly discussed the concept of a linked list. In this session, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take a lot more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session) and on the discussion forum. <br>
+In  [session 4](https://cass-kul.github.io/exercises/dynamic-memory/#dynamic-data-structures) we already briefly discussed the concept of a linked list. In this session, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take a lot more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session) and on the discussion forum. <br>
 Implementing the full interface is a great way to prepare yourself for the RISC-V programming part of the exam. C programming will not be
 evaluated on the exam. However, you will need to translate C code to RISC-V code. Therefore, we recommend to also implement the C part. Furthermore, implementing the interface in RISC-V will be a lot easier when you have C code that you can translate, especially if you wrote that C code yourself.
 
@@ -26,7 +26,7 @@ evaluated on the exam. However, you will need to translate C code to RISC-V code
 
 # Dynamic memory
 Sometimes we want to use a data structure, but we do not know how big it might become before running the program. To solve this problem, we can use dynamic memory to define data structures that might grow or shrink during runtime. The space reserved for dynamic allocation of memory is called **the heap**. 
-In session 4, we implemented a [stack structure]([dynamic-memory.md](https://cass-kul.github.io/exercises/dynamic-memory/#exercise-3) by using the heap. We will now use the same concepts to create a list is not limited in size before execution, as opposed to a regular `Array` in C. 
+In session 4, we implemented a [stack structure](https://cass-kul.github.io/exercises/dynamic-memory/#exercise-3) by using the heap. We will now use the same concepts to create a list is not limited in size before execution, as opposed to a regular `Array` in C. 
 
 ## Linked list
 A linked list is simply put a data structure that allows to link different nodes with each other by using pointers. The assignment requires you to implement a one-directional linked list where each node consists of a value and a pointer to the next node. For more details see the section about [data structures](#data-structures). <br>
