@@ -17,7 +17,7 @@ has_toc: false
 
 # Introduction
 In this session you will make one big exercise as a recap of everything that you have learned about RISC-V and C up to now.
-In  [session 4](dynamic-memory.md#dynamic-data-structures) we already briefly discussed the concept of a linked list. In this session, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take a lot more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session) and on the discussion forum. <br>
+In  [session 4]([dynamic-memory.md](https://cass-kul.github.io/exercises/dynamic-memory/#dynamic-data-structures) we already briefly discussed the concept of a linked list. In this session, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take a lot more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session) and on the discussion forum. <br>
 Implementing the full interface is a great way to prepare yourself for the RISC-V programming part of the exam. C programming will not be
 evaluated on the exam. However, you will need to translate C code to RISC-V code. Therefore, we recommend to also implement the C part. Furthermore, implementing the interface in RISC-V will be a lot easier when you have C code that you can translate, especially if you wrote that C code yourself.
 
@@ -26,7 +26,7 @@ evaluated on the exam. However, you will need to translate C code to RISC-V code
 
 # Dynamic memory
 Sometimes we want to use a data structure, but we do not know how big it might become before running the program. To solve this problem, we can use dynamic memory to define data structures that might grow or shrink during runtime. The space reserved for dynamic allocation of memory is called **the heap**. 
-In session 4, we implemented a [stack structure](dynamic-memory.md#exercise-3) by using the heap. We will now use the same concepts to create a list is not limited in size before execution, as opposed to a regular `Array` in C. 
+In session 4, we implemented a [stack structure]([dynamic-memory.md](https://cass-kul.github.io/exercises/dynamic-memory/#exercise-3) by using the heap. We will now use the same concepts to create a list is not limited in size before execution, as opposed to a regular `Array` in C. 
 
 ## Linked list
 A linked list is simply put a data structure that allows to link different nodes with each other by using pointers. The assignment requires you to implement a one-directional linked list where each node consists of a value and a pointer to the next node. For more details see the section about [data structures](#data-structures). <br>
@@ -34,13 +34,13 @@ A linked list is simply put a data structure that allows to link different nodes
 Let's have a look at an example of how linked lists work: <br>
 
 1. **Initalization of the list**: We create an empty list where the pointer to the first element has the value `NULL`.
-![Empty memory with list pointer](linked-lists/images/linked_list_1.png)
+![Empty memory with list pointer](/exercises/linked-lists/images/linked_list_1.png)
 2. **Adding an element to the list**: We add the value `5` to the linked list. We can do this by allocating some space on the heap for our new node and setting the value of the `first` pointer to the allocated memory. We can then write our value in memory and let the next pointer of the node point to `NULL`. <br>
-![Adding first node](linked-lists/images/linked_list_2.png) <br>
+![Adding first node](/exercises/linked-lists/images/linked_list_2.png) <br>
 3. **Adding a second node to the list**: We now want to add a second node with the value `3` to the list. We can do this in the same way as the previous step. Note that we want to change the value of the `next` pointer of the previous node to point to our new node. <br>
-![Adding a second node](linked-lists/images/linked_list_3.png)
+![Adding a second node](/exercises/linked-lists/images/linked_list_3.png)
 4. **Removing a node**: We want to delete the previously added node with value `3`. In order to do this we need to free the space used for the node we want to delete and make sure that the `next` pointer of the node with value `5` is changed to have the `NULL` value, since there will be no longer a next node in the list.
-![Removing a node](linked-lists/images/linked_list_4.png) <br>
+![Removing a node](/exercises/linked-lists/images/linked_list_4.png) <br>
 
 Now that you understand the basics, we can move on to the exercise. 
 
@@ -52,7 +52,7 @@ Before you begin, make sure that RARS is configured correctly. Go to the `settin
 
 # Linked lists interface
 
-To get started, download the file [linked_list.zip](linked-lists/linked-list-1.4.zip). Inside, you will find the following files:
+To get started, download the file [linked_list.zip](/exercises/linked-lists/linked-list-1.4.zip). Inside, you will find the following files:
 
 * `c/linked_list.h`: header file containig the definition of the interface functions
 * `c/linked-list.c*`: the template in which you need to implement all function definitions
@@ -109,15 +109,14 @@ front of the list, and so forth. Returns either `OK`, `INDEX OUT OF BOUNDS`, `UN
 > :bulb: **Tip**: Before translating a complex function to RISC-V it might be a good idea to explicitly write down (in comments) which registers you will
 allocate to which variables This makes it much easier to keep track of sometimes very hard to read RISC-V code. It might make your life a lot easier if you have to fix a bug at a later time.
 
- # Test suites and debugging
+ ## Test suites and debugging
  We provide an extensive test suite for both your C and RISC-V program. The tests will be run on every interface function for all kinds of edge cases. 
  The C suite should be relatively straightforward to use. Whenever you execute your program, the test suite will test each of the interface functions.
 Whenever a certain part of a test fails, you will get an **assertion error** together
-with a line number in the test suite. Check out the error in the suite to figure out what your implementation did wrong.
+with a line number in the test suite. Check out the error in the suite to figure out what your implementation did wrong. <br>
 The RISC-V suite is a little bit more complicated. It follows exactly the same structure as the C suite, thus, if you get lost, take a look at the
 C implementation as well. Since there is no direct way of using assertions
-in RISC-V, we hacked our own version in the simulator. We use macros
-to execute the same assertions as the ones in C. When the assertion fails, however, we throw an exception by executing `lw t0, 0xdeadbeef`. The exception you will see in RARS whenever an assertion fails is of the following structure:
+in RISC-V, we hacked our own version in the simulator. We use macros to execute the same assertions as the ones in C. When the assertion fails, however, we throw an exception by executing `lw t0, 0xdeadbeef`. The exception you will see in RARS whenever an assertion fails is of the following structure:
 
 ```
 line 131: Runtime exception at 0x004002ac:
