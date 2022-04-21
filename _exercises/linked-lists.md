@@ -2,14 +2,13 @@
 layout: default
 title: "Session 6: Linked Lists"
 nav_order: 6
-nav_exclude: false
-search_exclude: false
+nav_exclude: true
+search_exclude: true
 has_children: false
 has_toc: false
 ---
 
 ## Table of contents
-
 {: .no_toc .text-delta }
 
 1. TOC
@@ -88,7 +87,7 @@ struct ListNode
 };
 ```
 
-The `value` attribute stores the content of the list element and `next` is a pointer to the next node in the list.  
+The `value` attribute stores the content of the list element and `next` is a pointer to the next node in the list.
 
 ## Functions
 
