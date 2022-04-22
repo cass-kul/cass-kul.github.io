@@ -33,6 +33,13 @@ sw s9, 40(t0)
 sw s10, 44(t0)
 sw s11, 48(t0)
 jal %label
+mv t0, zero
+mv t1, zero
+mv t2, zero
+mv t3, zero
+mv t4, zero
+mv t5, zero
+mv t6, zero
 check_register(sp, 0)
 check_register(s0, 4)
 check_register(s1, 8)
