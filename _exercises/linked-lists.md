@@ -23,6 +23,8 @@ evaluated on the exam. However, you will need to translate C code to RISC-V code
 
 > :bulb: **Tip**: A good order in which to solve this assignment is to implement a function first in C, then translate this to RISC-V, then move on to the next C function and so forth. Improving at C will help your understanding of assembly and the opposite is true as well. Having the function implementation fresh in  your memory will also help your assembly implementation.
 
+> :warning: **Note**: We will not upload solutions for this exercise session. Instead, we provide a thorough testing suite and clear instructions of how to use it. As it is common for more complex programs, there is not a single correct way of doing things. If your program passes the tests that we made, then you can assume that your program is also a good solution for the task.
+
 # Dynamic memory
 
 Sometimes we want to use a data structure, but we do not know how big it might become before running the program. To solve this problem, we can use dynamic memory to define data structures that might grow or shrink during runtime. The space reserved for dynamic allocation of memory is called **the heap**.
@@ -51,7 +53,7 @@ Before you begin, make sure that RARS is configured correctly. Go to the `settin
 
 # Linked lists interface
 
-To get started, download the file [linked_list.zip](/exercises/linked-lists/linked-list-1.4.zip). Inside, you will find the following files:
+To get started, download the file [linked_list.zip](/exercises/linked-lists/exercise-files.zip). Inside, you will find the following files:
 
 * `c/linked_list.h`: header file containig the definition of the interface functions
 * `c/linked-list.c*`: the template in which you need to implement all function definitions
