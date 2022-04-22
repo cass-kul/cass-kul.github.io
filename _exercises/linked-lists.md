@@ -96,12 +96,16 @@ The `value` attribute stores the content of the list element and `next` is a poi
 In order to make to program work, you will need to implement a number of functions. In this section you can find a description and expected operation of each function. If you are still unsure about what the behavior of the function should be, have a look at the test suite. <br>
 Each function will return a [code](#error-codes) indicating whether an error occured during exection.
 
-> :bulb: **Tip**: Implement the functions in the given order. For some of the more complicated functions, you might need to use a previously written function.
+> :bulb: **Tip**: Implement the functions in the given order. For some of the more complicated functions, you might need to use a previously written function. The test suite will check the functions in the order below and will abort if a test fails.
+
+> :bulb: **Tip**: In assembly, you can use malloc and free as defined in the `malloc.asm` file. For malloc, pass the number of *words* to allocate (i.e. 1 when you want to allocate 4 bytes), and for free pass the address that should be freed. Malloc will return the address that was allocated while free will return nothing.
 
 * ```struct List *list_create();``` <br />
   Creates a new list by allocating a `struct List` and returning the address of this list.
 * ```status list_append(struct List *list, int value);``` <br />
   Appends a value to the end of an existing list by allocating a new struct ListElement and adding it to the chain. Returns either `OK`, `OUT OF MEMORY`, or `UNINITIALIZED LIST`.
+* ```int list_length(struct List *list);``` <br />
+  Counts the number of ListItems in the list and returns the length of this list. Can return `UNINITIALIZED LIST` if the list was not initialized.
 * ```status list_get(struct List *list, int index, int*value);``` <br>
 Get the value at position index in an existing list. Store this value at the address stored in the `int *value` pointer. Returns either `OK`, `INDEX OUT OF BOUNDS`, `UNINITIALIZED LIST`, or `UNINITIALIZED RETVAL`.
 * ```status list_print(struct List *list);``` <br>
