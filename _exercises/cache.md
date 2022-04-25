@@ -14,7 +14,46 @@ has_toc: false
 1. TOC
 {:toc}
 
-## Exercise 2.1
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+There's a lot of prose in the exercise pdf as well, maybe some of it can be directly copy and pasted here!
+
+The solutions contain a lot of information, some of it probably should be moved to a regular explanation.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Introduction
+
+Over the years, a performance gap has formed between the processor and the memory unit, forming a
+bottleneck for the performance of the computer in general.
+
+To solve this issue, caches were introduced. These are not as fast as registers, but can include more data,
+and are much faster than the main memory.
+
+A lot smaller though. There is even a hierarchy of caches in most commercial CPUs: L1I, L1D, L2, LLC.
+
+# Locality principle
+
+Programs usually access a relatively small portion of the address space at a time.
+
+Temporal locality (same value again) and spatial locality (nearby variables, array members). Transfer entire blocks (multiple contiguous words) into the cache at once.
+
+# Terminology
+
+Cache miss: on first use, value not in cache
+
+Cache hit: value already in cache, no need to consult the DRAM.
+
+Hit rate, miss rate
+
+# Timing attacks
+
+TODO!!! Do we want to obscure the secret a little bit in the header by e.g., xoring together two numbers
+that make up the key, so that if someone accidentally opens it, they don't get spoiled?
+
+TODO!!! Do the programs in this session still work on the M1?
+
+### Exercise 2.1
 
 We start by compiling the downloaded program and running it with an arbitrary input.
 
@@ -36,7 +75,7 @@ Enter super secret password ('q' to exit): 32349
 time (med clock cycles): 68
 ```
 
-## Exercise 2.2
+### Exercise 2.2
 
 In the program ( `passwd.c` ), we see that the printed execution time is the calculated median over 100, 000 measurements:
 
@@ -55,7 +94,7 @@ med = diff[NUM_SAMPLES/2];
 
 Even with this measure, we might notice different time values for the same inputs. This happens because the timing of one execution depends on many factors. Modern processors include a wide range of microarchitectural optimizations, such as instruction and data caches, pipelining, branch prediction, dynamic frequency scaling, out-of-order execution, etc. The execution can also be delayed by external events, such as an interrupt that is handled by the operating system. Taking the median instead of the average reduces the effect of such outliers.
 
-## Exercise 2.3
+### Exercise 2.3
 
 It's time to guess the password. First, we can notice that the program exits immediately if we provide a password with an incorrect length.
 
@@ -132,9 +171,17 @@ Enter super secret password ('q' to exit): 524
 time (med clock cycles): 1342
 ```
 
----
+## Timing attacks on the cache
 
-## Exercise 3.2
+Can we use timing differences in the cache to exploit programs?
+
+The CPU allows us to flush (empty) the cache contents.
+
+Attacker can measure the difference in timing between cache hits and misses.
+
+Flush+Reload: requires shared memory, attacker directly flashes a line from the victim's memory.
+
+### Exercise 3.2
 
 The `flush-and-reload.c` file contains the following function:
 
@@ -158,7 +205,7 @@ Using the Flush+Reload technique, we need to take the following steps:
 
 Of course, the above process could be executed with `votes_b` in place of `votes_a` . Since there are only two candidates, it suffices to check whether one of the two variables has been accessed.
 
-## Exercise 3.3
+### Exercise 3.3
 
 In order to draw a conclusion in the above example, we need to have an idea about what a "low" and "high" access time is. To make our job easier, we can just measure the access time of both the `votes_a` and `votes_b` variables and see which one takes considerably less time: that one is the one the user voted for.
 
@@ -195,7 +242,15 @@ $ ./fnr
 A avg: 419, B avg: 120
 ```
 
----
+# Cache organization
+
+Direct mapping
+
+Set-associativity
+
+## More advanced cache attacks
+
+Utilizing knowledge about the cache organization to attack across protection domains
 
 ## Exercise 4.1
 
