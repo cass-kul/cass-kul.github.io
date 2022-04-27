@@ -6,6 +6,13 @@ nav_exclude: true
 search_exclude: true
 has_children: false
 has_toc: false
+gallery_images:
+    - /exercises/7-cache/flush_reload/flush_reload1.png
+    - /exercises/7-cache/flush_reload/flush_reload2.png
+    - /exercises/7-cache/flush_reload/flush_reload3.png
+    - /exercises/7-cache/flush_reload/flush_reload4.png
+    - /exercises/7-cache/flush_reload/flush_reload5.png
+    - /exercises/7-cache/flush_reload/flush_reload6.png
 ---
 
 ## Table of contents
@@ -24,29 +31,91 @@ The solutions contain a lot of information, some of it probably should be moved 
 
 # Introduction
 
-Over the years, a performance gap has formed between the processor and the memory unit, forming a
-bottleneck for the performance of the computer in general.
+Over the years, a performance gap has formed between the processor and the
+memory unit. As show in the figure below, processor performance has been
+increasing much faster than memory performance. Consequently, the processor has
+become much faster than the memory, forming a bottleneck for the performance
+of the computer in general.
 
-To solve this issue, caches were introduced. These are not as fast as registers, but can include more data,
-and are much faster than the main memory.
+![Illustration of the performance gap between memory and CPU](/exercises/7-cache/performance_gap.png){: .center-image }
 
-A lot smaller though. There is even a hierarchy of caches in most commercial CPUs: L1I, L1D, L2, LLC.
+To solve this issue, **caches** were introduced. Cache memories are not as fast
+as registers, but can include more data, and are much faster than the main
+memory. However, they are also more expensive than the main memory and therefore
+a lot smaller. Most commercial CPU typically offer a hierarchy of cache: Level 1
+cache (L1) is the fastest but also the smallest cache, Level 2 cache (L2) is
+slower but larger, and Last Level Cache LLC which is the slowest but the
+fastest. 
 
-# Locality principle
+![Illustration of memory hierarchy in a computer](/exercises/7-cache/memory_hierarchy.png){: .center-image }
+
+Caches can be local to a single processor core (this is typically for case for
+L1 and L2 caches), or shared across multiple cores. Finally, the L1 cache is
+usually split into an instruction cache (L1D), which contains program
+instructions, and a data cache (L1I), which contains program data.
+
+![Illustration of cache hierarchy in a computer](/exercises/7-cache/cache_hierarchy.png){: .center-image }
+
+
+<!-- | ![Illustration of memory hierarchy in a computer](/exercises/7-cache/memory_hierarchy.png){: .center-image } | ![Illustration of cache hierarchy in a computer](/exercises/7-cache/cache_hierarchy.png){: .center-image } | -->
+
+## Locality principle
 
 Programs usually access a relatively small portion of the address space at a time.
 
-Temporal locality (same value again) and spatial locality (nearby variables, array members). Transfer entire blocks (multiple contiguous words) into the cache at once.
+In particular, when a program accesses a memory location, it is likely to access
+it again in a near future. This is called **temporal locality**. Hence a memory
+location that is accessed by a program can be cached to speed up future
+accesses!
 
-# Terminology
+![Illustration of temporal locality](/exercises/7-cache/temporal_locality.png){:
+.center-image }
 
-Cache miss: on first use, value not in cache
+Additionally, when a program accesses a memory location, it is likely to access
+nearby memory location in a near future (think for instance about nearby
+variables in the stack or array members). This is called **spatial locality**.
+Hence when a memory location is accessed, we can transfer entire blocks
+(multiple contiguous words) into the cache at once.
 
-Cache hit: value already in cache, no need to consult the DRAM.
+![Illustration of temporal locality](/exercises/7-cache/spatial_locality.png){:
+.center-image }
 
-Hit rate, miss rate
+By exploiting these two locality principles, cache can result in a huge
+performance gain, even though they are small.
+
+
+## Terminology
+Consider a program that access a memory address: `lw x0, 0x10010000`.
+
+We say that we have a **cache miss** if the address `0x10010000` is not in the
+cache, (for instance if it is the first time it is accessed by the programs). In
+that case, the value is requested from the DRAM and the memory access is *slow*.
+The value is then placed in the cache for later use (following the temporal
+locality principle).
+
+We say that we have a **cache hit** if the address `0x10010000` is in the cache.
+In this case, the corresponding value is directly served from the cache and the
+memory access is *fast*.
+
+Hit rate, miss rate? TODO
 
 # Timing attacks
+Because caches introduce *timing variations* based on the memory accesses of a
+program, an attacker use timing to infer which memory addresses are accessed by
+a victim! In particular, on shared architecture (like for instance a remote
+server shared between multiple users), an attacker can *monitor the state of the
+cache* (by observing cache hits and misses) to infer which cache lines are
+accesses by a victim. If the memory addresses accessed by the victim depend on
+secret data, the attacker can ultimately infer information about these secret
+data, leading to critical security vulnerabilities. 
+
+Attacks that exploit the *state of the cache* as a way to leak secret data, are
+called **cache attacks**. They are part of a more general class of attacks,
+called **timing attacks**, which exploit *timing variations* of a system to
+leak secret data.
+
+> :crystal_ball: We will see two different examples of cache attacks later in the session.
+> But first, let's illustrate timing attack with some exercises.
 
 TODO!!! Do we want to obscure the secret a little bit in the header by e.g., xoring together two numbers
 that make up the key, so that if someone accidentally opens it, they don't get spoiled?
@@ -171,15 +240,30 @@ Enter super secret password ('q' to exit): 524
 time (med clock cycles): 1342
 ```
 
-## Timing attacks on the cache
+## Basic cache attack: Flush+Reload
+CPU offer instruction to flush the cache that can be abused by an attacker to
+mount a cache attacks called **Flush+Reload**.
 
-Can we use timing differences in the cache to exploit programs?
+We illustrate Flush+Reload with a step-by-step example:
+1. Consider that an attacker and a victim share some memory so that a variable
+   `a` is accessible to both the attacker and a victim;
+2. The attacker flushes the address `&a` from the cache;
+3. The attacker let the victim execute. Assuming `secret = 1`, the victim
+   requests the address `&a`, which produces a cache miss;
+4. The address `&a` is then requested from DRAM and placed in the cache.
+5. The atttacker can try to access again the address `&a` and *timea the memory
+   access*. If the access is fast (cache hit) then the attacker can infer that
+   the value has been accessed by the victim, and therefore that `secret = 1`.
+6. Alternatively, the atttacker can try to access the variable `b`. Because the
+   access is slow (cache miss), the attacker can infer that the value has *not*
+   been accessed by the victim, and again conclude that `secret = 1`.
+   
+{% include gallery.html images=page.gallery_images  ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
 
-The CPU allows us to flush (empty) the cache contents.
-
-Attacker can measure the difference in timing between cache hits and misses.
-
-Flush+Reload: requires shared memory, attacker directly flashes a line from the victim's memory.
+Flush+Reload is a *very reliable and easy* attack as it does not require
+knowledge of internal cache organization. However, it requires a *shared memory*
+between an attacker and its victim in order to flush the victim's cache lines
+and hence is only applicable in a limited number of scenarios.
 
 ### Exercise 3.2
 
@@ -242,13 +326,15 @@ $ ./fnr
 A avg: 419, B avg: 120
 ```
 
-# Cache organization
+# Cache placement policies
+The cache placement policy determines *where* a memory address should be placed
+in the cache.
 
-Direct mapping
+## Direct mapping
 
-Set-associativity
+## Set-associativity
 
-## More advanced cache attacks
+## More advanced cache attacks: Prime+Probe
 
 Utilizing knowledge about the cache organization to attack across protection domains
 
