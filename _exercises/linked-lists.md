@@ -102,7 +102,7 @@ Each function will return a [status code](#error-codes) indicating whether an er
 > :bulb: **Tip**: In assembly, you can use `malloc` and `free` as defined in the `malloc.asm` file. For `malloc`, pass the number of *words* to allocate (i.e. 1 when you want to allocate 4 bytes), and for `free` pass the address that should be freed. `malloc` will return the address that was allocated (or `NULL`, indicating insufficient memory), while `free` will return nothing.
 
 * ```struct List *list_create();``` <br>
-  Creates a new list by allocating a `struct List` and returning the address of this list. In this function, you don't need to worry about error handling yet.
+  Creates a new list by allocating a `struct List` and returning the address of this list. In C, you can assume that `malloc` will work correctly, but in RISC-V you should return `OUT_OF_MEMORY` if `malloc` fails!
 * ```status list_append(struct List *list, int value);``` <br>
   Appends a value to the end of an existing list by allocating a new `ListElement` struct and adding it to the chain. Returns either `OK`, `OUT_OF_MEMORY`, or `UNINITIALIZED_LIST`.
 * ```int list_length(struct List *list);``` <br>
