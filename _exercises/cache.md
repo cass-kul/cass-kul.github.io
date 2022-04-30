@@ -123,12 +123,14 @@ leak secret data.
 > :crystal_ball: We will see two different examples of cache attacks later in the session.
 > But first, let's illustrate basic timing attack with some exercises.
 
-TODO!!! Do we want to obscure the secret a little bit in the header by e.g., xoring together two numbers
-that make up the key, so that if someone accidentally opens it, they don't get spoiled?
-
 TODO!!! Do the programs in this session still work on the M1?
 
-### Exercise 2.1
+### Exercise 2: Mount a timing attack
+First, download the archive [code.zip](/exercises/7-cache/code.zip), which
+contains the program for this exercise (and the next one). The file `passwd.c`
+contains the code of a password checker. In this exercise, you have to infer the
+value of the password using timing attacks (the password, given in `secret.h` so
+for the sake of the exercise, please do not open the file).
 
 We start by compiling the downloaded program and running it with an arbitrary input.
 
@@ -150,8 +152,7 @@ Enter super secret password ('q' to exit): 32349
 time (med clock cycles): 68
 ```
 
-### Exercise 2.2
-
+#### Exercise 2.1: Guess the length
 In the program ( `passwd.c` ), we see that the printed execution time is the calculated median over 100, 000 measurements:
 
 ``` c
@@ -169,8 +170,6 @@ med = diff[NUM_SAMPLES/2];
 
 Even with this measure, we might notice different time values for the same inputs. This happens because the timing of one execution depends on many factors. Modern processors include a wide range of microarchitectural optimizations, such as instruction and data caches, pipelining, branch prediction, dynamic frequency scaling, out-of-order execution, etc. The execution can also be delayed by external events, such as an interrupt that is handled by the operating system. Taking the median instead of the average reduces the effect of such outliers.
 
-### Exercise 2.3
-
 It's time to guess the password. First, we can notice that the program exits immediately if we provide a password with an incorrect length.
 
 ``` c
@@ -182,82 +181,101 @@ If we guess the length incorrectly, the program exits. If we guess it correctly,
 
 This means that based on the execution time, we can tell whether we guessed the length correctly: the program will take longer to execute in that case.
 
-``` bash
-Enter super secret password ('q' to exit): 0
-time (med clock cycles): 68
-Enter super secret password ('q' to exit): 00
-time (med clock cycles): 70
-Enter super secret password ('q' to exit): 000
-time (med clock cycles): 372
-```
+> :fire: Use timing measurements to guess the length of the password.
 
-Now we know that the password consists of 3 characters. Let us examine how the program compares the individual characters:
+<!-- ``` bash -->
+<!-- Enter super secret password ('q' to exit): 0 -->
+<!-- time (med clock cycles): 68 -->
+<!-- Enter super secret password ('q' to exit): 00 -->
+<!-- time (med clock cycles): 70 -->
+<!-- Enter super secret password ('q' to exit): 000 -->
+<!-- time (med clock cycles): 372 -->
+<!-- ``` -->
+
+<!-- Now we know that the password consists of 3 characters. -->
+
+
+#### Exercise 2.1: Guess the digits
+Let us examine how the program compares the individual characters:
 
 ``` c
 for (i = 0; i < user_len; i++)
 {
-    if (user[i] != SECRET_PWD[i])
+    if (user[i] != secret_pwd[i])
         return 0;
 }
 ```
 
 The same principle applies here: the program quits at the first character that does not match. This means that the longer the execution takes, the more characters at the start of the password we managed to guess correctly.
 
-``` bash
-Enter super secret password ('q' to exit): 200
-time (med clock cycles): 372
-Enter super secret password ('q' to exit): 300
-time (med clock cycles): 372
-Enter super secret password ('q' to exit): 400
-time (med clock cycles): 372
-Enter super secret password ('q' to exit): 500
-time (med clock cycles): 782
-```
+This way, we can guess the characters one-by-one, starting from the start of the
+string. Assuming that the password is a pin made of `N` digits, this means that
+to guess the entire password, we need a total of `N * 10` guesses. Compare this
+with `10^N` guesses if we could not guess one-by-one, but would have to iterate
+over every possible combination!
 
-``` bash
-Enter super secret password ('q' to exit): 510
-time (med clock cycles): 784
-Enter super secret password ('q' to exit): 520
-time (med clock cycles): 1072
-```
+> :fire: Use timing measurements to guess the value of the password, one character at a time.
 
-This way, we can guess the characters one-by-one, starting from the start of the string. With a password that is 3 characters long, this means that to guess the entire password, we need a total of `3 * 10 = 30` guesses. Compare this with `10^3 = 1000` guesses if we could not guess one-by-one, but would have to iterate over every possible combination. Of course, for longer passwords, the effect is even more severe.
+<!-- ``` bash -->
+<!-- Enter super secret password ('q' to exit): 200 -->
+<!-- time (med clock cycles): 372 -->
+<!-- Enter super secret password ('q' to exit): 300 -->
+<!-- time (med clock cycles): 372 -->
+<!-- Enter super secret password ('q' to exit): 400 -->
+<!-- time (med clock cycles): 372 -->
+<!-- Enter super secret password ('q' to exit): 500 -->
+<!-- time (med clock cycles): 782 -->
+<!-- ``` -->
 
-``` bash
-Enter super secret password ('q' to exit): 522
-time (med clock cycles): 1070
-Enter super secret password ('q' to exit): 523
-time (med clock cycles): 1070
-Enter super secret password ('q' to exit): 524
---> You entered: '524'
- _______________
-< ACCESS ALLOWED >
- ---------------
-        \
-         \
-        .--.
-       |o_o |
-       |:_/ |
-      //   \ \
-     (|     | )
-    /'\_   _/`\
-    \___)=(___/
+<!-- ``` bash -->
+<!-- Enter super secret password ('q' to exit): 510 -->
+<!-- time (med clock cycles): 784 -->
+<!-- Enter super secret password ('q' to exit): 520 -->
+<!-- time (med clock cycles): 1072 -->
+<!-- ``` -->
 
-time (med clock cycles): 1342
-```
+<!-- ``` bash -->
+<!-- Enter super secret password ('q' to exit): 522 -->
+<!-- time (med clock cycles): 1070 -->
+<!-- Enter super secret password ('q' to exit): 523 -->
+<!-- time (med clock cycles): 1070 -->
+<!-- Enter super secret password ('q' to exit): 524 -->
+<!-- -\-> You entered: '524' -->
+<!--  _______________ -->
+<!-- < ACCESS ALLOWED > -->
+<!--  --------------- -->
+<!--         \ -->
+<!--          \ -->
+<!--         .--. -->
+<!--        |o_o | -->
+<!--        |:_/ | -->
+<!--       //   \ \ -->
+<!--      (|     | ) -->
+<!--     /'\_   _/`\ -->
+<!--     \___)=(___/ -->
+
+<!-- time (med clock cycles): 1342 -->
+<!-- ``` -->
 
 ## Basic cache attack: Flush+Reload
-CPU offer instruction to flush the cache that can be abused by an attacker to
-mount a cache attacks called **Flush+Reload**.
+Cache attack, just as the timing attack on the password checker illustrated
+above, exploit variations of execution time to infer secret data. By measuring
+the execution time of a *memory access*, an attacker can determine whether a
+memory access results in a *cache hit* or a *cache miss*. Using this
+information, the attacker can determine if a victim has accessed the same memory
+location!
 
-We illustrate Flush+Reload with a step-by-step example:
+Let us look at a basic cache attack, called Flush+Reload **Flush+Reload**.
+Flush+Reload rely on an instructions, offered by some CPUs, to *flush* the
+cache. We illustrate **Flush+Reload** with a step-by-step example (notice that
+each bullet number corresponds to a slide in the slideshow below):
 1. Consider that an attacker and a victim share some memory so that a variable
    `a` is accessible to both the attacker and a victim;
-2. The attacker flushes the address `&a` from the cache;
-3. The attacker let the victim execute. Assuming `secret = 1`, the victim
+2. **Flush:** the attacker flushes the address `&a` from the cache;
+3. **Victim execute:** The attacker let the victim execute. Assuming `secret = 1`, the victim
    requests the address `&a`, which produces a cache miss;
 4. The address `&a` is then requested from DRAM and placed in the cache;
-5. The atttacker tries to access again the address `&a` and *time the memory
+5. **Reload:** The attacker tries to access again the address `&a` and *time the memory
    access*. If the access is fast (cache hit) then the attacker can infer that
    the value has been accessed by the victim, and therefore that `secret = 1`;
 6. Alternatively, the attacker can try to access the variable `b`. Because the
@@ -271,9 +289,9 @@ knowledge of internal cache organization. However, it requires a *shared memory*
 between an attacker and its victim in order to flush the victim's cache lines
 and hence is only applicable in a limited number of scenarios.
 
-### Exercise 3.2
-
-The `flush-and-reload.c` file contains the following function:
+### Exercise 3: Mount a Flush+Reload attack
+The `flush-and-reload.c` of the [code.zip](/exercises/7-cache/code.zip) archive
+file contains the following function:
 
 ``` c
 void secret_vote(char candidate)
@@ -285,52 +303,77 @@ void secret_vote(char candidate)
 }
 ```
 
-We want to detect which of the candidates the user voted for. To increase the vote count, the program first has to load the current number of votes from memory. This is the access we will try to detect. Based on whether `votes_a` or `votes_b` has been fetched, we know which candidate got the vote.
+We want to detect which of the candidates the user voted for. To increase the
+vote count for candidate `a` or for candidate `b`, the program first has to load
+the corresponding current number of votes from memory (i.e. `votes_a` or
+`votes_b`). This is the access we will try to detect. Based on whether `votes_a`
+or `votes_b` has been accessed, we know which candidate got the vote.
+
+> :fire: Detail the three steps to mount a successful flush + reload attack
+> onthis program.
+
+<details closed markdown="block">
+  <summary>
+    Solution
+  </summary>
+  {: .text-gamma .text-blue-000 }
 
 Using the Flush+Reload technique, we need to take the following steps:
-
-1. Flush `votes_a` from the cache.
-2. Let the `secret_vote` function execute with a secret input. This will load the value of either `votes_a` or `votes_b` from memory, caching it in the process.
-3. After the execution is done, reload `votes_a`. If the access time is low, this signals a cache hit. A cache hit in turn indicates that the victim process has accessed `votes_a`, which means a vote for *candidate A*. On the other hand, if the access time is high, this means the value has not been cached, this is not the candidate the user voted for.
+1. Flush `votes_a` from the cache;
+2. Let the `secret_vote` function execute with a secret inpu `candidate`. This
+   will load the value of either `votes_a` or `votes_b` from memory, and place
+   it in the cache;
+3. After the execution is done, reload `votes_a`. If the access time is low,
+   this signals a cache hit. A cache hit in turn indicates that the victim
+   process has accessed `votes_a`, which means a vote for *candidate A*. On the
+   other hand, if the access time is high, this means the value has not been
+   cached, this is not the candidate the user voted for.
 
 Of course, the above process could be executed with `votes_b` in place of `votes_a` . Since there are only two candidates, it suffices to check whether one of the two variables has been accessed.
+</details>
 
-### Exercise 3.3
+Edit the `main` function in `flush-and-reload.c` to implement the missing
+*flush* and *reload* attacker phases. You can use respectively the provided
+`void flush(void *adrs)` and `int reload(void *adrs)` functions. The latter
+returns the CPU cycle timing difference needed for the reload. If necessary,
+compensate for timing noise from modern processor optimizations by repeating the
+experiment (steps 1-3 above) a sufficient amount of times and taking the median
+or average.
 
-In order to draw a conclusion in the above example, we need to have an idea about what a "low" and "high" access time is. To make our job easier, we can just measure the access time of both the `votes_a` and `votes_b` variables and see which one takes considerably less time: that one is the one the user voted for.
+<!-- In order to draw a conclusion in the above example, we need to have an idea about what a "low" and "high" access time is. To make our job easier, we can just measure the access time of both the `votes_a` and `votes_b` variables and see which one takes considerably less time: that one is the one the user voted for. -->
 
-Using the provided functions, this is simply:
+<!-- Using the provided functions, this is simply: -->
 
-``` c
-flush(&votes_a);
-flush(&votes_b);
-secret_vote('b');
-time_a = reload(&votes_a);
-time_b = reload(&votes_b);
-```
+<!-- ``` c -->
+<!-- flush(&votes_a); -->
+<!-- flush(&votes_b); -->
+<!-- secret_vote('b'); -->
+<!-- time_a = reload(&votes_a); -->
+<!-- time_b = reload(&votes_b); -->
+<!-- ``` -->
 
-Similarly to the previous example, we will compensate for variations in the timings by averaging the measurements over multiple executions. The final code is thus:
+<!-- Similarly to the previous example, we will compensate for variations in the timings by averaging the measurements over multiple executions. The final code is thus: -->
 
-``` c
-int SAMPLES = 1000;
-unsigned long long time_a = 0, time_b = 0;
-for (int i = 0; i < SAMPLES; ++i) {
-    flush(&votes_a);
-    flush(&votes_b);
-    secret_vote('b');
-    time_a += reload(&votes_a);
-    time_b += reload(&votes_b);
-}
-printf("A avg: %llu, B avg: %llu\n", time_a / SAMPLES, time_b / SAMPLES);
-```
+<!-- ``` c -->
+<!-- int SAMPLES = 1000; -->
+<!-- unsigned long long time_a = 0, time_b = 0; -->
+<!-- for (int i = 0; i < SAMPLES; ++i) { -->
+<!--     flush(&votes_a); -->
+<!--     flush(&votes_b); -->
+<!--     secret_vote('b'); -->
+<!--     time_a += reload(&votes_a); -->
+<!--     time_b += reload(&votes_b); -->
+<!-- } -->
+<!-- printf("A avg: %llu, B avg: %llu\n", time_a / SAMPLES, time_b / SAMPLES); -->
+<!-- ``` -->
 
-This will provide us with an output from which it is clear to see which candidate has been voted for:
+<!-- This will provide us with an output from which it is clear to see which candidate has been voted for: -->
 
-``` bash
-$ gcc flush-and-reload.c -o fnr
-$ ./fnr
-A avg: 419, B avg: 120
-```
+<!-- ``` bash -->
+<!-- $ gcc flush-and-reload.c -o fnr -->
+<!-- $ ./fnr -->
+<!-- A avg: 419, B avg: 120 -->
+<!-- ``` -->
 
 # Cache placement policies
 The cache placement policy determines *where* a memory address should be placed
