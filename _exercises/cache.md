@@ -473,7 +473,7 @@ Utilizing knowledge about the cache organization (i.e. placement policies and
 cache collisions), an attacker can perform cache attacks across protection
 domains!
 
-**Prime+Probe** is a cache attack that allows an attacker to infer information a
+**Prime+Probe** is a cache attack that allows an attacker to infer information
 a victim memory accesses without requiring shared memory (unlike Flush+Reload):
 1. Consider that an attacker and a victim executing on the same machine (but
    without shared memory). The victim has access to a variable `a` and the
