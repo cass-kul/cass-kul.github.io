@@ -6,13 +6,19 @@ nav_exclude: true
 search_exclude: true
 has_children: false
 has_toc: false
-gallery_images:
+flush_reload:
     - /exercises/7-cache/flush_reload/flush_reload1.png
     - /exercises/7-cache/flush_reload/flush_reload2.png
     - /exercises/7-cache/flush_reload/flush_reload3.png
     - /exercises/7-cache/flush_reload/flush_reload4.png
     - /exercises/7-cache/flush_reload/flush_reload5.png
     - /exercises/7-cache/flush_reload/flush_reload6.png
+prime_probe:
+    - /exercises/7-cache/prime_probe/prime_probe1.png
+    - /exercises/7-cache/prime_probe/prime_probe2.png
+    - /exercises/7-cache/prime_probe/prime_probe3.png
+    - /exercises/7-cache/prime_probe/prime_probe4.png
+    - /exercises/7-cache/prime_probe/prime_probe5.png
 ---
 
 ## Table of contents
@@ -250,15 +256,15 @@ We illustrate Flush+Reload with a step-by-step example:
 2. The attacker flushes the address `&a` from the cache;
 3. The attacker let the victim execute. Assuming `secret = 1`, the victim
    requests the address `&a`, which produces a cache miss;
-4. The address `&a` is then requested from DRAM and placed in the cache.
-5. The atttacker can try to access again the address `&a` and *timea the memory
+4. The address `&a` is then requested from DRAM and placed in the cache;
+5. The atttacker tries to access again the address `&a` and *time the memory
    access*. If the access is fast (cache hit) then the attacker can infer that
-   the value has been accessed by the victim, and therefore that `secret = 1`.
-6. Alternatively, the atttacker can try to access the variable `b`. Because the
+   the value has been accessed by the victim, and therefore that `secret = 1`;
+6. Alternatively, the attacker can try to access the variable `b`. Because the
    access is slow (cache miss), the attacker can infer that the value has *not*
    been accessed by the victim, and again conclude that `secret = 1`.
    
-{% include gallery.html images=page.gallery_images  ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
+{% include gallery.html images=page.flush_reload  ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
 
 Flush+Reload is a *very reliable and easy* attack as it does not require
 knowledge of internal cache organization. However, it requires a *shared memory*
@@ -371,7 +377,6 @@ the value `A0`, while the address `001001` corresponds to the value `A1`.
 ![Illustration of a direct mapped
 cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mapped_cache2.png){: .center-image }
 
-
 > :bulb: **Summary.**\\
 > A cache is made of 2^k sets (or cache lines), containing 2^b blocks.
 > A memory address (of size 32 bits) is composed of:
@@ -379,31 +384,73 @@ cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mappe
 > 2. an index (next k bits), which determine the cache set;
 > 3. a tag (remaining 32-(k+b) most significant bits), which determine whether
 > we have a cache miss or a cache hit.
+> Additionally, the cache contains a *Valid* bit, which indicates whether a
+> cache line is valid or not (e.g. in order to synchronize data across
+> different caches).
 
-![Summary of a direct mapped cache](/exercises/7-cache/summary_direct_mapped_cache_summary.png){: .center-image }
+![Summary of a direct mapped cache](/exercises/7-cache/direct_mapped_cache_summary.png){: .center-image }
 
 ## Set-associativity
+A limitation of direct-mapped caches is that there is only one block available
+in a set. Every time a new memory is referenced to the same set, the block is
+replaced is replaced, which causes conflict miss. Imagine for instance a program
+that accesses frequently addresses `000100` and `010100` in the above
+illustration. Because both address map to the same cache set (at index `01`),
+accessing `010100` evicts `000100` from the cache (and vice versa). Hence,
+accessing both addresses alternatively results in a sequence of cache miss,
+which causes a performance loss.
+
+To mitigate this problem, we can duplicate our cache structure into multiple
+**ways**, where a given address can be placed into any of the ways. We
+illustrate below a 2-way cache. Now, even though `000100` and `010100` map to
+the same cache set (at index `01`), they can be placed in two different way and
+can be in the cache at the same time!
+
+![Illustration of a 2-way set-associative cache](/exercises/7-cache/2-way_associative_cache.png){: .center-image }
+
+
+Finally, a **fully associative cache** is made of a *single cache set*
+containing multiple ways. Hence a memory address can occupy any of the ways and
+is solely identified with its tag (no need for an index because there is only
+one set!). Fully-associative caches ensure full utilization of the cache: a
+block is never evicted if the cache is not full. When the cache is full, the
+evicted line is determined by a replacement policy (e.g. the least recently used
+block is replaced). However, searching for an address in a fully associative
+cache is expensive: it takes time (and power) to iterate through all cache
+blocks and find a matching tag.
+
+> :bulb: Notice that a 1-way associative cache corresponds to a direct-mapped
+> cache. Hence, a n-way set-associative cache provides an interesting tradeoff
+> between a direct-mapped cache and a fully associative cache.
+
+![Illustration of a n-way set-associative cache](/exercises/7-cache/n-way_associative_cache.png){: .center-image }
 
 ## More advanced cache attacks: Prime+Probe
-Utilizing knowledge about the cache organization to attack across protection domains
+Utilizing knowledge about the cache organization (i.e. placement policies and
+cache collisions), an attacker can perform cache attacks across protection
+domains!
 
+**Prime+Probe** is a cache attack that allows an attacker to infer information a
+a victim memory accesses without requiring shared memory (unlike Flush+Reload):
+1. Consider that an attacker and a victim executing on the same machine (but
+   without shared memory). The victim has access to a variable `a` and the
+   attacker has access to a variable `c` such that `a` and `c` map to the same
+   cache line;
+2. The attacker evicts the address `&a` from the cache by accessing the address
+   `&c`;
+3. The attacker let the victim execute. Assuming `secret = 1`, the victim
+   requests the address `&a`, which produces a cache miss;
+4. The address `&a` is then requested from DRAM and placed in the cache,
+   evicting the attacker's data `c`;
+5. The atttacker tries to access again the address `&c` and *times the memory
+   access*. If the access is slow (cache miss) then the attacker can infer that
+   `a` has been accessed by the victim, and therefore that `secret = 1`;
+
+{% include additional_gallery.html images=page.prime_probe ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
+
+
+# TODO
 ## Exercise 4.1
-When two addresses map to the same cache line, and these addresses are accessed quickly in an alternating fashion, this leads to many cache misses, causing a performance loss. To mitigate this problem, we can duplicate our cache structure into multiple *ways*, where a given address can be placed into any of the ways. In this case, we have `A` number of ways.
-
-```
-
-             Way 1                            Way 2                               Way A
-+---+------------+------------+  +---+------------+------------+ ... +---+------------+------------+
-| V |    Tag     |    Data    |  | V |    Tag     |    Data    | ... | V |    Tag     |    Data    |
-+---+------------+------------+  +---+------------+------------+ ... +---+------------+------------+
-|   |            | .......... |  |   |            | .......... | ... |   |            | .......... |
-+---+------------+------------+  +---+------------+------------+ ... +---+------------+------------+
-|   |            |            |  |   |            |            | ... |   |            |            |
-+---+------------+------------+  +---+------------+------------+ ... +---+------------+------------+
-|   |            |            |  |   |            |            | ... |   |            |            |
-+---+------------+------------+  +---+------------+------------+ ... +---+------------+------------+
-```
-
 Another piece of information we are given is the cache data size, `S` bytes. This is the total size of all the data blocks, across all ways and sets.
 This already gives us enough information to calculate the number of sets. The total cache data size is `S` , this divided by the number of ways, `A` , gives us the data size of one way ( `= S/A` ). Dividing this with the block size, `B` , gives us the number of blocks in one way, which is the number of sets ( `= S/(A*B)` ).
 
