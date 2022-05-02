@@ -779,7 +779,7 @@ a victim memory accesses without requiring shared memory (unlike Flush+Reload):
    requests the address `&a`, which produces a cache miss;
 4. The address `&a` is then requested from DRAM and placed in the cache,
    evicting the attacker's data `c`;
-5. The atttacker tries to access again the address `&c` and *times the memory
+5. The attacker tries to access again the address `&c` and *times the memory
    access*. If the access is slow (cache miss) then the attacker can infer that
    `a` has been accessed by the victim, and therefore that `secret = 1`;
 
