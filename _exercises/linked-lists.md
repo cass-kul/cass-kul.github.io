@@ -9,6 +9,7 @@ has_toc: false
 ---
 
 <!-- TODO FOR NEXT YEAR: change uninitialized_list to empty_list -->
+<!-- TODO FOR NEXT YEAR: change assembly malloc function to take bytes and not words (to be same as C) -->
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -158,3 +159,24 @@ typedef enum {
 * `INDEX_OUT_OF_BOUNDS` occurs in functions that ask for an index parameter when that index is invalid (e.g. has a negative value).
 * `UNINITIALIZED_RETVAL` is used whenever a function provides a return value via a parameter. Thus, the function is supplied a pointer to which to write
 this return value. If that pointer points to `NULL`, return this error code.
+
+{% if site.solutions.show_session_6 %}
+
+# Partial solutions
+
+We provide a partial solution to the first two functions (`list-create` and `list-append`). These should help you to troubleshoot minor mistakes in your code if you are stuck. If you understand these two first functions, it should not be difficult for you to also implement the remaining functions.
+
+### list_create
+
+```armasm
+{% include_relative linked-lists/partial-solutions/list-create.asm %}
+```
+
+### list_append
+
+```armasm
+{% include_relative linked-lists/partial-solutions/list-append.asm %}
+```
+
+{% endif %}
+
