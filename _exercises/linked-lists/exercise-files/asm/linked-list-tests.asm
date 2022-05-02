@@ -138,10 +138,11 @@ list_create_test:
 	assert_not_null (a0)
 	
 	#EXTRA TEST - WHAT IF MALLOC RUNS OUT OF MEMORY (AND RETURNS 0)? HOW DOES YOUR FUNCTION BEHAVE?
+	# Hint: Your function should return OUT_OF_MEMORY (-2) in this case.
 	li t0, 1
 	sw t0, out_of_memory, t1
 	jal_and_check list_create
-	assert_null(a0)
+	assert_eqi(a0, OUT_OF_MEMORY)
 	sw zero, out_of_memory, t0
 	
 	lw ra, (sp)
