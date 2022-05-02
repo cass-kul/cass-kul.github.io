@@ -459,8 +459,10 @@ in the cache.
 
 ## Direct mapping
 
-Let us start with the structure of the cache. The cache is a table that contains
-multiple rows, these are called the **cache sets**. A cache set can include one or more cache blocks (a block is sometimes also called a cache line, which can be
+Let us start with the structure of the cache. In our examples, we consider
+byte-addressable memory, meaning that data is stored and accessed byte-per-byte
+(contrary to a word-addressable memory where data is stored word-per-word).
+The cache is a table that contains multiple rows, these are called the **cache sets**. A cache set can include one or more **cache blocks** (a block is sometimes also called a cache line, which can be
 slightly confusing in our representation, since a *cache set* is represented
 as a row [or line] in the cache table, which can contain multiple *cache lines*).
 
@@ -470,7 +472,7 @@ memory address to a *unique* block in the cache.
 Take for instance the cache model given below, where each cache set only
 contains a single block. Given a memory address, the index of the corresponding
 cache set is determined using the two least significant bits of the address (`index = adress %
-4`). Because multiple addresses map to a single cache line, the cache also needs
+4`). Because multiple addresses map to a single cache block, the cache also needs
 to keep track of a **tag**, corresponding to the most significant bits of the
 address. Therefore, given an address, the index determines where to look for the
 data in the cache and the tag indicates whether we have a cache hit or a cache
@@ -486,24 +488,22 @@ the tag in the cache at index `01` is `00`. However, accessing the address
 `0010` (i.e. tag=`00`, index=`10`) results in a cache miss because the tag in
 the cache at index `10` is `10`.
 
-The data in one cache line typically contains more than one byte. This is to
+The data in one cache block typically contains more than one byte. This is to
 enable spatial locality: when the data from a certain address is loaded, the
 contents of the neighboring memory locations are also placed in the cache, in
-case they are also accessed in the future. The size of one of these data blocks
-is called the *block size*.
+case they are also accessed in the future.
 
-For instance, in the cache model given below, each cache set is made of 4 blocks.
-The lower bits of the address correspond to the offset of the data in a cache
-set (i.e. which cache block). For instance, the address `001000` corresponds to
-the value `A0`, while the address `001001` corresponds to the value `A1`.
+For instance, in the cache model given below, the size of a block is 4 bytes. The
+lower bits of the address correspond to the offset of the data in a cache block.
+For instance, the address `001000` corresponds to the value `A0`, while the
+address `001001` corresponds to the value `A1`.
 
 ![Illustration of a direct mapped
 cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mapped_cache2.png){: .center-image }
 
 > :bulb: **Summary.**\\
-> A cache is made up of 2^k sets (or cache lines), containing 2^b blocks.
 > A memory address (of size 32 bits) is composed of:
-> 1. an offset (the least significant bits of *b*) which determines the cache block;
+> 1. an offset (the least significant bits of *b*) which determines the offset into one cache block;
 > 2. an index (the next k bits), which determines the cache set;
 > 3. a tag (the remaining 32-(k+b) most significant bits), which determines whether
 > we have a cache miss or a cache hit.
