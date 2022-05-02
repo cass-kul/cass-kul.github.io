@@ -634,7 +634,21 @@ Here is a series of address references given as word addresses: 2, 3, 11, 16, 21
 - direct-mapped cache with 4-word block size and total size of 16 words;
 - 2-way set-associative cache, 2-word block size. Total size of 16 words.
 
-Example table
+The following table shows an example format of a possible solution for a direct-mapped cache with 8 2-word blocks.
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code style='line-height: 1; font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;'>+---+----+----+
+| S | W0 | W1 |
++---+----+----+
+| 0 | -- | -- |
+| 1 |  2 | 19 |
+| 2 | -- | -- |
+| 3 | -- | -- |
+| 4 | -- | -- |
+| 5 | -- |  3 |
+| 6 | -- | -- |
+| 7 | -- | -- |
++---+----+----+
+</code></pre></div></div>
 
 {% if site.solutions.show_session_7 %}
 #### Solution
