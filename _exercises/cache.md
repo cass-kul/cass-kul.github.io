@@ -7,18 +7,19 @@ search_exclude: false
 has_children: false
 has_toc: false
 flush_reload:
-    - /exercises/7-cache/flush_reload/flush_reload1.png
-    - /exercises/7-cache/flush_reload/flush_reload2.png
-    - /exercises/7-cache/flush_reload/flush_reload3.png
-    - /exercises/7-cache/flush_reload/flush_reload4.png
-    - /exercises/7-cache/flush_reload/flush_reload5.png
-    - /exercises/7-cache/flush_reload/flush_reload6.png
+    - /exercises/7-cache/flush_reload/flush_reload1.svg
+    - /exercises/7-cache/flush_reload/flush_reload2.svg
+    - /exercises/7-cache/flush_reload/flush_reload3.svg
+    - /exercises/7-cache/flush_reload/flush_reload4.svg
+    - /exercises/7-cache/flush_reload/flush_reload5.svg
+    - /exercises/7-cache/flush_reload/flush_reload6.svg
 prime_probe:
-    - /exercises/7-cache/prime_probe/prime_probe1.png
-    - /exercises/7-cache/prime_probe/prime_probe2.png
-    - /exercises/7-cache/prime_probe/prime_probe3.png
-    - /exercises/7-cache/prime_probe/prime_probe4.png
-    - /exercises/7-cache/prime_probe/prime_probe5.png
+    - /exercises/7-cache/prime_probe/prime_probe.svg
+    - /exercises/7-cache/prime_probe/prime_probe1.svg
+    - /exercises/7-cache/prime_probe/prime_probe2.svg
+    - /exercises/7-cache/prime_probe/prime_probe3.svg
+    - /exercises/7-cache/prime_probe/prime_probe4.svg
+    - /exercises/7-cache/prime_probe/prime_probe5.svg
 ---
 
 ## Table of contents
