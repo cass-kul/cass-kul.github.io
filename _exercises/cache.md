@@ -636,18 +636,20 @@ Here is a series of address references given as word addresses: 2, 3, 11, 16, 21
 
 The following table shows an example format of a possible solution for a direct-mapped cache with 8 2-word blocks.
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code style='line-height: 1; font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;'>+---+----+----+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code style='line-height: 1; font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;'>
++---+----+----+
 | S | W0 | W1 |
 +---+----+----+
-| 0 | -- | -- |
-| 1 |  2 | 19 |
-| 2 | -- | -- |
-| 3 | -- | -- |
+| 0 | 48 | 49 |
+| 1 |  2 |  3 |
+| 2 |  4 |  5 |
+| 3 | 22 | 23 |
 | 4 | -- | -- |
-| 5 | -- |  3 |
-| 6 | -- | -- |
+| 5 | 26 | 27 |
+| 6 | 12 | 13 |
 | 7 | -- | -- |
 +---+----+----+
+2 (miss), 3 (hit) 11, 16, 21, 13, 64, 48, 19 (all misses), 11 (hit), 3, 22, 4, 27, 11 (all misses)
 </code></pre></div></div>
 
 {% if site.solutions.show_session_7 %}
