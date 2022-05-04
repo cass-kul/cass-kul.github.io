@@ -487,7 +487,7 @@ hit) if the tag at index `i` in the cache matches `t`. For instance, accessing
 the address `0001` (i.e. tag=`00`, index=`01`) results in a cache hit because
 the tag in the cache at index `01` is `00`. However, accessing the address
 `0010` (i.e. tag=`00`, index=`10`) results in a cache miss because the tag in
-the cache at index `10` is `10`.
+the cache at index `10` is `01`.
 
 The data in one cache block typically contains more than one byte. This is to
 enable spatial locality: when the data from a certain address is loaded, the
