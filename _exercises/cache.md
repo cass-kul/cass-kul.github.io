@@ -517,7 +517,7 @@ cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mappe
 ## Set-associativity
 
 A limitation of direct-mapped caches is that there is only one block available
-in a set. Every time a new memory address is referenced that is mapped to the same set, the block is replaced, which causes a cache miss. Imagine for instance a program
+in a set. Every time a new memory address is referenced that is mapped to the same set, the **entire block** is replaced, which causes a cache miss. Imagine for instance a program
 that frequently accesses addresses `000100` and `010100` in the above
 illustration. Because both addresses map to the same cache set (at index `01`),
 accessing `010100` evicts `000100` from the cache (and vice versa). Hence,
@@ -587,14 +587,14 @@ We are told that the memory is byte-addressable (one memory address corresponds 
 
 k                                    0
 +-----+-------------+----------------+
-| Tag | Block index | Index in block |
+| Tag |  Set index  | Index in block |
 +-----+-------------+----------------+
        log2(S/(A*B))        b
 ```
 
 The least significant bits select the addressed byte from the data block. This data block contains `2^b` bytes, which are addressable using exactly `b` bits (as the number `x` can be represented using `log_2(x)` bits).
 
-The next bits select the cache set (referred to as the block index). The same principle applies here. As we know that there are `S/(A*B)` sets, these can be indexed using `log_2(S/(A*B))` bits.
+The next bits select the cache set (referred to as the set index). The same principle applies here. As we know that there are `S/(A*B)` sets, these can be indexed using `log_2(S/(A*B))` bits.
 
 The remainder of the address is used as the *tag* in the cache. This part of the address makes sure that even if the lower bits of two addresses are equal, the value of one cannot be loaded from the cache when the other one is accessed (because the tag equality check is going to fail). The size of this tag is thus `k - log_2(S/(A*B)) - b` bits (the total length of the address minus the previous two fields).
 
@@ -678,7 +678,6 @@ The lowest 4 bits (the set index) give the result of `42 % 16 = 10` , while the 
 Using this method, we can place all of the addresses in the first exercise, by using the modulo operation to find the correct set. If a given address maps to a block that is already occupied, we simply replace the contained value (and in practice, we would also replace the tag to know which address the value belongs to).
 
 ```
-
 +----+----+
 |  S |  W |
 +----+----+
@@ -715,7 +714,6 @@ We can again use a trick: we see that the position of the address in the cache i
 The second thing we need to pay attention to is that when a word within a block is loaded, the neighboring values are also updated (cf. spatial locality). In other words, if address 1 is loaded from memory, the values of the memory locations of 0-3 are all loaded into the block in set 1.
 
 ```
-
 +---+----+----+----+----+
 | S | W0 | W1 | W2 | W3 |
 +---+----+----+----+----+
@@ -734,7 +732,6 @@ In the third exercise, we have a 2-word block size, so the last bit of the addre
 4 sets can be indexed with 2 bits, so in total we use 3 bits of the address for indexing, we can take `address % 8` to determine which set and word an address belongs to. The choice of block within the set is down to the replacement strategy we use. Once again, we also need to make sure to only replace full blocks, not just one word in the block.
 
 ```
-
 +---+---+----+----+
 | S | B | W0 | W1 |
 +---+---+----+----+
