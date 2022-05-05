@@ -89,7 +89,7 @@ Insert element (address): <input type="number" placeholder="Address" id="address
 # Introduction
 
 Over the years, a performance gap has formed between the processor and the
-memory unit. As show in the figure below, processor performance has been
+memory unit. As shown in the figure below, processor performance has been
 increasing much faster than memory performance. Consequently, the processor has
 become much faster than the memory, forming a bottleneck for the performance
 of the computer in general.
@@ -144,7 +144,7 @@ performance gain, even though they are small.
 
 ## Terminology
 
-Consider a program that access a memory address: `lw t0, 0x10010000`.
+Consider a program that accesses a memory address: `lw t0, 0x10010000`.
 
 We say that we have a **cache miss** if the address `0x10010000` is not in the
 cache (for instance if it is the first time it is accessed by the program). In
@@ -158,21 +158,21 @@ memory access is *fast*.
 
 We can express the performance of the caching algorithm with the **hit rate**,
 which is the number of cache hits divided by the total number of memory accesses.
-We can also talk about the **miss rate**, which is equal to *1 - hit rate*, or
-*cache misses / total accesses*.
+We can also talk about the **miss rate**, which is equal to *(1 - hit rate)*, or
+*(cache misses / total accesses)*.
 
 # Timing attacks
 
 Caches introduce *timing variations* based on the memory accesses of a
-program. This mean that an attacker can use timing to infer which memory addresses are accessed by
+program. This means that an attacker can use timing to infer which memory addresses are accessed by
 a victim program! In particular, on shared architectures (for instance a remote
 server shared between multiple users), an attacker can *monitor the state of the
 cache* (by observing cache hits and misses) to infer which cache lines are
-accesses by a victim. If the memory addresses accessed by the victim depend on
+accessed by a victim. If the memory addresses accessed by the victim depend on
 secret data, the attacker can ultimately infer information about this secret
 data, leading to critical security vulnerabilities.
 
-Attacks that exploit the *state of the cache* as a way to leak secret data, are
+Attacks that exploit the *state of the cache* as a way to leak secret data are
 called **cache attacks**. They are part of a more general class of attacks,
 called **timing attacks**, which exploit *timing variations* of a system to
 leak secret data.
@@ -330,7 +330,7 @@ information, the attacker can determine if a victim has accessed the same memory
 location!
 
 Let us look at a basic cache attack, called **Flush+Reload**.
-Flush+Reload relies on an instruction, offered by some CPUs, to *flush* (remove all data from) the
+Flush+Reload relies on an instruction, offered by some CPUs, to *flush* (remove data from) the
 cache. We illustrate **Flush+Reload** with a step-by-step example (notice that
 each item number corresponds to a slide in the slideshow below):
 1. Consider that an attacker and a victim share some memory so that a variable
@@ -518,7 +518,7 @@ cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mappe
 A limitation of direct-mapped caches is that there is only one block available
 in a set. Every time a new memory address is referenced that is mapped to the same set, the block is replaced, which causes a cache miss. Imagine for instance a program
 that frequently accesses addresses `000100` and `010100` in the above
-illustration. Because both address map to the same cache set (at index `01`),
+illustration. Because both addresses map to the same cache set (at index `01`),
 accessing `010100` evicts `000100` from the cache (and vice versa). Hence,
 accessing both addresses in an alternating fashion results in a sequence of cache misses,
 which causes a performance loss.
@@ -556,7 +556,7 @@ out what the following quantities are in terms of S, B, A, b and k:
 
 - the number of sets in the cache;
 - the number of index bits in the address;
-- the number of bits to implement the cache.
+- the number of bits needed to implement the cache.
 
 {% if site.solutions.show_session_7 %}
 #### Solution
