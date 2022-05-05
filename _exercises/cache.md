@@ -802,10 +802,10 @@ victim accesses during the “probe” phase?
 
 ### OPTIONAL: Exercise 8
 
-Consider a processor with a 32 bits addressing mode and a direct mapped cache, with a 1-word
-block size and a total size of 16 blocks. First calculate index and tag address bits, as in Exercise 4.2 above. Say that
+Consider a processor with a 32-bit addressing mode and a direct mapped cache, with a 1-word
+block size and a total size of 16 blocks. First calculate index and tag address bits, as in [Exercise 4](#exercise-4) above. Say that
 all memory addresses in the range [0, 100[ belong to the victim, whereas the attacker owns addresses in the range[100, 232[. The victim performs a series of address references given as word addresses: either (2, 3, 11, 16, 21, 13,
-64, 48, 19, 11, 3, 22, 4, 27, 11) if secret=1, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, 70, 36, 7, 91, 75) if secret=0.
+64, 48, 19, 11, 3, 22, 4, 27, 11) if `secret=1`, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, 70, 36, 7, 91, 75) if `secret=0`.
 Construct a memory access sequence to be performed by an attacker during the “prime” phase, in order to learn
 the victim’s secret in the “probe” phase later on.
 
