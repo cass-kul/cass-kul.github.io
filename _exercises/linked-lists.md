@@ -114,9 +114,11 @@ Get the value at position index in an existing list. Store this value at the add
 Prints all elements of the list to the console. Returns either `OK` or `UNINITIALIZED_LIST`. This function is not tested by the test suites.
 * ```status list_remove_item(struct List *list, int index);``` <br>
 Remove the item with the provided index from the list. Returns either `OK`, `INDEX OUT OF BOUND`, or `UNINITIALIZED_LIST`.
-* ```status list_insert(struct List *list, int index, int value);```
-Insert an element wtih the provided value at the provided index in the list. Thus, executing with index `0` should insert the new element in the
+* ```status list_insert(struct List *list, int index, int value);``` <br>
+Insert an element with the provided value at the provided index in the list. Thus, executing with index `0` should insert the new element in the
 front of the list, and so forth. Returns either `OK`, `INDEX_OUT_OF_BOUNDS`, `UNINITIALIZED_LIST`, or `OUT_OF_MEMORY`.
+* ```status list_delete(struct List *list);``` <br>
+Frees all allocated memory that was used for the list (all items and the list itself). Returns either `OK` or `UNINITIALIZED_LIST`.
 
 > :bulb: **Tip**: Before translating a complex function to RISC-V it might be a good idea to explicitly write down (in comments) which registers you will
 > allocate to which variables. This makes it much easier to keep track of sometimes very hard to read RISC-V code. It might make your life a lot easier if you have to fix a bug at a later time.
@@ -179,4 +181,3 @@ We provide a partial solution to the first two functions (`list-create` and `lis
 ```
 
 {% endif %}
-

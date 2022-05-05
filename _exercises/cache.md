@@ -90,7 +90,7 @@ Insert element (address): <input type="number" placeholder="Address" id="address
 # Introduction
 
 Over the years, a performance gap has formed between the processor and the
-memory unit. As show in the figure below, processor performance has been
+memory unit. As shown in the figure below, processor performance has been
 increasing much faster than memory performance. Consequently, the processor has
 become much faster than the memory, forming a bottleneck for the performance
 of the computer in general.
@@ -145,7 +145,7 @@ performance gain, even though they are small.
 
 ## Terminology
 
-Consider a program that access a memory address: `lw t0, 0x10010000`.
+Consider a program that accesses a memory address: `lw t0, 0x10010000`.
 
 We say that we have a **cache miss** if the address `0x10010000` is not in the
 cache (for instance if it is the first time it is accessed by the program). In
@@ -159,21 +159,21 @@ memory access is *fast*.
 
 We can express the performance of the caching algorithm with the **hit rate**,
 which is the number of cache hits divided by the total number of memory accesses.
-We can also talk about the **miss rate**, which is equal to *1 - hit rate*, or
-*cache misses / total accesses*.
+We can also talk about the **miss rate**, which is equal to *(1 - hit rate)*, or
+*(cache misses / total accesses)*.
 
 # Timing attacks
 
 Caches introduce *timing variations* based on the memory accesses of a
-program. This mean that an attacker can use timing to infer which memory addresses are accessed by
+program. This means that an attacker can use timing to infer which memory addresses are accessed by
 a victim program! In particular, on shared architectures (for instance a remote
 server shared between multiple users), an attacker can *monitor the state of the
 cache* (by observing cache hits and misses) to infer which cache lines are
-accesses by a victim. If the memory addresses accessed by the victim depend on
+accessed by a victim. If the memory addresses accessed by the victim depend on
 secret data, the attacker can ultimately infer information about this secret
 data, leading to critical security vulnerabilities.
 
-Attacks that exploit the *state of the cache* as a way to leak secret data, are
+Attacks that exploit the *state of the cache* as a way to leak secret data are
 called **cache attacks**. They are part of a more general class of attacks,
 called **timing attacks**, which exploit *timing variations* of a system to
 leak secret data.
@@ -331,7 +331,7 @@ information, the attacker can determine if a victim has accessed the same memory
 location!
 
 Let us look at a basic cache attack, called **Flush+Reload**.
-Flush+Reload relies on an instruction, offered by some CPUs, to *flush* (remove all data from) the
+Flush+Reload relies on an instruction, offered by some CPUs, to *flush* (remove data from) the
 cache. We illustrate **Flush+Reload** with a step-by-step example (notice that
 each item number corresponds to a slide in the slideshow below):
 1. Consider that an attacker and a victim share some memory so that a variable
@@ -487,7 +487,7 @@ hit) if the tag at index `i` in the cache matches `t`. For instance, accessing
 the address `0001` (i.e. tag=`00`, index=`01`) results in a cache hit because
 the tag in the cache at index `01` is `00`. However, accessing the address
 `0010` (i.e. tag=`00`, index=`10`) results in a cache miss because the tag in
-the cache at index `10` is `10`.
+the cache at index `10` is `01`.
 
 The data in one cache block typically contains more than one byte. This is to
 enable spatial locality: when the data from a certain address is loaded, the
@@ -517,9 +517,9 @@ cache where a cache set contains 2 cache blocks](/exercises/7-cache/direct_mappe
 ## Set-associativity
 
 A limitation of direct-mapped caches is that there is only one block available
-in a set. Every time a new memory address is referenced that is mapped to the same set, the block is replaced, which causes a cache miss. Imagine for instance a program
+in a set. Every time a new memory address is referenced that is mapped to the same set, the **entire block** is replaced, which causes a cache miss. Imagine for instance a program
 that frequently accesses addresses `000100` and `010100` in the above
-illustration. Because both address map to the same cache set (at index `01`),
+illustration. Because both addresses map to the same cache set (at index `01`),
 accessing `010100` evicts `000100` from the cache (and vice versa). Hence,
 accessing both addresses in an alternating fashion results in a sequence of cache misses,
 which causes a performance loss.
@@ -557,7 +557,7 @@ out what the following quantities are in terms of S, B, A, b and k:
 
 - the number of sets in the cache;
 - the number of index bits in the address;
-- the number of bits to implement the cache.
+- the number of bits needed to implement the cache.
 
 {% if site.solutions.show_session_7 %}
 #### Solution
@@ -587,14 +587,14 @@ We are told that the memory is byte-addressable (one memory address corresponds 
 
 k                                    0
 +-----+-------------+----------------+
-| Tag | Block index | Index in block |
+| Tag |  Set index  | Index in block |
 +-----+-------------+----------------+
        log2(S/(A*B))        b
 ```
 
 The least significant bits select the addressed byte from the data block. This data block contains `2^b` bytes, which are addressable using exactly `b` bits (as the number `x` can be represented using `log_2(x)` bits).
 
-The next bits select the cache set (referred to as the block index). The same principle applies here. As we know that there are `S/(A*B)` sets, these can be indexed using `log_2(S/(A*B))` bits.
+The next bits select the cache set (referred to as the set index). The same principle applies here. As we know that there are `S/(A*B)` sets, these can be indexed using `log_2(S/(A*B))` bits.
 
 The remainder of the address is used as the *tag* in the cache. This part of the address makes sure that even if the lower bits of two addresses are equal, the value of one cannot be loaded from the cache when the other one is accessed (because the tag equality check is going to fail). The size of this tag is thus `k - log_2(S/(A*B)) - b` bits (the total length of the address minus the previous two fields).
 
@@ -678,7 +678,6 @@ The lowest 4 bits (the set index) give the result of `42 % 16 = 10` , while the 
 Using this method, we can place all of the addresses in the first exercise, by using the modulo operation to find the correct set. If a given address maps to a block that is already occupied, we simply replace the contained value (and in practice, we would also replace the tag to know which address the value belongs to).
 
 ```
-
 +----+----+
 |  S |  W |
 +----+----+
@@ -715,7 +714,6 @@ We can again use a trick: we see that the position of the address in the cache i
 The second thing we need to pay attention to is that when a word within a block is loaded, the neighboring values are also updated (cf. spatial locality). In other words, if address 1 is loaded from memory, the values of the memory locations of 0-3 are all loaded into the block in set 1.
 
 ```
-
 +---+----+----+----+----+
 | S | W0 | W1 | W2 | W3 |
 +---+----+----+----+----+
@@ -734,7 +732,6 @@ In the third exercise, we have a 2-word block size, so the last bit of the addre
 4 sets can be indexed with 2 bits, so in total we use 3 bits of the address for indexing, we can take `address % 8` to determine which set and word an address belongs to. The choice of block within the set is down to the replacement strategy we use. Once again, we also need to make sure to only replace full blocks, not just one word in the block.
 
 ```
-
 +---+---+----+----+
 | S | B | W0 | W1 |
 +---+---+----+----+
@@ -802,10 +799,10 @@ victim accesses during the “probe” phase?
 
 ### OPTIONAL: Exercise 8
 
-Consider a processor with a 32 bits addressing mode and a direct mapped cache, with a 1-word
-block size and a total size of 16 blocks. First calculate index and tag address bits, as in Exercise 4.2 above. Say that
+Consider a processor with a 32-bit addressing mode and a direct mapped cache, with a 1-word
+block size and a total size of 16 blocks. First calculate index and tag address bits, as in [Exercise 4](#exercise-4) above. Say that
 all memory addresses in the range [0, 100[ belong to the victim, whereas the attacker owns addresses in the range[100, 232[. The victim performs a series of address references given as word addresses: either (2, 3, 11, 16, 21, 13,
-64, 48, 19, 11, 3, 22, 4, 27, 11) if secret=1, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, 70, 36, 7, 91, 75) if secret=0.
+64, 48, 19, 11, 3, 22, 4, 27, 11) if `secret=1`, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, 70, 36, 7, 91, 75) if `secret=0`.
 Construct a memory access sequence to be performed by an attacker during the “prime” phase, in order to learn
 the victim’s secret in the “probe” phase later on.
 
