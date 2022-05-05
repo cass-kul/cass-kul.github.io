@@ -123,22 +123,6 @@ speculative execution
 
 {% include gallery.html images=page.riscv  ratio_image="/exercises/8-microarchitecture/riscv-ratio.png" %}
 
-## Hazards
-
-### Data hazards
-![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
-
-#### Forwarding
-![Forwarding](/exercises/8-microarchitecture/forwarding.drawio.svg){: .center-image }
-![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
-![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
-
-
-### Control hazards
-![Control hazard](/exercises/8-microarchitecture/control-hazard.drawio.svg){: .center-image }
-
-## Spectre and Meltdown
-
 ## Exercise 1 - Microarchitecture and Performance
 
 In this exercise we examine how pipelining affects the clock cycle time of the processor. Problems in
@@ -200,6 +184,9 @@ As the cycle time is determined by the most time-consuming stage, this is the on
 | b | IF             | 190ps                 | 
 
 {% endif %}
+
+
+
 
 ## Exercise 2 - Microarchitecture and Performance 2
 
@@ -308,7 +295,7 @@ In short:
 {% endif %}
 
 
-### Exercise 4.5
+### Exercise 2.5
 
 Recall the RISC-V program from above.
 
@@ -328,6 +315,16 @@ As there is no parallelism in single-cycle and multi-cycle processors, there are
 In the pipelined design, changing the first instruction like this would create a read after write (RAW) dependency between the first and the second instructions, as the second one uses the `t1` register the first instruction writes to. The second instruction needs the correct value of `t1` in its EX stage, but by then the first instruction is only in its MEM stage, the register file has not been written yet. To avoid this hazard, the processor either has to stall the second instruction until the correct value is available in `t1` or set up data forwarding between the pipeline registers.
 
 {% endif %}
+
+# Hazards
+
+## Data hazards
+![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
+
+### Forwarding
+![Forwarding](/exercises/8-microarchitecture/forwarding.drawio.svg){: .center-image }
+![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
+![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
 
 
 ## Exercise 3 - Forwarding
@@ -408,6 +405,10 @@ Without forwarding, we are forced to add the 4 nop instructions, which adds 4 ad
 
 {% endif %}
 
+## Control hazards
+![Control hazard](/exercises/8-microarchitecture/control-hazard.drawio.svg){: .center-image }
+
+### Spectre and Meltdown
 
 ## Exercise 4 - Code Optimization
 The code below describes a simple function in RISC-V assembly(A = B + E; C = B + F;).
