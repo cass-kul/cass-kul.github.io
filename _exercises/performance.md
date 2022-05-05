@@ -6,6 +6,9 @@ nav_exclude: true
 search_exclude: true
 has_children: false
 has_toc: false
+riscv:
+   - /exercises/8-microarchitecture/risc-v-stages.png
+   - /exercises/8-microarchitecture/risc-v-stages-annotated.png
 ---
 
 ## Table of contents
@@ -26,21 +29,77 @@ You should read the book from section 4.1 to 4.9 to get a better grasp on proces
 
 ## Improving performance across all abstraction layers
 
+Improving runtime performance of software can be done at multiple layers across the computing stack.
+Below you see a figure of the abstraction layers we look at in the context of computing and some possible performance optimizations that can be applied.
+Starting from the top, maybe the most obvious optimizations to you at this point are optimizations of your code, i.e., optimizations of algorithms.
+While these are an important piece of the optimization puzzle, we will not look at those in the context of CASS.
 
-Below you see a figure of the abstraction layers we look at in the context of computing.
+Going down the stack, two performance improvements happen at the programming language level.
+The choice of programming language and the optimizations that are done on assembly level by the compiler may have great impact on the runtime of a function.
+You have already seen glimpses of this when doing [tail recursion in session 3](/exercises/functions-stack/#excursion-tail-recursion).
+Smart choices on assembly level may have great impacts on the performance of the code, even if on the higher level, the algorithm may stay the same.
+
+**In this session**, we will focus on three topics that go across different layers in the abstraction:
+
+ - Architectural awareness
+ - Instruction set architectural (ISA) awareness
+ - Microarchitectural awareness
+
+In *instruction set architectural awareness* we shortly explain how an ISA can impact the runtime of code.
+In the main part of this session we will talk about *microarchitectural awareness*.
+You have already seen caches in the last session and will now learn about pipelining, out-of-order execution, and what issues arise in this context.
+Lastly, we will also shortly discuss some *general architectural awareness* across multiple layers from the choice of programming language down to the microarchitecture and deal with the design of memory accesses and the order of operations.
 
 ![Improving performance across all abstraction layers](/exercises/8-microarchitecture/abstraction-layers.drawio.svg){: .center-image }
 
 
 # Instruction set architectural awareness
 
-RISC vs CISC
+Before we delve into the details of instruction set architectures, remember the core principle of the **cpu clock**: 
+The CPU is driven by a clock that switches between two voltages (high and low).
+The time it takes for the clock to complete one cycle of high and then low voltage is known as the clock period.
+
+![Simple clock cycle diagram](/exercises/8-microarchitecture/clock.drawio.svg){: .center-image }
+
+When we talk about the runtime of a program, we can look at the general formula below:
+The time per program depends on the number of instructions, the cycles that each instruction takes, and finally the time that each cycle takes.
+Improving the performance runtime of a program can now be done by decreasing either of these components: Reducing the number of instructions that are needed, reducing the cycles per instruction, or reducing the time per cycles.
+
+![General formula for the runtime of a program](/exercises/8-microarchitecture/isa-program-runtime.svg){: .center-image }
+
+## Designing an ISA
+
+When creating a new ISA, one design principle decision comes at the very beginning of the process:
+
+1. Programs should consist of only very few, specialized instructions.
+1. Programs can consist of many, more general, instructions that are less specialized.
+
+In short, should the ISA provide a smaller set of instructions that are also faster to execute or should it provide a large number of specialized instructions that may execute for a longer time?
+This design decision stands behind the difference between RISC vs CISC.
+CISC (**Complex** instruction set computer) designs have been the dominant design for a large time of computing history, mostly because of the popular x86 ISA which is used by Intel and AMD.
+CISC instructions can be very specialized but also take a longer time to execute.
+One good example is the x86 instruction `REPNE SCASB`.
+This complicated instruction can be used to calculate the size of a string with a line of assembly code.
+However, the runtime of this instruction obviously depends on the size of the string.
+
+RISC (**Reduced** instruction set computer) designs like RISC-V or ARM decided that it is better to have a smaller number of instructions available that then run faster.
+Programs in RISC will then consist of more instructions to achieve the same functionality that a program written in a CISC ISA provides.
+For example, to calculate the size of a string in a RISC program, you would loop over the string manually and compare each new character to the null byte.
+In RISC ISAs, each instruction often takes the same number of cycles to complete which allows for many simplifications in the CPU and along the datapath.
+
+## Further reading
+
+CISC vs RISC is an old dilemma that you can also read up a lot on via other sources.
+Here is a good [Stanford website explaining the tradeoffs]](https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/risccisc/). Here is a rebuttal statement [that it is actually not all that important as people think](https://www.extremetech.com/computing/323245-risc-vs-cisc-why-its-the-wrong-lens-to-compare-modern-x86-arm-cpus).
+In the end, the details of CISC vs RISC are only important to you if you want to design new architectures, but it is important to know that these tradeoffs exist and different architectures have different underlying design philosophies.
+
+> :fire: The recent ARM chips [developed by Apple](https://screenrant.com/apple-silicon-m1-mac-risc-faster-than-intel/) are RISC CPUs that in some ways outperform their CISC competition from Intel. This means that the battle of CISC vs RISC is definitely not decided yet and will stay relevant over the next years.
 
 # Microarchitectural awareness
 
-Pipelining
-out of order execution
-speculative execution
+Below, you see a simple, single-cycle RISC-V processor design.
+
+
 
 Execution phases:
 
@@ -50,15 +109,33 @@ Execution phases:
 1. Memory access
 1. Writeback
 
+![Single cycle processor](/exercises/8-microarchitecture/single-cycle.drawio.svg){: .center-image }
+
+
+out of order execution
+speculative execution
+
+
 ## Single cycle vs pipelined design
 
 5 stage riscv
+![Pipelined processor](/exercises/8-microarchitecture/pipeline.drawio.svg){: .center-image }
+
+{% include gallery.html images=page.riscv  ratio_image="/exercises/8-microarchitecture/riscv-ratio.png" %}
 
 ## Hazards
 
 ### Data hazards
+![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
+
+#### Forwarding
+![Forwarding](/exercises/8-microarchitecture/forwarding.drawio.svg){: .center-image }
+![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
+![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
+
 
 ### Control hazards
+![Control hazard](/exercises/8-microarchitecture/control-hazard.drawio.svg){: .center-image }
 
 ## Spectre and Meltdown
 
@@ -200,11 +277,11 @@ Note: you can assume the CPU starts from a clean state (e.g., after a system res
 
 {% if site.solutions.show_session_8 %}
 #### Solution
-{% endif %}
 
 ![Ex 2.3: Pipeline solution](/exercises/8-microarchitecture/sol2-3.png){: .center-image }
 
 From these figures, we can see how much more efficient the pipelined design is, even for shorter programs.
+{% endif %}
 
 ### Exercise 2.4
 
@@ -362,7 +439,7 @@ In this code, both `add` instructions will have to be stalled for one cycle. Bot
 In total, this means that we have 5 cycles for the first instruction, 6 (1 each) for completing the additional instructions, and 2 due to the two stalls. `5 + 6 + 2 = 13`
 {% endif %}
 
-## Exercise 4.2
+### Exercise 4.2
 Reorganize the code to optimize the performance. (Hint: try to remove the stalls)
 
 {% if site.solutions.show_session_8 %}
