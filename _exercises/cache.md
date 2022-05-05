@@ -7,18 +7,19 @@ search_exclude: false
 has_children: false
 has_toc: false
 flush_reload:
-    - /exercises/7-cache/flush_reload/flush_reload1.png
-    - /exercises/7-cache/flush_reload/flush_reload2.png
-    - /exercises/7-cache/flush_reload/flush_reload3.png
-    - /exercises/7-cache/flush_reload/flush_reload4.png
-    - /exercises/7-cache/flush_reload/flush_reload5.png
-    - /exercises/7-cache/flush_reload/flush_reload6.png
+    - /exercises/7-cache/flush_reload/flush_reload1.svg
+    - /exercises/7-cache/flush_reload/flush_reload2.svg
+    - /exercises/7-cache/flush_reload/flush_reload3.svg
+    - /exercises/7-cache/flush_reload/flush_reload4.svg
+    - /exercises/7-cache/flush_reload/flush_reload5.svg
+    - /exercises/7-cache/flush_reload/flush_reload6.svg
 prime_probe:
-    - /exercises/7-cache/prime_probe/prime_probe1.png
-    - /exercises/7-cache/prime_probe/prime_probe2.png
-    - /exercises/7-cache/prime_probe/prime_probe3.png
-    - /exercises/7-cache/prime_probe/prime_probe4.png
-    - /exercises/7-cache/prime_probe/prime_probe5.png
+    - /exercises/7-cache/prime_probe/prime_probe.svg
+    - /exercises/7-cache/prime_probe/prime_probe1.svg
+    - /exercises/7-cache/prime_probe/prime_probe2.svg
+    - /exercises/7-cache/prime_probe/prime_probe3.svg
+    - /exercises/7-cache/prime_probe/prime_probe4.svg
+    - /exercises/7-cache/prime_probe/prime_probe5.svg
 ---
 
 ## Table of contents
@@ -486,7 +487,7 @@ hit) if the tag at index `i` in the cache matches `t`. For instance, accessing
 the address `0001` (i.e. tag=`00`, index=`01`) results in a cache hit because
 the tag in the cache at index `01` is `00`. However, accessing the address
 `0010` (i.e. tag=`00`, index=`10`) results in a cache miss because the tag in
-the cache at index `10` is `10`.
+the cache at index `10` is `01`.
 
 The data in one cache block typically contains more than one byte. This is to
 enable spatial locality: when the data from a certain address is loaded, the
@@ -636,18 +637,20 @@ Here is a series of address references given as word addresses: 2, 3, 11, 16, 21
 
 The following table shows an example format of a possible solution for a direct-mapped cache with 8 2-word blocks.
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code style='line-height: 1; font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;'>+---+----+----+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code style='line-height: 1; font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;'>
++---+----+----+
 | S | W0 | W1 |
 +---+----+----+
-| 0 | -- | -- |
-| 1 |  2 | 19 |
-| 2 | -- | -- |
-| 3 | -- | -- |
+| 0 | 48 | 49 |
+| 1 |  2 |  3 |
+| 2 |  4 |  5 |
+| 3 | 22 | 23 |
 | 4 | -- | -- |
-| 5 | -- |  3 |
-| 6 | -- | -- |
+| 5 | 26 | 27 |
+| 6 | 12 | 13 |
 | 7 | -- | -- |
 +---+----+----+
+2 (miss), 3 (hit) 11, 16, 21, 13, 64, 48, 19 (all misses), 11 (hit), 3, 22, 4, 27, 11 (all misses)
 </code></pre></div></div>
 
 {% if site.solutions.show_session_7 %}
