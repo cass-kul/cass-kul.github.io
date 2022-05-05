@@ -90,7 +90,7 @@ In RISC ISAs, each instruction often takes the same number of cycles to complete
 ## Further reading
 
 CISC vs RISC is an old dilemma that you can also read up a lot on via other sources.
-Here is a good [Stanford website explaining the tradeoffs]](https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/risccisc/). Here is a rebuttal statement [that it is actually not all that important as people think](https://www.extremetech.com/computing/323245-risc-vs-cisc-why-its-the-wrong-lens-to-compare-modern-x86-arm-cpus).
+Here is a good [Stanford website explaining the tradeoffs](https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/risccisc/). Here is a rebuttal statement [that it is actually not all that important as people think](https://www.extremetech.com/computing/323245-risc-vs-cisc-why-its-the-wrong-lens-to-compare-modern-x86-arm-cpus).
 In the end, the details of CISC vs RISC are only important to you if you want to design new architectures, but it is important to know that these tradeoffs exist and different architectures have different underlying design philosophies.
 
 > :fire: The recent ARM chips [developed by Apple](https://screenrant.com/apple-silicon-m1-mac-risc-faster-than-intel/) are RISC CPUs that in some ways outperform their CISC competition from Intel. This means that the battle of CISC vs RISC is definitely not decided yet and will stay relevant over the next years.
