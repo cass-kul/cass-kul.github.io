@@ -456,13 +456,88 @@ Without forwarding, we are forced to add the 4 nop instructions, which adds 4 ad
 {% endif %}
 
 ## Control hazards
-![Control hazard](/exercises/8-microarchitecture/control-hazard.drawio.svg){: .center-image }
+Control hazards happen when the proper instruction cannot execute in a pipeline
+stage because the instruction that was fetched is not the correct instruction.
+The easiest example is a conditional branch where the CPU must start fetching
+next instructions before actually knowing the outcome of the conditional branch.
+
+A first solution would be to stall the pipeline until the outcome of the
+conditional branch is known and we know which instructions to fetch.
+Unfortunately, this solution incurs a penalty on every branch, which might
+become too high when the outcome of the branch cannot be decided quickly.
+
+An optimization, featured in most processor, is to try to **predict** the
+outcome of a branch. For instance, the processor can predict that branch are
+never taken and start fetching and executing corresponding instructions as shown
+in the following example:
+
+![Control hazard](/exercises/8-microarchitecture/control-hazard1.drawio.svg){: .center-image }
+
+If the prediction is correct, we have a performance gain and the pipeline
+proceeds at full speed. If the prediction is incorrect, we have to discard
+wrongly executed instruction in the pipeline (which is called a *pipeline
+flush*) and resume execution along the correct branch as shown in the following
+example. Of course we must make sure that these incorrect sequences of
+instructions called **transient executions** can be reverted (for instance they
+do not write to memory). In this case, the penalty is roughly equivalent to
+stalling.
+
+![Control hazard](/exercises/8-microarchitecture/control-hazard2.drawio.svg){: .center-image }
+
+Such prediction mechanisms are called **speculative execution** and are
+implemented in almost all processors. Modern processors have more sophisticated
+prediction mechanisms that can be updated *dynamically*. For instance, such a
+branch predictor could remember whether a particular branch was recently taken
+or non taken and base its prediction on this. Speculative execution can also be
+applied to predict the outcome of indirect branches or return instructions.
 
 ### Spectre
+Transient executions are reverted at the architectural level (they do not impact
+the final value of registers or memory) but *their effect on the
+microarchitectural state (for instance the cache) is not reverted*. This means
+that if a secret is accessed during transient execution, computations on that
+secret can leave traces in the microarchitecture. For instance, if a secret is
+used as an index to load data from memory (`load[secret]`), the state of the
+cache will be affected by the value of `secret`, and an attacker can use cache
+attacks to retrieve the value of that secret. This opens the door to a new class
+of attacks, called **Spectre attacks**, which exploit prediction mechanisms to
+leak secrets to the microarchitectural state.
 
+![Spectre logo](/exercises/8-microarchitecture/spectre.png){: .center-image width="250"}
+
+Consider for instance the following code where an attacker
+wants to learn the value of `secret` but cannot directly access it: they can only call the function `spectre_gadget` with an arbitrary value `i`. Notice that the program is protected against cache attacks because the `secret` cannot be used as a memory index during "normal" (non-transient) execution.
+```c
+int tab[4] = { 0, 1, 2, 3 };
+char tab2[1024];
+int secret; // The secret we want to protect
+
+void spectre_gadget(int i) {  // The attacker calls the function with i=260
+   if (i < 4) {               // The condition mispeculated 
+    int index = tab[i];       // index = secret
+    char tmp = tab2[index * 256]; // secret is used as a load index during transient execution
+    [...]
+   }
+}
+```
+1. The attacker can (optionally) train the branch predictor so that it predicts
+   the condition `(i < 4)` to be true;
+1. The attacker prepares the cache (e.g. by flushing the content of `tab2`);
+1. The attacker calls the victim with a value `i` such that `tab[i]` returns the
+   secret. The processor predicts the branch to be true, accesses the secret and
+   use it as an index to access `tab2`, which brings back `tab2[secret]` into
+   the cache. The processor eventually realizes that the prediction is incorrect
+   and flushes the pipeline but the state of the cache is not reverted.
+1. Finally, the attacker can use cache attacks to infer which cache lines have
+   been accessed by the victim and recover the value of `secret`!
+
+The Spectre attack illustrated above abuses the conditional branch predictor but
+there exist [other variants of Spectre](https://transient.fail/) that exploit
+different prediction mechanisms.
 
 ## Exercise 4 - Code Optimization
-The code below describes a simple function in RISC-V assembly(A = B + E; C = B + F;).
+The code below describes a simple function in RISC-V assembly(A = B + E; C = B +
+F;).
 
 ```armasm
 lw t1 , 0( t0)
