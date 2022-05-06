@@ -191,9 +191,6 @@ As the cycle time is determined by the most time-consuming stage, this is the on
 
 {% endif %}
 
-
-
-
 ## Exercise 2 - Microarchitecture and Performance 2
 
 Consider a processor where the individual instruction fetch, decode, execute, memory, and writeback stages in the datapath have the following latencies
@@ -300,6 +297,30 @@ In short:
 
 {% endif %}
 
+# Hazards
+
+While pipelining is great to parallelize operations and speed up instructions by performing multiple operations in a single clock cycle, this may also lead to problems.
+Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a hazard.
+There are three types of hazards:
+
+- *structural hazards* arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
+- *data hazards* occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
+- *control hazards* arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
+
+In this session we will now look at data and control hazards.
+
+## Data hazards
+
+The figure below shows a simple data hazard. The `addi` instruction will only write the new value of the register back into `t0` in the WB stage.
+However, `lw` will already need the correct value in the EX stage which occurs one cycle before, leading to a data hazard.
+
+There are three basic data dependencies that indicate a data hazard:
+
+- Read after Write (RAW): Data is read after it was previously written. Here, old data may be read before it is written.
+- Write after Read (WAR): Data is written after it was read earlier. In some pipelines and optimizations, the "later" write may already affect the earlier read.
+- Write after Write (WAW): Two writes may conflict each other.
+
+![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
 
 ### Exercise 2.5
 
@@ -322,14 +343,24 @@ In the pipelined design, changing the first instruction like this would create a
 
 {% endif %}
 
-# Hazards
-
-## Data hazards
-![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
-
 ### Forwarding
+
+Data hazards can be a big problem if not accounted for. The simplest way to deal with them is to add enough `nop` instructions before each data hazard to ensure that the information is available before the hazard may occur.
+Another approach is to cleverly reorder instructions so that hazards can be avoided. This must obviously be done in a way that does not change the result of the computation and can only work in a limited subset of occasions.
+
+To tackle data hazards more structurally, a CPU pipeline can *forward* information once it becomes available to the next or an earlier stage.
+This allows to prevent specific data hazards from occurring.
+Below, you see a simple forwarding mechanism from the EX stage to the EX stage that forwards the new value of a register to immediately be available for the `lw` instruction in the next cycle.
+
 ![Forwarding](/exercises/8-microarchitecture/forwarding.drawio.svg){: .center-image }
+
+While forwarding like this has many benefits, it also has limitations. Below, you see one example where forwarding can not help because the information of `lw` only becomes available in the MEM stage which happens at the same time when the next instruction, `addi`, requires it in the EX stage.
+
 ![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
+
+The only way to deal with this is to stall the current execution, add a `nop` instruction, and let the processor wait until the information becomes available.
+Simply said, if the information becomes available in the same cycle that it is needed, there is nothing we can do with forwarding and we instead have to stall. Below you see a solution to this problem with stalling and a forwarding from the MEM stage to the EX stage.
+
 ![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
 
 
