@@ -25,12 +25,12 @@ You should read the book from section 4.1 to 4.9 to get a better grasp on proces
 
 > :bulb: **Ripes**: To help you solve and reason about the upcoming exercises, it is advised to install the Ripes RISC-V simulator from [this GitHub page](https://github.com/mortbopet/Ripes/releases/latest). There is support for Windows, Mac and Linux. On Ubuntu, make the .AppImage executable using the command `chmod +x <ripes-filename>` to run the simulator.
 > 
-> Using Ripes, you can simulate four different processors: a single cycle RISC-V and three variants of a 5-stage pipeline. It also has a great cache simulator which can help you better understand what was learned in the caching session. All programs presented in this session can be executed cycle per cycle using Ripes.
+> Using Ripes, you can simulate four different processors: a single cycle RISC-V and three variants of a 5-stage pipeline. It also has a great cache simulator which can help you better understand what was learned in the last session about caches. All programs presented in this session can be executed cycle per cycle using Ripes.
 
 ## Improving performance across all abstraction layers
 
 Improving runtime performance of software can be done at multiple layers across the computing stack.
-Below you see a figure of the abstraction layers we look at in the context of computing and some possible performance optimizations that can be applied.
+Below you see a figure of the abstraction layers we can consider in the context of computing, and some possible performance optimizations that can be applied at each layer.
 Starting from the top, maybe the most obvious optimizations to you at this point are optimizations of your code, i.e., optimizations of algorithms.
 While these are an important piece of the optimization puzzle, we will not look at those in the context of CASS.
 
@@ -48,7 +48,7 @@ Smart choices on assembly level may have great impacts on the performance of the
 In *instruction set architectural awareness* we shortly explain how an ISA can impact the runtime of code.
 In the main part of this session we will talk about *microarchitectural awareness*.
 You have already seen caches in the last session and will now learn about pipelining, out-of-order execution, and what issues arise in this context.
-Lastly, we will also shortly discuss some *general architectural awareness* across multiple layers from the choice of programming language down to the microarchitecture and deal with the design of memory accesses and the order of operations.
+Lastly, we will also shortly discuss some *general architectural awareness* across multiple layers from the choice of programming language down to the microarchitecture, concerning the design of memory accesses and the order of operations.
 
 ![Improving performance across all abstraction layers](/exercises/8-microarchitecture/abstraction-layers.drawio.svg){: .center-image }
 
@@ -57,7 +57,7 @@ Lastly, we will also shortly discuss some *general architectural awareness* acro
 
 Before we delve into the details of instruction set architectures, remember the core principle of the **cpu clock**: 
 The CPU is driven by a clock that switches between two voltages (high and low).
-The time it takes for the clock to complete one cycle of high and then low voltage is known as the clock period.
+The time it takes for the clock to complete one cycle of high and then low voltage is known as the *clock period*.
 
 ![Simple clock cycle diagram](/exercises/8-microarchitecture/clock.drawio.svg){: .center-image }
 
@@ -96,28 +96,34 @@ In the end, the details of CISC vs RISC are only important to you if you want to
 > :fire: The recent ARM chips [developed by Apple](https://screenrant.com/apple-silicon-m1-mac-risc-faster-than-intel/) are RISC CPUs that in some ways outperform their CISC competition from Intel. This means that the battle of CISC vs RISC is definitely not decided yet and will stay relevant over the next years.
 
 # Microarchitectural awareness
+RISC-V instruction typically take 5 steps to execute:
+1. Instruction Fetch: fetch an instruction from memory and increment the program
+   counter so that it points to next instruction (`pc = pc + 4`)
+1. Instruction Decode: decode the instruction and read operand registers
+1. Execute: execute the operation or calculate the address
+1. Memory access: when needed, reads operand values from the data memory
+1. Writeback: write the result into a register
 
-Below, you see a simple, single-cycle RISC-V processor design.
-
-
-
-Execution phases:
-
-1. Instruction Fetch
-1. Instruction Decode
-1. Execute
-1. Memory access
-1. Writeback
+In a *single cycle processor implementation*, illustrated below, each
+ instruction is executed in *one* cycle, meaning that these 5 steps happen in a
+ single clock cycle. This also means that the clock cycle must have the same
+ length for all instructions. Therefore, the clock has to be slow enough to
+ allow the slowest instruction to execute (otherwise a slow instruction might
+ never reach the writeback phase). In other words, even if an instruction could
+ in theory execute faster (e.g. an `add` could in theory execute faster than a
+ `load` because it does not need to go through the memory access step), it is
+ limited by the clock speed, which itself is limited by the worst-case
+ instruction.
 
 ![Single cycle processor](/exercises/8-microarchitecture/single-cycle.drawio.svg){: .center-image }
 
-
-out of order execution
-speculative execution
+The performance of such single cycle processor is therefore constrained by the
+worst-case instruction. This become really problematic when the instruction set
+contains complex instruction like floating-point operations. In particular for
+CISC architecture the performance penalty would be completely unacceptable.
 
 
 ## Single cycle vs pipelined design
-
 5 stage riscv
 ![Pipelined processor](/exercises/8-microarchitecture/pipeline.drawio.svg){: .center-image }
 
@@ -408,7 +414,8 @@ Without forwarding, we are forced to add the 4 nop instructions, which adds 4 ad
 ## Control hazards
 ![Control hazard](/exercises/8-microarchitecture/control-hazard.drawio.svg){: .center-image }
 
-### Spectre and Meltdown
+### Spectre
+
 
 ## Exercise 4 - Code Optimization
 The code below describes a simple function in RISC-V assembly(A = B + E; C = B + F;).
