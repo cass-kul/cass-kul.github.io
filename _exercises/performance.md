@@ -107,13 +107,13 @@ RISC-V instruction typically take 5 steps to execute:
 In a *single cycle processor implementation*, illustrated below, each
  instruction is executed in *one* cycle, meaning that these 5 steps happen in a
  single clock cycle. This also means that the clock cycle must have the same
- length for all instructions. Therefore, the clock has to be slow enough to
- allow the slowest instruction to execute (otherwise a slow instruction might
- never reach the writeback phase). In other words, even if an instruction could
- in theory execute faster (e.g. an `add` could in theory execute faster than a
- `load` because it does not need to go through the memory access step), it is
- limited by the clock speed, which itself is limited by the worst-case
- instruction.
+ length for all instructions. Therefore, the clock has to be stretched to
+ accommodate the slowest instruction (i.e. it has to be slow enough to allow the
+ slowest instruction to fully execute, from the fetch to the writeback step). In
+ other words, even if an instruction could in theory execute faster (e.g. an
+ `add` could in theory execute faster than a `load` because it does not need to
+ go through the memory access step), it is limited by the clock speed, which
+ itself is limited by the worst-case instruction.
 
 ![Single cycle processor](/exercises/8-microarchitecture/single-cycle.drawio.svg){: .center-image }
 
@@ -123,11 +123,24 @@ contains complex instruction like floating-point operations. In particular for
 CISC architecture the performance penalty would be completely unacceptable.
 
 
-## Single cycle vs pipelined design
-5 stage riscv
-![Pipelined processor](/exercises/8-microarchitecture/pipeline.drawio.svg){: .center-image }
+## Pipelining
+Nowadays, almost all processors use an optimization called **pipelining**. The
+execution is divided into pipeline steps, called **stages** which are operating
+in parallel. Coming back to our 5 steps design: each step correspond to one
+pipeline stage and takes one cycle to execute, as illustrated below. The
+processor can execute the stages in parallel instead of waiting for an
+instruction to go through all the stages like in a single-cycle design.
 
 {% include gallery.html images=page.riscv  ratio_image="/exercises/8-microarchitecture/riscv-ratio.png" %}
+
+Pipelining does not increase the time to execute a single instruction (called
+the **latency**), but increases the number of instructions that can be executed
+simultaneously and thus the rate at which instructions are executed (called the
+**throughput**). In the best case scenario, this five stage pipeline is five
+times faster than the single cycle processor:
+
+![Pipelined processor](/exercises/8-microarchitecture/pipeline.drawio.svg){: .center-image }
+
 
 ## Exercise 1 - Microarchitecture and Performance
 
