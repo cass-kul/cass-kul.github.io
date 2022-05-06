@@ -316,9 +316,9 @@ While pipelining is great to parallelize operations and speed up instructions by
 Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a hazard.
 There are three types of hazards:
 
-- *structural hazards* arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
-- *data hazards* occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
-- *control hazards* arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
+- **structural hazards** arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
+- **data hazards** occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
+- **control hazards** arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
 
 In this session we will now look at data and control hazards.
 
@@ -624,10 +624,15 @@ In this exercise, we need to pay attention to branches and jumps. The processor 
 
 # General architectural awareness
 
+As final content for the exercise sessions, we will explain some general methods one can apply to make use of a CPU architecture.
+These may be the most applicable performance optimizations you can think of later in your programming career. Very often, compilers and interpreters may already perform similar optimizations for you, so you may not see any immediate benefit when applying these optimizations. However sometimes there can be a huge performance increase if one helps the compiler out.
+
+In general, the modern rule of thumb should be to not attempt optimizations by oneself but first let the compiler and its tools give it a try. Usually, the generic approaches of optimizing code are already very sophisticated. However when specific code optimizations are needed, it is useful to have the understanding of the lower-level principles and the architecture that you now have, to methodologically attempt to make specific performance improvements to select pieces of code.
+
 ## Loop fission
-break a loop into multiple loops over the same index range
-each new loop takes only part of the original loop's body
-improve locality of reference for both data and code
+
+Due to the principle of locality, we know that accesses that are close to each other in memory may be faster than varying accesses at the same time.
+Sometimes, it may be faster to break a loop into multiple loops over the same index range and allow each new loop to focus on only parts of the original loop's body. This can improve locality of reference for both data and code since the microarchitecture can kick in optimizations on hardware level. Below you see a simple example of this where instead of accessing both arrays in the same loop, we split up the loop and run it twice.
 
 <table>
 <tr>
@@ -660,10 +665,8 @@ for (i = 0; i < 100; i++) {
 
 ## Loop unrolling
 
-Decreases # instructions
-Less jumps/conditional branches
-Better for pipeline
-Might also perform worse due to micro-architecture!
+In a similar vein, very short loops may suffer from a lot of overhead due to the conditional branch that performs the loop.
+*Sometimes* decreasing the actual amount of instructions may be beneficial since it results in less jumps or conditional branches and can be beneficial for the pipeline. As you may guess, this optimization method also has the great potential of actually performing worse due to the microarchitecture!
 
 <table>
 <tr>
@@ -696,3 +699,5 @@ sum = sum1 + sum2 + sum3 + sum4;
 </table>
 
 ## Loop tiling
+
+Lastly, the access pattern of a loop can be optimized by processing the loop in chunks instead of over the whole range repeatedly. [This Wikipedia article](https://en.wikipedia.org/wiki/Loop_nest_optimization) explains the concept well. Essentially loop tiling aims to decrease the number of cache misses during the processing of a loop which can decrease runtime considerably.
