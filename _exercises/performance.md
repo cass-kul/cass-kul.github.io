@@ -491,19 +491,37 @@ branch predictor could remember whether a particular branch was recently taken
 or non taken and base its prediction on this. Speculative execution can also be
 applied to predict the outcome of indirect branches or return instructions.
 
+> :bulb: You might wonder what is the difference between *speculative execution*
+> and *transient execution*. Speculative execution is any sequence of
+> instructions that is executed by the processor after a prediction and before
+> the prediction is resolved. In particular the processor does not know is
+> speculatively executed instructions will be committed or flushed. Transient
+> executions specifically refer to incorrectly executed instructions. In
+> particular, transient executions can happen because of speculative execution,
+> but speculative execution [is not the only source of transient
+> execution](https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)).
+
 ### Spectre
-Transient executions are reverted at the architectural level (they do not impact
-the final value of registers or memory) but *their effect on the
+In 2018, a major vulnerability called Spectre became public, which has been
+discovered jointly by academic and industry security researchers. The
+vulnerability had a tremendous impact not only on academic research but also on
+industry: mitigations were proposed for microprocessors, operating systems, and
+other software. With our knowledge about architectures (in particular
+speculative execution) we can now understand what happened!
+
+![Spectre logo](/exercises/8-microarchitecture/spectre.png){: .center-image
+width="250"}
+
+The main idea behind **Spectre attacks**, is to exploit prediction mechanisms in
+order to leak secrets to the microarchitectural state during transient
+execution. Transient executions are reverted at the architectural level (they do
+not impact the final value of registers or memory) but *their effect on the
 microarchitectural state (for instance the cache) is not reverted*. This means
 that if a secret is accessed during transient execution, computations on that
 secret can leave traces in the microarchitecture. For instance, if a secret is
 used as an index to load data from memory (`load[secret]`), the state of the
 cache will be affected by the value of `secret`, and an attacker can use cache
-attacks to retrieve the value of that secret. This opens the door to a new class
-of attacks, called **Spectre attacks**, which exploit prediction mechanisms to
-leak secrets to the microarchitectural state.
-
-![Spectre logo](/exercises/8-microarchitecture/spectre.png){: .center-image width="250"}
+attacks to retrieve the value of that secret.
 
 Consider for instance the following code where an attacker
 wants to learn the value of `secret` but cannot directly access it: they can only call the function `spectre_gadget` with an arbitrary value `i`. Notice that the program is protected against cache attacks because the `secret` cannot be used as a memory index during "normal" (non-transient) execution.
