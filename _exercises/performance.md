@@ -128,7 +128,7 @@ CISC architectures the performance penalty would be completely unacceptable.
 ## Pipelining
 Nowadays, almost all processors use an optimization called **pipelining**. The
 execution is divided into pipeline steps, called **stages**, which are operating
-in parallel. Coming back to our 5 steps design: each step correspond to one
+in parallel. Coming back to our 5-step design: each step corresponds to one
 pipeline stage and takes one cycle to execute, as illustrated below. The
 processor can execute the stages in parallel instead of waiting for an
 instruction to go through all the stages like in a single-cycle design.
@@ -139,15 +139,16 @@ Pipelining does not increase the time to execute a single instruction (called
 the **latency**), but increases the number of instructions that can be executed
 simultaneously and thus the rate at which instructions are executed (called the
 **throughput**). In the best case scenario, this five stage pipeline is five
-times faster than the single cycle processor:
+times faster than the single-cycle processor:
 
 ![Pipelined processor](/exercises/8-microarchitecture/pipeline.drawio.svg){: .center-image }
 
 
 ## Exercise 1 - Microarchitecture and Performance
 
-In this exercise we examine how pipelining affects the clock cycle time of the processor. Problems in
-this exercise assume that individual stages of the datapaths a and b have the following latencies:
+In this exercise, we examine how pipelining affects the clock cycle time of the processor.
+Solve the following questions both for data paths `a` and `b`, assuming that the individual stages of
+the data paths have the following latencies:
 
 |   |  IF  |  ID  |  EX  |  MEM |  WB  |
 |:-:|:----:|:----:|:----:|:----:|:----:|
@@ -191,7 +192,7 @@ In a pipelined processor, this equals the cycle time multiplied with the number 
 
 ### Exercise 1.3
 
-If we can split one stage of the pipelined datapath into two new stages, each with half the latency of the original stage, which stage would you split and what is the new clock cycle time of the processor?
+If we can split one stage of the pipelined data path into two new stages, each with half the latency of the original stage, which stage would you split and what is the new clock cycle time of the processor?
 
 {% if site.solutions.show_session_8 %}
 
@@ -208,14 +209,14 @@ As the cycle time is determined by the most time-consuming stage, this is the on
 
 ## Exercise 2 - Microarchitecture and Performance 2
 
-Consider a processor where the individual instruction fetch, decode, execute, memory, and writeback stages in the datapath have the following latencies
+Consider a processor where the individual instruction fetch, decode, execute, memory, and writeback stages in the datapath have the following latencies:
 
 |  IF  |  ID  |  EX  |  MEM |  WB  |
 |:----:|:----:|:----:|:----:|:----:|
 | 150ps| 50ps | 200ps| 100ps| 100ps|
 
-We assume a classic RISC instruction set where all 5 stages are needed for loads (`lw`), but the writeback WB stage is not necessarily needed for stores (`sw`) and the memory MEM stage is not necessarily needed for register (R-format) instructions.
-Instead of a single-cycle organization, we can use a multi-cycle organization where each instruction takes multiple clock cycles but one instruction finishes before another is fetched. In this organization, an instruction only goes through stages it actually needs (e.g. sw only takes four clock cycles because it does not need the WB stage).
+We assume a classic RISC instruction set where all 5 stages are needed for loads (`lw`), but the writeback `WB` stage is not necessarily needed for stores (`sw`) and the memory `MEM` stage is not necessarily needed for register (R-format) instructions.
+Instead of a single-cycle organization, we can use a *multi-cycle* organization where each instruction takes multiple clock cycles, but one instruction finishes before another is fetched. In this organization, an instruction only goes through stages it actually needs (e.g., `sw` only takes four clock cycles because it does not need the `WB` stage).
 Compare clock cycle times and execution times with single-cycle, multi-cycle, and pipelined organization.
 
 ### Exercise 2.1
@@ -241,8 +242,8 @@ In short:
 
 ### Exercise 2.2
 
-What are the best and worst case total latencies for an instruction in each of the 3 designs (single-
-cycle, multi-cycle, pipelined)? Note: express instruction latency both in number of cycles as well as in total time
+What are the best and worst case total latencies for an instruction in each of the 3 designs
+(single-cycle, multi-cycle, pipelined)? Express instruction latency both in number of cycles and in total time
 (ps). Based on these numbers, which design would you prefer? Explain.
 
 {% if site.solutions.show_session_8 %}
@@ -267,9 +268,9 @@ In short:
 Consider the following RISC-V program:
 
 ```armasm
-addi t0 , zero , 10
-sw zero , 4( t1)
-lw t2 , 10( t3)
+addi t0, zero, 10
+sw zero, 4(t1)
+lw t2, 10(t3)
 ```
 
 For each of the 3 CPU designs (single-cycle, multi-cycle, pipelined), fill out the grid below where the horizontal axis represents time (every cell is 100 ps), and the vertical axis lists the instruction stream.
@@ -290,8 +291,8 @@ From these figures, we can see how much more efficient the pipelined design is, 
 
 ### Exercise 2.4
 
-What is the total time and cycles needed to execute the above RISC-V program from question (2.3) for each of the three CPU designs?
-What if we add 50 no-operation instructions (add zero, zero, zero)?
+What is the total time and cycles needed to execute the above RISC-V program from question 2.3 for each of the three CPU designs?
+What if we add 50 no-operation (`nop`) instructions (`add zero, zero, zero`)?
 Provide a formula to explain your answer.
 
 {% if site.solutions.show_session_8 %}
@@ -314,13 +315,13 @@ In short:
 
 # Hazards
 
-While pipelining is great to parallelize operations and speed up instructions by performing multiple operations in a single clock cycle, this may also lead to problems.
+While pipelining is great for parallelizing operations and speeding up instructions by performing multiple operations in a single clock cycle, it may also lead to problems.
 Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a hazard.
 There are three types of hazards:
 
-- **structural hazards** arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
-- **data hazards** occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
-- **control hazards** arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
+- **Structural hazards** arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
+- **Data hazards** occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
+- **Control hazards** arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
 
 In this session we will now look at data and control hazards.
 
@@ -331,9 +332,9 @@ However, `lw` will already need the correct value in the EX stage which occurs o
 
 There are three basic data dependencies that indicate a data hazard:
 
-- Read after Write (RAW): Data is read after it was previously written. Here, old data may be read before it is written.
-- Write after Read (WAR): Data is written after it was read earlier. In some pipelines and optimizations, the "later" write may already affect the earlier read.
-- Write after Write (WAW): Two writes may conflict each other.
+- Read after write (RAW): Data, which is read after it was previously written. Here, the old value of the data may be read before the new one is written.
+- Write after read (WAR): Data is written after it was read earlier. In some pipelines and optimizations, the "later" write may already affect the earlier read.
+- Write after write (WAW): Two writes may conflict with each other.
 
 ![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
 
@@ -342,12 +343,12 @@ There are three basic data dependencies that indicate a data hazard:
 Recall the RISC-V program from above.
 
 ```armasm
-addi t0 , zero , 10
-sw zero , 4( t1)
-lw t2 , 10( t3)
+addi t0, zero, 10
+sw zero, 4(t1)
+lw t2, 10(t3)
 ```
 
-Describe the performance implications for each of the three CPU designs, if in the RISC-V program the first instruction is changed to `addi t1, zero, 10` (hint: hazards).
+Describe the performance implications for each of the three CPU designs from exercise 2, if in the RISC-V program the first instruction is changed to `addi t1, zero, 10` (think about hazards).
 
 {% if site.solutions.show_session_8 %}
 #### Solution
@@ -364,16 +365,16 @@ Data hazards can be a big problem if not accounted for. The simplest way to deal
 Another approach is to cleverly reorder instructions so that hazards can be avoided. This must obviously be done in a way that does not change the result of the computation and can only work in a limited subset of occasions.
 
 To tackle data hazards more structurally, a CPU pipeline can *forward* information once it becomes available to the next or an earlier stage.
-This allows to prevent specific data hazards from occurring.
+This prevents specific data hazards from occurring.
 Below, you see a simple forwarding mechanism from the EX stage to the EX stage that forwards the new value of a register to immediately be available for the `lw` instruction in the next cycle.
 
 ![Forwarding](/exercises/8-microarchitecture/forwarding.drawio.svg){: .center-image }
 
-While forwarding like this has many benefits, it also has limitations. Below, you see one example where forwarding can not help because the information of `lw` only becomes available in the MEM stage which happens at the same time when the next instruction, `addi`, requires it in the EX stage.
+While forwarding like this has many benefits, it also has limitations. Below, you see one example where forwarding cannot help because the information of `lw` only becomes available in the MEM stage, which happens at the same time when the next instruction, `addi`, requires it in the EX stage.
 
 ![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
 
-The only way to deal with this is to stall the current execution, add a `nop` instruction, and let the processor wait until the information becomes available.
+The only way to deal with this is to stall the current execution (add a `nop` instruction), and let the processor wait until the information becomes available.
 Simply said, if the information becomes available in the same cycle that it is needed, there is nothing we can do with forwarding and we instead have to stall. Below you see a solution to this problem with stalling and a forwarding from the MEM stage to the EX stage.
 
 ![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
@@ -383,18 +384,18 @@ Simply said, if the information becomes available in the same cycle that it is n
 The code below describes a simple function in RISC-V assembly.
 
 ```armasm
-or t1 ,t2 ,t3
-or t2 ,t1 ,t4
-or t1 ,t1 ,t2
+or t1, t2, t3
+or t2, t1, t4
+or t1, t1, t2
 ```
 
-Assume the following cycle times for each of the options related to forwarding:
+Assume the following cycle times for two processors with different forwarding strategies:
 - Without forwarding: 250ps
-- With Full Forwarding: 300ps
+- With full forwarding: 300ps
 
 ### Exercise 3.1
-Indicate the dependencies and their type: Read After Write (RAW), Write After Read (WAR), Write
-after Write (WAW).
+Indicate the dependencies in the code and their type: read after write (RAW), write after read (WAR), write
+after write (WAW).
 
 {% if site.solutions.show_session_8 %}
 #### Solution
@@ -407,7 +408,7 @@ after Write (WAW).
 {% endif %}
 
 ### Exercise 3.2
-Assume there is no forwarding in the pipelined processor. Indicate hazards and add nop (no operation) instructions to eliminate them.
+Assume there is no forwarding in the pipelined processor. Indicate hazards and add `nop` (no operation) instructions to eliminate them.
 
 {% if site.solutions.show_session_8 %}
 #### Solution
@@ -443,7 +444,7 @@ or t1, t1, t2
 
 ### Exercise 3.3
 Assume there is full forwarding in the pipelined processor.
-Indicate the remaining hazards and add nop (no operation) instructions to eliminate them.
+Indicate the remaining hazards and add `nop` (no operation) instructions to eliminate them.
 Compared the speedup achieved by adding full forwarding to a pipeline with no forwarding.
 
 {% if site.solutions.show_session_8 %}
@@ -458,30 +459,31 @@ Without forwarding, we are forced to add the 4 nop instructions, which adds 4 ad
 {% endif %}
 
 ## Control hazards
+
 Control hazards happen when the proper instruction cannot execute in a pipeline
 stage because the instruction that was fetched is not the correct instruction.
 The easiest example is a conditional branch where the CPU must start fetching
 next instructions before actually knowing the outcome of the conditional branch.
 
 A first solution would be to stall the pipeline until the outcome of the
-conditional branch is known and we know which instructions to fetch.
+conditional branch is known, and we know which instructions to fetch.
 Unfortunately, this solution incurs a penalty on every branch, which might
 become too high when the outcome of the branch cannot be decided quickly.
 
-An optimization, featured in most processor, is to try to **predict** the
-outcome of a branch. For instance, the processor can predict that branch are
+An optimization, featured in most processors, is to try to **predict** the
+outcome of a branch. For instance, the processor can predict that branches are
 never taken and start fetching and executing corresponding instructions as shown
 in the following example:
 
 ![Control hazard](/exercises/8-microarchitecture/control-hazard1.drawio.svg){: .center-image }
 
 If the prediction is correct, we have a performance gain and the pipeline
-proceeds at full speed. If the prediction is incorrect, we have to discard
-wrongly executed instruction in the pipeline (which is called a *pipeline
+proceeds at full speed. If the prediction is incorrect, we have to discard the
+wrongly executed instructions in the pipeline (which is called a *pipeline
 flush*) and resume execution along the correct branch as shown in the following
-example. Of course we must make sure that these incorrect sequences of
-instructions called **transient executions** can be reverted (for instance they
-do not write to memory). In this case, the penalty is roughly equivalent to
+example. Of course, we must make sure that these incorrect sequences of
+instructions (called **transient executions**) can be reverted (for instance, they
+must not write to memory). In this case, the penalty is roughly equivalent to
 stalling.
 
 ![Control hazard](/exercises/8-microarchitecture/control-hazard2.drawio.svg){: .center-image }
@@ -490,13 +492,13 @@ Such prediction mechanisms are called **speculative execution** and are
 implemented in almost all processors. Modern processors have more sophisticated
 prediction mechanisms that can be updated *dynamically*. For instance, such a
 branch predictor could remember whether a particular branch was recently taken
-or non taken and base its prediction on this. Speculative execution can also be
-applied to predict the outcome of indirect branches or return instructions.
+or not, and base its prediction on this. Speculative execution can also be
+applied to predict the outcome of indirect branches or `ret` instructions.
 
-> :bulb: You might wonder what is the difference between *speculative execution*
-> and *transient execution*. Speculative execution is any sequence of
-> instructions that is executed by the processor after a prediction and before
-> the prediction is resolved. In particular the processor does not know is
+> :bulb: You might be wondering what the difference between *speculative execution*
+> and *transient execution* is. Speculative execution is any sequence of
+> instructions that is executed by the processor after a prediction (and before
+> the prediction is resolved). In particular, the processor does not know if
 > speculatively executed instructions will be committed or flushed. Transient
 > executions specifically refer to incorrectly executed instructions. In
 > particular, transient executions can happen because of speculative execution,
@@ -508,13 +510,13 @@ In 2018, a major vulnerability called Spectre became public, which has been
 discovered jointly by academic and industry security researchers. The
 vulnerability had a tremendous impact not only on academic research but also on
 industry: mitigations were proposed for microprocessors, operating systems, and
-other software. With our knowledge about architectures (in particular
-speculative execution) we can now understand what happened!
+other software. With our knowledge about architectures (speculative execution in particular)
+we can now understand what happened!
 
 ![Spectre logo](/exercises/8-microarchitecture/spectre.png){: .center-image
 width="250"}
 
-The main idea behind **Spectre attacks**, is to exploit prediction mechanisms in
+The main idea behind **Spectre attacks** is to exploit prediction mechanisms in
 order to leak secrets to the microarchitectural state during transient
 execution. Transient executions are reverted at the architectural level (they do
 not impact the final value of registers or memory) but *their effect on the
@@ -536,41 +538,42 @@ void spectre_gadget(int i) {  // The attacker calls the function with i=260
    if (i < 4) {               // The condition mispeculated
     int index = tab[i];       // index = secret
     char tmp = tab2[index * 256]; // secret is used as a load index during transient execution
-    [...]
+    // [...]
    }
 }
 ```
 1. The attacker can (optionally) train the branch predictor so that it predicts
    the condition `(i < 4)` to be true;
-1. The attacker prepares the cache (e.g. by flushing the content of `tab2`);
+1. The attacker prepares the cache (e.g., by flushing the content of `tab2`);
 1. The attacker calls the victim with a value `i` such that `tab[i]` returns the
    secret. The processor predicts the branch to be true, accesses the secret and
-   use it as an index to access `tab2`, which brings back `tab2[secret]` into
+   uses it as an index to access `tab2`, which brings `tab2[secret]` into
    the cache. The processor eventually realizes that the prediction is incorrect
-   and flushes the pipeline but the state of the cache is not reverted.
-1. Finally, the attacker can use cache attacks to infer which cache lines have
+   and flushes the pipeline, but the state of the cache is not reverted.
+1. Finally, the attacker can use cache attacks (like in the [previous session](/exercises/cache/#basic-cache-attack-flushreload))
+to infer which cache lines have
    been accessed by the victim and recover the value of `secret`!
 
-The Spectre attack illustrated above abuses the conditional branch predictor but
+The Spectre attack illustrated above abuses the conditional branch predictor, but
 there exist [other variants of Spectre](https://transient.fail/) that exploit
 different prediction mechanisms.
 
 ## Exercise 4 - Code Optimization
-The code below describes a simple function in RISC-V assembly(A = B + E; C = B +
-F;).
+The code below describes a simple function in RISC-V assembly (`A = B + E; C = B +
+F`).
 
 ```armasm
-lw t1 , 0( t0)
-lw t2 , 4( t0)
-add t3 , t1 , t2
-sw t3 , 12( t0)
-lw t4 , 8( t0)
-add t5 , t1 , t4
-sw t5 , 16( t0)
+lw t1, 0(t0)
+lw t2, 4(t0)
+add t3, t1, t2
+sw t3, 12(t0)
+lw t4, 8(t0)
+add t5, t1, t4
+sw t5, 16(t0)
 ```
 
 ### Exercise 4.1
-Assume the above program will be executed on a 5-stage pipelined processor with forwarding and hazard detection.
+Assume the program above will be executed on a 5-stage pipelined processor with forwarding and hazard detection.
 How many clock cycles will it take to correctly run this RISC-V code?
 
 {% if site.solutions.show_session_8 %}
@@ -610,23 +613,23 @@ sw t5, 16(t0)
 The code below describes a simple function in RISC-V assembly.
 
 ```armasm
-      add x1 , x0 , x0
+      add x1, x0, x0
 bar:
-      bne x1 , x0 , exit
-      bge x1 , x0 , foo
-      addi x1 , x1 , -100
-      add x5 , x5 , x5
-      add x6 , x1 , x1
-      sub x1 , x1 , x2
+      bne x1, x0, exit
+      bge x1, x0, foo
+      addi x1, x1, -100
+      add x5, x5, x5
+      add x6, x1, x1
+      sub x1, x1, x2
 foo:
-      addi x1 , x1 , 1
-      jal x10 , bar
+      addi x1, x1, 1
+      jal x10, bar
 exit:
-      xor x20 ,x21 ,x22
+      xor x20, x21, x22
       nop
 ```
 
-Fill out the following instruction/time diagram for the following set of instructions until the instruction on line 13 (xor) fully executes and commits.
+Fill out the following instruction/time diagram for this program until the instruction on line 13 (`xor`) fully executes and commits.
 Execution starts from line 1.
 
 ![Instruction time diagram](/exercises/8-microarchitecture/instruction-time-diagram.png){: .center-image }
@@ -645,14 +648,14 @@ In this exercise, we need to pay attention to branches and jumps. The processor 
 # General architectural awareness
 
 As final content for the exercise sessions, we will explain some general methods one can apply to make use of a CPU architecture.
-These may be the most applicable performance optimizations you can think of later in your programming career. Very often, compilers and interpreters may already perform similar optimizations for you, so you may not see any immediate benefit when applying these optimizations. However sometimes there can be a huge performance increase if one helps the compiler out.
+These may be the most applicable performance optimizations you can think of later in your programming career. Very often, compilers and interpreters may already perform similar optimizations for you, so you may not see any immediate benefit when applying these optimizations. However, sometimes there can be a huge performance increase if one helps the compiler out.
 
-In general, the modern rule of thumb should be to not attempt optimizations by oneself but first let the compiler and its tools give it a try. Usually, the generic approaches of optimizing code are already very sophisticated. However when specific code optimizations are needed, it is useful to have the understanding of the lower-level principles and the architecture that you now have, to methodologically attempt to make specific performance improvements to select pieces of code.
+In general, the modern rule of thumb should be to not attempt optimizations by oneself but first let the compiler and its tools give it a try. Usually, the generic approaches of optimizing code are already very sophisticated. However, when specific code optimizations are needed, it is useful to have the understanding of the lower-level principles and the architecture that you now have, to methodologically attempt to make specific performance improvements to select pieces of code.
 
 ## Loop fission
 
 Due to the principle of locality, we know that accesses that are close to each other in memory may be faster than varying accesses at the same time.
-Sometimes, it may be faster to break a loop into multiple loops over the same index range and allow each new loop to focus on only parts of the original loop's body. This can improve locality of reference for both data and code since the microarchitecture can kick in optimizations on hardware level. Below you see a simple example of this where instead of accessing both arrays in the same loop, we split up the loop and run it twice.
+Sometimes, it may be faster to break a loop into multiple loops over the same index range and allow each new loop to focus on only parts of the original loop's body. This can improve locality of reference for both data (the different arrays don't evict each other from the cache) and code (the entire code of the loop can fit in the instruction cache) since the microarchitecture can kick in optimizations at the hardware level. Below you see a simple example of this where instead of accessing both arrays in the same loop, we split up the loop and run it twice.
 
 <table>
 <tr>
@@ -686,7 +689,7 @@ for (i = 0; i < 100; i++) {
 ## Loop unrolling
 
 In a similar vein, very short loops may suffer from a lot of overhead due to the conditional branch that performs the loop.
-*Sometimes* decreasing the actual amount of instructions may be beneficial since it results in less jumps or conditional branches and can be beneficial for the pipeline. As you may guess, this optimization method also has the great potential of actually performing worse due to the microarchitecture!
+*Sometimes* decreasing the actual amount of instructions may be beneficial since it results in fewer jumps or conditional branches and can be beneficial for the pipeline. As you may guess, this optimization method also has the great potential of actually performing worse due to the microarchitecture!
 
 <table>
 <tr>
