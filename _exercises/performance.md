@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Session 8: Performance and Microarchitecture"
-nav_order: 7
+nav_order: 8
 nav_exclude: true
 search_exclude: true
 has_children: false
@@ -19,31 +19,31 @@ riscv:
 
 # Introduction
 
-The goal of today's exercise session is to introduce you to some microarchitecure and low level optimization concepts. 
-Learning about these optimizations will not only make you a better programmer, but will also give you more insight in to the wonderful low-level world and enhance your reasoning skills about it.
+The goal of today's exercise session is to introduce you to some microarchitecture and low-level optimization concepts.
+Learning about these optimizations will not only make you a better programmer, but will also give you more insight into the wonderful low-level world and enhance your reasoning skills about it.
 You should read the book from section 4.1 to 4.9 to get a better grasp on processor design and architecture.
 
-> :bulb: **Ripes**: To help you solve and reason about the upcoming exercises, it is advised to install the Ripes RISC-V simulator from [this GitHub page](https://github.com/mortbopet/Ripes/releases/latest). There is support for Windows, Mac and Linux. On Ubuntu, make the .AppImage executable using the command `chmod +x <ripes-filename>` to run the simulator.
-> 
-> Using Ripes, you can simulate four different processors: a single cycle RISC-V and three variants of a 5-stage pipeline. It also has a great cache simulator which can help you better understand what was learned in the last session about caches. All programs presented in this session can be executed cycle per cycle using Ripes.
+> :bulb: **Ripes**: To help you solve and reason about the upcoming exercises, it is advised to install the Ripes RISC-V simulator from [this GitHub page](https://github.com/mortbopet/Ripes/releases/latest). There is support for Windows, Mac and Linux. On Ubuntu, make the `.AppImage` file executable using the command `chmod +x <ripes-filename>` to run the simulator.
+>
+> Using Ripes, you can simulate different processors: a single-cycle, and different pipelined RISC-V cores. It also has a great cache simulator, which can help you better understand what was learned in the last session about caches. All programs presented in this session can be executed cycle per cycle using Ripes.
 
 ## Improving performance across all abstraction layers
 
 Improving runtime performance of software can be done at multiple layers across the computing stack.
-Below you see a figure of the abstraction layers we can consider in the context of computing, and some possible performance optimizations that can be applied at each layer.
+Below, you see a figure of the abstraction layers we can consider in the context of computing, and some possible performance optimizations that can be applied at each layer.
 Starting from the top, maybe the most obvious optimizations to you at this point are optimizations of your code, i.e., optimizations of algorithms.
-While these are an important piece of the optimization puzzle, we will not look at those in the context of CASS.
+While these are an important piece of the optimization puzzle, we will not look at them in the context of CASS.
 
 Going down the stack, two performance improvements happen at the programming language level.
-The choice of programming language and the optimizations that are done on assembly level by the compiler may have great impact on the runtime of a function.
+The choice of programming language and the optimizations that are done at the assembly level by the compiler may have great impact on the runtime of a function.
 You have already seen glimpses of this when doing [tail recursion in session 3](/exercises/functions-stack/#excursion-tail-recursion).
-Smart choices on assembly level may have great impacts on the performance of the code, even if on the higher level, the algorithm may stay the same.
+Smart choices on assembly level may have great impact on the performance of the code, even if on the higher level, the algorithm may stay the same.
 
 **In this session**, we will focus on three topics that go across different layers in the abstraction:
 
- - Architectural awareness
  - Instruction set architectural (ISA) awareness
  - Microarchitectural awareness
+ - Architectural awareness
 
 In *instruction set architectural awareness* we shortly explain how an ISA can impact the runtime of code.
 In the main part of this session we will talk about *microarchitectural awareness*.
@@ -55,7 +55,7 @@ Lastly, we will also shortly discuss some *general architectural awareness* acro
 
 # Instruction set architectural awareness
 
-Before we delve into the details of instruction set architectures, remember the core principle of the **cpu clock**: 
+Before we delve into the details of instruction set architectures, remember the core principle of the **cpu clock**:
 The CPU is driven by a clock that switches between two voltages (high and low).
 The time it takes for the clock to complete one cycle of high and then low voltage is known as the *clock period*.
 
@@ -69,23 +69,23 @@ Improving the performance runtime of a program can now be done by decreasing eit
 
 ## Designing an ISA
 
-When creating a new ISA, one design principle decision comes at the very beginning of the process:
+When creating a new ISA, one design principle decision comes at the very beginning of the process: should programs consist of
 
-1. Programs should consist of only very few, specialized instructions.
-1. Programs can consist of many, more general, instructions that are less specialized.
+1. only very few, specialized instructions or
+1. many, more general, instructions that are less specialized?
 
 In short, should the ISA provide a smaller set of instructions that are also faster to execute or should it provide a large number of specialized instructions that may execute for a longer time?
 This design decision stands behind the difference between RISC vs CISC.
 CISC (**Complex** instruction set computer) designs have been the dominant design for a large time of computing history, mostly because of the popular x86 ISA which is used by Intel and AMD.
 CISC instructions can be very specialized but also take a longer time to execute.
 One good example is the x86 instruction `REPNE SCASB`.
-This complicated instruction can be used to calculate the size of a string with a line of assembly code.
+This complicated instruction can be used to calculate the size of a string with one line of assembly code.
 However, the runtime of this instruction obviously depends on the size of the string.
 
 RISC (**Reduced** instruction set computer) designs like RISC-V or ARM decided that it is better to have a smaller number of instructions available that then run faster.
 Programs in RISC will then consist of more instructions to achieve the same functionality that a program written in a CISC ISA provides.
 For example, to calculate the size of a string in a RISC program, you would loop over the string manually and compare each new character to the null byte.
-In RISC ISAs, each instruction often takes the same number of cycles to complete which allows for many simplifications in the CPU and along the datapath.
+In RISC ISAs, each instruction often takes the same number of cycles to complete, which allows for many simplifications in the CPU and along the data path.
 
 ## Further reading
 
@@ -96,36 +96,38 @@ In the end, the details of CISC vs RISC are only important to you if you want to
 > :fire: The recent ARM chips [developed by Apple](https://screenrant.com/apple-silicon-m1-mac-risc-faster-than-intel/) are RISC CPUs that in some ways outperform their CISC competition from Intel. This means that the battle of CISC vs RISC is definitely not decided yet and will stay relevant over the next years.
 
 # Microarchitectural awareness
-RISC-V instruction typically take 5 steps to execute:
-1. Instruction Fetch: fetch an instruction from memory and increment the program
+
+RISC-V instructions typically take 5 steps to execute:
+1. Instruction fetch: fetch the instruction from memory and increment the program
    counter so that it points to next instruction (`pc = pc + 4`)
-1. Instruction Decode: decode the instruction and read operand registers
+1. Instruction decode: decode the instruction and read the operand registers
 1. Execute: execute the operation or calculate the address
 1. Memory access: when needed, reads operand values from the data memory
-1. Writeback: write the result into a register
+1. Write back: write the result into a register
 
 In a *single cycle processor implementation*, illustrated below, each
- instruction is executed in *one* cycle, meaning that these 5 steps happen in a
- single clock cycle. This also means that the clock cycle must have the same
- length for all instructions. Therefore, the clock has to be stretched to
- accommodate the slowest instruction (i.e. it has to be slow enough to allow the
- slowest instruction to fully execute, from the fetch to the writeback step). In
- other words, even if an instruction could in theory execute faster (e.g. an
- `add` could in theory execute faster than a `load` because it does not need to
- go through the memory access step), it is limited by the clock speed, which
- itself is limited by the worst-case instruction.
+instruction is executed in *one* cycle, meaning that these 5 steps happen in a
+single clock cycle. This also means that the clock cycle must have the same
+length for all instructions, since the clock frequency cannot dynamically change for
+each instruction. Therefore, the clock has to be stretched to
+accommodate the slowest instruction (i.e., it has to be slow enough to allow the
+slowest instruction to fully execute, from the fetch to the write back step). In
+other words, even if an instruction could in theory execute faster (e.g., an
+`add` could in theory execute faster than a `load` because it does not need to
+go through the memory access step), it is limited by the clock speed, which
+itself is limited by the worst-case instruction.
 
 ![Single cycle processor](/exercises/8-microarchitecture/single-cycle.drawio.svg){: .center-image }
 
-The performance of such single cycle processor is therefore constrained by the
-worst-case instruction. This become really problematic when the instruction set
-contains complex instruction like floating-point operations. In particular for
-CISC architecture the performance penalty would be completely unacceptable.
+The performance of such a single cycle processor is therefore constrained by the
+worst-case instruction. This becomes really problematic when the instruction set
+contains complex instructions like floating-point operations. In particular for
+CISC architectures the performance penalty would be completely unacceptable.
 
 
 ## Pipelining
 Nowadays, almost all processors use an optimization called **pipelining**. The
-execution is divided into pipeline steps, called **stages** which are operating
+execution is divided into pipeline steps, called **stages**, which are operating
 in parallel. Coming back to our 5 steps design: each step correspond to one
 pipeline stage and takes one cycle to execute, as illustrated below. The
 processor can execute the stages in parallel instead of waiting for an
@@ -166,7 +168,7 @@ In a single-cycle design, the entire execution with all stages executes in one c
 |   | Pipelined   | Single-cycle    |
 |:-:|:-----------:|:---------------:|
 | a | 500ps       | 1650 ps         |
-| b | 200ps       | 800ps           |  
+| b | 200ps       | 800ps           |
 
 {% endif %}
 
@@ -183,7 +185,7 @@ In a pipelined processor, this equals the cycle time multiplied with the number 
 |   | Pipelined   | Single-cycle   |
 |:-:|:-----------:|:--------------:|
 | a | 2500ps      | 1650ps         |
-| b | 1000ps      | 800ps          |  
+| b | 1000ps      | 800ps          |
 
 {% endif %}
 
@@ -200,7 +202,7 @@ As the cycle time is determined by the most time-consuming stage, this is the on
 |   | Stage to split | New clock cycle time  |
 |:-:|:--------------:|:---------------------:|
 | a | MEM            | 490ps                 |
-| b | IF             | 190ps                 | 
+| b | IF             | 190ps                 |
 
 {% endif %}
 
@@ -270,8 +272,8 @@ sw zero , 4( t1)
 lw t2 , 10( t3)
 ```
 
-For each of the 3 CPU designs (single-cycle, multi-cycle, pipelined), fill out the grid below where the horizontal axis represents time (every cell is 100 ps), and the vertical axis lists the instruction stream. 
-First draw the clock signal indicating at which time intervals a new CPU cycle starts, and then visualize how the processor executes the instruction stream over time. 
+For each of the 3 CPU designs (single-cycle, multi-cycle, pipelined), fill out the grid below where the horizontal axis represents time (every cell is 100 ps), and the vertical axis lists the instruction stream.
+First draw the clock signal indicating at which time intervals a new CPU cycle starts, and then visualize how the processor executes the instruction stream over time.
 Clearly indicate the start and end of each of the 5 datapath stages (IF, ID, EX, MEM, WB) for all instructions.
 Note: you can assume the CPU starts from a clean state (e.g., after a system reset).
 
@@ -288,7 +290,7 @@ From these figures, we can see how much more efficient the pipelined design is, 
 
 ### Exercise 2.4
 
-What is the total time and cycles needed to execute the above RISC-V program from question (2.3) for each of the three CPU designs? 
+What is the total time and cycles needed to execute the above RISC-V program from question (2.3) for each of the three CPU designs?
 What if we add 50 no-operation instructions (add zero, zero, zero)?
 Provide a formula to explain your answer.
 
@@ -440,7 +442,7 @@ or t1, t1, t2
 {% endif %}
 
 ### Exercise 3.3
-Assume there is full forwarding in the pipelined processor. 
+Assume there is full forwarding in the pipelined processor.
 Indicate the remaining hazards and add nop (no operation) instructions to eliminate them.
 Compared the speedup achieved by adding full forwarding to a pipeline with no forwarding.
 
@@ -531,7 +533,7 @@ char tab2[1024];
 int secret; // The secret we want to protect
 
 void spectre_gadget(int i) {  // The attacker calls the function with i=260
-   if (i < 4) {               // The condition mispeculated 
+   if (i < 4) {               // The condition mispeculated
     int index = tab[i];       // index = secret
     char tmp = tab2[index * 256]; // secret is used as a load index during transient execution
     [...]
@@ -568,7 +570,7 @@ sw t5 , 16( t0)
 ```
 
 ### Exercise 4.1
-Assume the above program will be executed on a 5-stage pipelined processor with forwarding and hazard detection. 
+Assume the above program will be executed on a 5-stage pipelined processor with forwarding and hazard detection.
 How many clock cycles will it take to correctly run this RISC-V code?
 
 {% if site.solutions.show_session_8 %}
