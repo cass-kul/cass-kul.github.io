@@ -506,7 +506,7 @@ applied to predict the outcome of indirect branches or `ret` instructions.
 > execution](https://en.wikipedia.org/wiki/Meltdown_(security_vulnerability)).
 
 ### Spectre
-In 2018, a major vulnerability called Spectre became public, which has been
+In 2018, [a major vulnerability called Spectre](https://en.wikipedia.org/wiki/Spectre_(security_vulnerability)) became public, which has been
 discovered jointly by academic and industry security researchers. The
 vulnerability had a tremendous impact not only on academic research but also on
 industry: mitigations were proposed for microprocessors, operating systems, and
