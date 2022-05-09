@@ -2,8 +2,8 @@
 layout: default
 title: "Session 8: Performance and Microarchitecture"
 nav_order: 8
-nav_exclude: true
-search_exclude: true
+nav_exclude: false
+search_exclude: false
 has_children: false
 has_toc: false
 riscv:
@@ -613,19 +613,19 @@ sw t5, 16(t0)
 The code below describes a simple function in RISC-V assembly.
 
 ```armasm
-      add x1, x0, x0
+      add t0, zero, zero
 bar:
-      bne x1, x0, exit
-      bge x1, x0, foo
-      addi x1, x1, -100
-      add x5, x5, x5
-      add x6, x1, x1
-      sub x1, x1, x2
+      bne t0, zero, exit
+      bge t0, zero, foo
+      addi t0, t0, -100
+      add t1, t1, t1
+      add t2, t0, t0
+      sub t0, t0, t3
 foo:
-      addi x1, x1, 1
-      jal x10, bar
+      addi t0, t0, 1
+      jal bar
 exit:
-      xor x20, x21, x22
+      xor s0, s1, s2
       nop
 ```
 
