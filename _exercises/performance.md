@@ -202,7 +202,7 @@ As the cycle time is determined by the most time-consuming stage, this is the on
 
 |   | Stage to split | New clock cycle time  |
 |:-:|:--------------:|:---------------------:|
-| a | MEM            | 490ps                 |
+| a | MEM            | 400ps                 |
 | b | IF             | 190ps                 |
 
 {% endif %}
