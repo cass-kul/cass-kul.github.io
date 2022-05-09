@@ -21,7 +21,7 @@ riscv:
 
 The goal of today's exercise session is to introduce you to some microarchitecture and low-level optimization concepts.
 Learning about these optimizations will not only make you a better programmer, but will also give you more insight into the wonderful low-level world and enhance your reasoning skills about it.
-You should read the book from section 4.1 to 4.9 to get a better grasp on processor design and architecture.
+This session covers the material from section 4.1 to 4.8 in the book. If you are unsure about any of the concepts, you can look for it in the book first.
 
 > :bulb: **Ripes**: To help you solve and reason about the upcoming exercises, it is advised to install the Ripes RISC-V simulator from [this GitHub page](https://github.com/mortbopet/Ripes/releases/latest). There is support for Windows, Mac and Linux. On Ubuntu, make the `.AppImage` file executable using the command `chmod +x <ripes-filename>` to run the simulator.
 >
@@ -319,7 +319,7 @@ While pipelining is great for parallelizing operations and speeding up instructi
 Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a hazard.
 There are three types of hazards:
 
-- **Structural hazards** arise from incompatibilities of the hardware with the instructions that are to be performed. In RISC-V and in a carefully designed processor, we can assume that structural hazards should not occur.
+- **Structural hazards** occur when instructions in different stages of the pipeline need access to the same resource in the same cycle, for example, if the instruction fetch stage uses the same memory bus as the memory stage. In pipelined RISC-V processors this hazard usually doesn't occur (e.g., instructions can be fetched in the same cycle as when memory loads are executing).
 - **Data hazards** occur when an operation relies on data that is yet to be provided by an earlier operation. The easiest example is using the result of an addition that is yet to be written to a register.
 - **Control hazards** arise when decisions need to be taken based on branches that are not yet resolved. The easiest example is a conditional branch where the CPU must already decide what instruction it loads next before knowing what the result of the conditional branch is.
 
