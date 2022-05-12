@@ -795,6 +795,23 @@ victim accesses during the “probe” phase?
 
 {% if site.solutions.show_session_7 %}
 #### Solution
+
+1. Direct mapping: Prime+Probe is applicable, since multiple addresses in the main memory map to the exact
+    same cache location. It suffices for the attacker to access a *single address with the same cache index address bits*
+    in order to replace a cached victim memory address during the “prime” phase. The granularity at which
+    the attacker can later see victim accesses during the “probe” phase, is equal to the cache block size. That is,
+    Prime+Probe cannot distinguish multiple victim accesses *within* the same cache block.
+2. N-way set associative: Prime+Probe is applicable, since multiple addresses in the main memory map to the
+    same cache set. However, in order to make sure that a cached victim memory address is replaced during
+    the “prime” phase, the attacker now has to access *N addresses with the same cache index address bits* (assuming
+    a least-recently used cache replacement policy). The best-case granularity at which the attacker can later
+    see victim accesses during the “probe” phase, is equal to the cache block size. That is, Prime+Probe cannot
+    distinguish multiple victim accesses *within* the same cache set.
+3. Fully associative: Prime+Probe is not applicable, since all addresses map to a *single* set. As such, there is
+    no secret-dependent replacement that can be measured during the “probe” phase. Even if the attacker fully
+    fills the cache during the “prime” phase, she can only learn afterwards that the least-recently used attacker
+    entries were replaced by the victim. In other words, the attacker can only learn how many, but not which
+    victim entries exactly where loaded into the cache.
 {% endif %}
 
 ### OPTIONAL: Exercise 8
