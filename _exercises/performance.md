@@ -55,15 +55,15 @@ Lastly, we will also shortly discuss some *general architectural awareness* acro
 
 # Instruction set architectural awareness
 
-Before we delve into the details of instruction set architectures, remember the core principle of the **cpu clock**:
+Before we delve into the details of instruction set architectures, remember the core principle of the **CPU clock**:
 The CPU is driven by a clock that switches between two voltages (high and low).
 The time it takes for the clock to complete one cycle of high and then low voltage is known as the *clock period*.
 
 ![Simple clock cycle diagram](/exercises/8-microarchitecture/clock.drawio.svg){: .center-image }
 
 When we talk about the runtime of a program, we can look at the general formula below:
-The time per program depends on the number of instructions, the cycles that each instruction takes, and finally the time that each cycle takes.
-Improving the performance runtime of a program can now be done by decreasing either of these components: Reducing the number of instructions that are needed, reducing the cycles per instruction, or reducing the time per cycles.
+The time it takes to run a program depends on the number of instructions, the cycles that each instruction takes, and finally the time that each cycle takes.
+Improving the performance runtime of a program can now be done by decreasing either of these components: Reducing the number of instructions that are needed, reducing the cycles per instruction, or reducing the time per cycle.
 
 ![General formula for the runtime of a program](/exercises/8-microarchitecture/isa-program-runtime.svg){: .center-image }
 
@@ -101,7 +101,7 @@ RISC-V instructions typically take 5 steps to execute:
 1. Instruction fetch: fetch the instruction from memory and increment the program
    counter so that it points to next instruction (`pc = pc + 4`)
 1. Instruction decode: decode the instruction and read the operand registers
-1. Execute: execute the operation or calculate the address
+1. Execute: execute the operation or calculate the address (for a memory operation)
 1. Memory access: when needed, reads operand values from the data memory
 1. Write back: write the result into a register
 
@@ -389,10 +389,6 @@ or t2, t1, t4
 or t1, t1, t2
 ```
 
-Assume the following cycle times for two processors with different forwarding strategies:
-- Without forwarding: 250ps
-- With full forwarding: 300ps
-
 ### Exercise 3.1
 Indicate the dependencies in the code and their type: read after write (RAW), write after read (WAR), write
 after write (WAW).
@@ -446,6 +442,10 @@ or t1, t1, t2
 Assume there is full forwarding in the pipelined processor.
 Indicate the remaining hazards and add `nop` (no operation) instructions to eliminate them.
 Compared the speedup achieved by adding full forwarding to a pipeline with no forwarding.
+
+Assume the following cycle times for two processors with different forwarding strategies:
+- Without forwarding: 250ps
+- With full forwarding: 300ps
 
 {% if site.solutions.show_session_8 %}
 #### Solution
