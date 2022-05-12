@@ -819,12 +819,41 @@ victim accesses during the “probe” phase?
 Consider a processor with a 32-bit addressing mode and a direct mapped cache, with a 1-word
 block size and a total size of 16 blocks. First calculate index and tag address bits, as in [Exercise 4](#exercise-4) above. Say that
 all memory addresses in the range [0, 100[ belong to the victim, whereas the attacker owns addresses in the range[100, 232[. The victim performs a series of address references given as word addresses: either (2, 3, 11, 16, 21, 13,
-64, 48, 19, 11, 3, 22, 4, 27, 11) if `secret=1`, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, 70, 36, 7, 91, 75) if `secret=0`.
+64, 48, 19, 11, **3, 22, 4, 27, 11**) if `secret=1`, or (2, 3, 11, 16, 21, 13, 64, 48, 19, 11, *70, 36, 7, 91, 75*) if `secret=0`.
 Construct a memory access sequence to be performed by an attacker during the “prime” phase, in order to learn
 the victim’s secret in the “probe” phase later on.
 
 {% if site.solutions.show_session_7 %}
 #### Solution
+
+The 32-bit address divided as follows: (26 tag bits), (4 index bits), (2 data bits within word).
+
+Victim's cache usage (highlighted secret-dependent access sequence for **secret=1** vs *secret=0*):
+
+| S | W |
+|---|---|
+|  0 | <del>16</del>, <del>64</del>, 48 |
+|  1 | -- |
+|  2 |  2 |
+|  3 |  <del>19</del>, **3** |
+|  4 |  **4** or *36* |
+|  5 | 21 |
+|  6 | **22** or *70* |
+|  7 | *7* |
+|  8 | -- |
+|  9 | -- |
+| 10 | -- |
+| 11 | <del>11</del>, **27, 11** or *91, 75* |
+| 12 | -- |
+| 13 | 13 |
+| 14 | -- |
+| 15 | -- |
+
+Now observe that cache block 7 is only accessed by the victim if *secret=0*. It thus suffices to load an attacker-controlled
+memory location that maps to cache block 7 during the “prime” phase (e.g., word address 135), and
+reload that location in the “probe” phase after the victim’s execution. A long access time (i.e., cache miss) reveals
+that the attacker’s memory location in cache block 7 was replaced by the victim, and hence *secret=0*.
+
 {% endif %}
 
 ### OPTIONAL: Exercise 9
@@ -835,4 +864,27 @@ policy.
 
 {% if site.solutions.show_session_7 %}
 #### Solution
+
+The 32-bit address divided as follows: (27 tag bits), (2 index bits to select set), (1 bit to select word within
+set), (2 data bits within word).
+
+Victim's cache usage (highlighted secret-dependent access sequence for **secret=1** vs *secret=0*):
+
+| Set | Block | Word 0 : Word 1 |
+|-----|-------|-----------------|
+| 0 | 0 | <del>16:17</del>, 48:49 |
+|   | 1 | 64:65 |
+| 1 | 2 | <del>2:3</del>, <del>18:19</del>, **<del>2:3</del>, 10:11** or *90:91* |
+|   | 3 | <del>10:11</del>, **26:27** or *74:75* |
+| 2 | 4 | <del>20:21</del>, **4:5** or *36:37* |
+|   | 5 | 12:13 |
+| 3 | 6 | **22:23** or *70:71* |
+|   | 7 | *6:7* |
+
+Now observe that cache set 3 has a higher pressure when *secret=0* (two replacements when accessing words 70 and
+7) vs. when **secret=1** (only a single replacement when accessing word 22). It thus suffices to completely fill cache
+set 3 with attacker-controlled words (e.g., word addresses 126 and 134) during the “prime” phase. After executing
+the victim, the attacker reloads both word 126 and 134 in the “probe” phase. Only when both accesses are slow (i.e.,
+cache miss), the victim replaced two cache blocks in cache set 3, and hence secret=0.
+
 {% endif %}
