@@ -10,7 +10,7 @@ permalink: /
 This website is the source of all information regarding the exercise sessions of the
 Computer Architecture and System Software course.
 
-We are trying a new approach this year by providing the exercise sessions in the format of web pages, please don't hesitate to give us feedback on this! If you find mistakes or errors, just reach out to us. You are also most welcome to create Pull Requests: The source code of the Website that you see is visible on [GitHub](https://github.com/cass-kul/cass-kul.github.io). Both in the GitHub repository as well as on this website, you may be able to find some pages that are hidden from the menu and that are not unlocked yet (such as future sessions or solutions). You are free to look at these pages, but please be aware that we will be actively working on each session up until the Monday of the session's week - so be careful when roaming around as the pages may not be final yet!
+For a few years now, we provided the exercise sessions as web pages. So far the feedback has been positive, but please reach out to us if you disagree or if you think we could make the course better. If you find mistakes or errors, just reach out to us. You are also most welcome to create Pull Requests: The source code of the Website that you see is visible on [GitHub](https://github.com/cass-kul/cass-kul.github.io). Both in the GitHub repository as well as on this website, you may be able to find some pages that are hidden from the menu and that are not unlocked yet (such as future sessions or solutions). You are free to look at these pages, but please be aware that we will be actively working on each session up until the Monday of the session's week - so be careful when roaming around as the pages may not be final yet!
 
 ## Exercises
 
@@ -30,24 +30,24 @@ The 9 sessions will have the following contents:
 
 | Week   | Session name |
 | :----- | :----------- |
-| Feb 21 | C & assembly basics |
-| Feb 28 | Advanced C & assembly |
-| Mar 7  | Functions and the stack |
-| Mar 14 | Dynamic memory |
-| Mar 28 | Operating systems |
-| Apr 25 | Large exercise: linked lists |
-| May 2  | Caches |
-| May 9  | Microarchitecture |
-| May 16 | Recap and Q&A |
+| Feb 20 | C & assembly basics |
+| Feb 27 | Advanced C & assembly |
+| Mar 6  | Functions and the stack |
+| Mar 13 | Dynamic memory |
+| Mar 27 | Operating systems |
+| Apr 24 | Large exercise: linked lists |
+| May 1  | Caches |
+| May 8  | Microarchitecture |
+| May 15 | Recap and Q&A |
 
 ## YouTube videos
 
-There are videos available from last year, where the theory of each session is explained.
+There are videos available from 2020, where the theory of each session is explained.
 These videos might help with understanding the concepts, but watching them is not required,
 and they do not substitute working through the material yourself, as there might be new
 content included this year.
 
-You can find all videos on [Youtube](https://www.youtube.com/playlist?list=PLMXWnt556xY4Sexd5FMBc-ZF7pFb2SLnU). Note, that we changed the exercises slightly to make the introduction to C and assembly easier, so there are already differences to last year. For example, some exercises and their solutions that are presented on the Youtube channel are shuffled around or are different this year. Nonetheless, the videos can be a good addition if you prefer the video style to a Website.
+You can find all videos on [Youtube](https://www.youtube.com/playlist?list=PLMXWnt556xY4Sexd5FMBc-ZF7pFb2SLnU). Note, that we changed the exercises slightly to make the introduction to C and assembly easier, so there are already differences. For example, some exercises and their solutions that are presented on the Youtube channel are shuffled around or are different this year. Nonetheless, the videos can be a good addition if you prefer the video style to a Website.
 
 ## Other useful resources
 
