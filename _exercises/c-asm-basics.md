@@ -453,19 +453,19 @@ remaining, so we know x points to an integer pointer (<code class="language-plai
 </details>
 
 
-# Memory segments in assembly
+# Memory sections in assembly
 
 So far, we have only used registers to store values in assembly. But in many cases, we want to store
 values in memory (e.g., if we have more variables than the number of available registers). This is of
 course also possible in assembly.
 
-A program is made up of multiple **memory segments**. The C compiler manages this for us transparently,
+A program is made up of multiple **memory sections**. The C compiler manages this for us transparently,
 but when writing assembly, we need to note these explicitly. If you go back to the [first assembly example](#compiling-c)
 we've seen, you'll see the string `"Hello world"` is stored in `.section .rodata`.
 
 ## The `.text` section
 
-In RISC-V assembly, we will make use of two segments. The program code (the instructions) are
+In RISC-V assembly, we will make use of two sections. The program code (the instructions) are
 stored in the `.text` section. If you only write instructions in RARS, it will automatically put
 them in this section, this is why the warm-up program worked as it did. But it's good practice to always define it:
 
