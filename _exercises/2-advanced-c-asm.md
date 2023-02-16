@@ -54,7 +54,7 @@ You can store the result in the `a0` register.
 # Functions in C
 
 In this session, we will briefly introduce functions in C, but the detailed description of how to
-translate them into assembly will be the topic of the [third session](/exercises/functions-stack).
+translate them into assembly will be the topic of the [third session](/exercises/3-functions-stack).
 
 You probably remember that every C program must contain the `int main(void)` function,
 this is where the execution will start. Remember that the first `int` means that

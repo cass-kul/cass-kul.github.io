@@ -136,7 +136,7 @@ sw t3, 8(t0)  # array[2] = 5
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/warmup1.asm %}
+{% include_relative 3-functions-stack/warmup1.asm %}
 ```
 
 {% endif %}
@@ -180,7 +180,7 @@ If you take a look at the [RISC-V card linked at the top of the website](/files/
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/warmup2.asm %}
+{% include_relative 3-functions-stack/warmup2.asm %}
 ```
 
 {% endif %}
@@ -228,7 +228,7 @@ If you are now unsure about what the size of the data is that you want to put or
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/warmup4.asm %}
+{% include_relative 3-functions-stack/warmup4.asm %}
 ```
 
 {% endif %}
@@ -256,7 +256,7 @@ At this point, it may not surprise you anymore to hear that RISC-V actually has 
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/warmup5.asm %}
+{% include_relative 3-functions-stack/warmup5.asm %}
 ```
 
 {% endif %}
@@ -343,7 +343,7 @@ Below, you can find a series of images that walk you through an example program 
   {: .text-delta .text-blue-000 }
 
 ```armasm
-{% include_relative functions-stack/stack-example.asm %}
+{% include_relative 3-functions-stack/stack-example.asm %}
 ```
 
 </details>
@@ -355,7 +355,7 @@ Assume that `main` does not return like common functions.
 Why is this assumption necessary right now?
 
 ```c
-{% include_relative functions-stack/ex1.c %}
+{% include_relative 3-functions-stack/ex1.c %}
 ```
 
 {% if site.solutions.show_session_3 %}
@@ -363,7 +363,7 @@ Why is this assumption necessary right now?
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/sol1.asm %}
+{% include_relative 3-functions-stack/sol1.asm %}
 ```
 
 {% endif %}
@@ -386,11 +386,11 @@ Follow the calling conventions to pass all arguments correctly.
 > of `main`!
 
 ```c
-{% include_relative functions-stack/ex2.c %}
+{% include_relative 3-functions-stack/ex2.c %}
 ```
 
 ```armasm
-{% include_relative functions-stack/ex2.asm %}
+{% include_relative 3-functions-stack/ex2.asm %}
 ```
 
 {% if site.solutions.show_session_3 %}
@@ -398,7 +398,7 @@ Follow the calling conventions to pass all arguments correctly.
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/sol2.asm %}
+{% include_relative 3-functions-stack/sol2.asm %}
 ```
 
 {% endif %}
@@ -415,7 +415,7 @@ Note that `sum_fixme` acts both as a caller and a callee at different times. You
 - the value `0xdeadbeef` in `s0`.
 
 ```armasm
-{% include_relative functions-stack/ex3.asm %}
+{% include_relative 3-functions-stack/ex3.asm %}
 ```
 
 {% if site.solutions.show_session_3 %}
@@ -423,7 +423,7 @@ Note that `sum_fixme` acts both as a caller and a callee at different times. You
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/sol3.asm %}
+{% include_relative 3-functions-stack/sol3.asm %}
 ```
 
 {% endif %}
@@ -433,7 +433,7 @@ Note that `sum_fixme` acts both as a caller and a callee at different times. You
 Consider the following recursive function which calculates `n!`.
 
 ```c
-{% include_relative functions-stack/ex4.c %}
+{% include_relative 3-functions-stack/ex4.c %}
 ```
 
 1. Convert this function to RISC-V.
@@ -445,7 +445,7 @@ Consider the following recursive function which calculates `n!`.
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/sol4.asm %}
+{% include_relative 3-functions-stack/sol4.asm %}
 ```
 
 {% endif %}
@@ -477,7 +477,7 @@ Translate this program to RISC-V.
 Try to avoid using the call stack during the `fact_tail` implementation. Why is this possible?
 
 ```c
-{% include_relative functions-stack/ex5.c %}
+{% include_relative 3-functions-stack/ex5.c %}
 ```
 
 {% if site.solutions.show_session_3 %}
@@ -485,7 +485,7 @@ Try to avoid using the call stack during the `fact_tail` implementation. Why is 
 #### Solution
 
 ```armasm
-{% include_relative functions-stack/sol5.asm %}
+{% include_relative 3-functions-stack/sol5.asm %}
 ```
 
 {% endif %}

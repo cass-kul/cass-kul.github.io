@@ -21,7 +21,7 @@ During previous sessions, you learned how to write small functions and programs.
 The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
 
 <center>
-<img src="/exercises/os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
+<img src="/exercises/5-os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
 </center>
 
 The OS also provides a form of security. Different program processes are isolated form each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
@@ -29,7 +29,7 @@ The OS also provides a form of security. Different program processes are isolate
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
 <center>
-<img src="/exercises/os/rings.drawio.png" alt="Rings have different levels of privilege" />
+<img src="/exercises/5-os/rings.drawio.png" alt="Rings have different levels of privilege" />
 </center>
 
 RISC-V offers three privilege levels or *modes*:
@@ -37,12 +37,12 @@ RISC-V offers three privilege levels or *modes*:
 
 * **Supervisor Mode**: Supervisor mode allows the execution of most instructions, but not all of them. This mode is typically used when the kernel executes.
 
-* **User Mode**: The instructions that are allowed to be executed are limited in user mode. This mode is usually used during the execution of processes.    
+* **User Mode**: The instructions that are allowed to be executed are limited in user mode. This mode is usually used during the execution of processes.
 
 > :bulb: The RISC-V architecture only requires that machine mode is available on a CPU.
 > Therefore, not all three modes are available on all CPUs.
 
-> :pencil: The RARS emulater that you have been using during previous sessions does not only emulate a RISCV-V processor. 
+> :pencil: The RARS emulater that you have been using during previous sessions does not only emulate a RISCV-V processor.
 > It also simulates a tiny OS with its own set of services. All the programs that you assembled and executed in RARS were
 > running on this OS in user mode. This means that it's not possible by default to use all instructions of the RISC-V instruction set
 > in RARS.
@@ -99,7 +99,7 @@ Write a user program that uses system calls to read two numbers from the user’
 #### Solution
 
 ```armasm
-{% include_relative os/sol1.asm %}
+{% include_relative 5-os/sol1.asm %}
 ```
 
 {% endif %}
@@ -163,7 +163,7 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 #### Solution
 
 ```armasm
-{% include_relative os/sol2.asm %}
+{% include_relative 5-os/sol2.asm %}
 ```
 
 {% endif %}
@@ -192,7 +192,7 @@ This approach has the following problems:
 For every program that you run in RARS, a fixed address space is provided by the RARS OS for the program's process. For 32bit RARS, the process layout is as follows:
 
 <center>
-<img src="/exercises/os/process_layout.drawio.png" alt="32bit RARS process layout" />
+<img src="/exercises/5-os/process_layout.drawio.png" alt="32bit RARS process layout" />
 </center>
 
 The `.text` sections contains the program's code. Every *jump* or *branch* that you write will land in this section. The `.data` section contains the global variables that you declared in advance. The *heap* and *stack* are both dynamic regions: their size can grow and shrink when required. The OS reserves just enough memory for the program to run. When the processes requires more memory, more memory can dynamically be requested from the *heap* region, which is initially empty, through a system call. This is in contrast with our approach that reserved a *heap* in the `.data` section: we might have reserved a lot of bytes that the process would never even use or need, which would be a waste of memory.
@@ -214,7 +214,7 @@ main:
 ```
 
 ### Releasing allocated memory
-It would not be efficient to keep increasing the heap when previously allocated memory is no longer in use; we have to *free* it. This allows to later on reuse this memory when more memory is again required. In the [last exercise of previous session](/exercises/dynamic-memory/#exercise-5), you had to come up with an allocator that also allows to *free* previous allocated memory.
+It would not be efficient to keep increasing the heap when previously allocated memory is no longer in use; we have to *free* it. This allows to later on reuse this memory when more memory is again required. In the [last exercise of previous session](/exercises/4-dynamic-memory/#exercise-5), you had to come up with an allocator that also allows to *free* previous allocated memory.
 
 ### Releasing memory in RARS
 It is possible to pass a negative integer to the `sbrk` system call in RARS. This could be used to *free* previously allocated memory. However, this would not always be sufficient to release any memory that you previously allocated. It only allows to *free* the last chunk of bytes that previously has been allocated through `sbrk`. Have a look at following example:
@@ -249,10 +249,10 @@ main:
 {% endhighlight %}
 </td>
 <td>
-<img src="/exercises/os/heap1.drawio.png" alt="Heap after allocation" />
+<img src="/exercises/5-os/heap1.drawio.png" alt="Heap after allocation" />
 </td>
 <td>
-<img src="/exercises/os/heap2.drawio.png" alt="Heap after free" />
+<img src="/exercises/5-os/heap2.drawio.png" alt="Heap after free" />
 </td>
 </tr>
 </table>
@@ -371,7 +371,7 @@ System call that are requested in user mode, are handled by the trap handler in 
 .text
 handler:
 	csrrw a0, ucause, zero # Move ucause to a0 and zero to ucause
-	la t0, end 	
+	la t0, end
 	csrrw zero, uepc, t0 # move epc to success and return
 	uret # jumps to the address in uepc
 main:
@@ -379,7 +379,7 @@ main:
  	csrrw zero, utvec, t0 # set utvec so it points to our custom trap handler
  	csrrsi zero, ustatus, 1 # set interrupt enable in use mode
  	lw t0, 1          # trigger trap (misaligned, no multiple of 4)
- 	li a7, 10		   
+ 	li a7, 10
  	ecall		   # exit (0)
 end:
  	li a7, 93
@@ -396,7 +396,7 @@ Write a custom user-mode exception handler. The exception handler should do noth
 #### Solution
 
 ```armasm
-{% include_relative os/sol3.asm %}
+{% include_relative 5-os/sol3.asm %}
 ```
 
 {% endif %}
@@ -419,7 +419,7 @@ Make sure to restore all register values before returning from the trap handler.
 #### Solution
 
 ```armasm
-{% include_relative os/sol4.asm %}
+{% include_relative 5-os/sol4.asm %}
 ```
 
 {% endif %}
@@ -437,7 +437,7 @@ Use following skeleton as a starting point and proceed as follow:
 
 ```armasm
 .data
-song: .string "CCisCCesC CCGGAAG FFEEDDC" #The song string itself. 
+song: .string "CCisCCesC CCGGAAG FFEEDDC" #The song string itself.
 # Any note (A-G) can be raised half a pitch (sharpened) with suffix is (e.g. Ais -> A sharp)
 # Any note (A-G) can be lowered half a pitch (flattened) with suffix es (e.g. Des -> D flat)
 # A space equals a rest
@@ -476,25 +476,25 @@ next_tone_from_string:
 	li  a0, 0
 	li  a1, 1
 	ret
-ret_A: 
+ret_A:
 	li a0, 12
 	j adjust
-ret_B: 
+ret_B:
 	li a0, 13
 	j adjust
-ret_C: 
+ret_C:
 	li a0, 3
 	j adjust
-ret_D: 
+ret_D:
 	li a0, 5
 	j adjust
-ret_E: 
+ret_E:
 	li a0, 7
 	j adjust
-ret_F: 
+ret_F:
 	li a0, 8
 	j adjust
-ret_G: 
+ret_G:
 	li a0, 10
 	j adjust
 adjust:
@@ -527,7 +527,7 @@ play_song:
 #otherwise, play the tone with pitch $a0 + scale_base (also with duration "duration")
 play_tone:
 	#TODO implement
-	
+
 main:
 	li t0, 60000
 	lw t1, bpm
@@ -536,7 +536,7 @@ main:
 
 	la a0, song
 	jal play_song
-	
+
 	li a7, 10
 	ecall
 
@@ -547,7 +547,7 @@ main:
 #### Solution
 
 ```armasm
-{% include_relative os/sol5.asm %}
+{% include_relative 5-os/sol5.asm %}
 ```
 
 {% endif %}
