@@ -44,10 +44,10 @@ teaching assistant or reach out to us on the Toledo forums!
 
 # Architecture basics
 
-Modern computers are made up of several hardware components. Most of these follow the so-called
+Modern computers are made up of several hardware components. Most of these computers follow the so-called
 *von Neummann* architecture. This means that the random access memory (RAM) contains both
 program code and the data this program calculates on. (This is in contrast to Harvard
-architectures, where the instructions and data are stored in separate memory modules).
+architectures, where the instructions and data are stored in separate memory modules.)
 
 The computer's operation is sometimes called the `fetch`, `decode`, `execute` cycle.
 Instructions are fetched from RAM, decoded by the control unit, then executed in the
@@ -59,11 +59,11 @@ to RAM.
 </center>
 
 These designs are called *stored-program computers*, highlighting that the code that is
-executed is stored in memory. These instructions are stored in **machine code** format, which
+executed is stored in memory. These instructions are stored in **machine code** format (see later), which
 is often directly compiled from a high-level program by a compiler.
 
-The computations are usually performed on values stored in **registers**. These allow a small number of
-values to be stored inside the CPU. Accessing registers
+The computations are usually performed on values stored in **registers**. Registers allow
+values to be stored inside the CPU (but there are only a few of them). Accessing registers
 is much quicker than accessing the RAM, so registers enable faster computations
 than if the values were fetched directly from RAM. In fact, in later sessions we will see how caches are used
 to speed up accesses to values that are not stored in registers and have to be fetched from
@@ -90,7 +90,7 @@ execute is defined in the instruction set architecture (ISA). This specification
 possible instructions (and their behavior), but also the list of registers or other hardware features that must be supported
 to be able to execute these instructions.
 
-The most popular ISA today is x86, which is implemented by almost all Intel and AMD processors. x86 is called a
+The most widely used ISA today is x86, which is implemented by almost all Intel and AMD processors. x86 is called a
 CISC (*complex* instruction set computer) ISA, its specification has evolved over many years and currently includes
 thousands of instructions, some of which are very specialized to increase performance (e.g., dedicated
 instructions for performing AES encryption).
@@ -233,8 +233,8 @@ at the corresponding memory locations.
 In contrast, in RISC-V assembly we can only perform arithmetic operations on values stored in registers:
 
 ```armasm
-addi t0, zero, 4      # t0 = 4
-addi t1, zero, 5      # t1 = 5
+addi t0, zero, 4      # t0 = zero + 4 (zero is a special register containing the value 0)
+addi t1, zero, 5      # t1 = zero + 5
 addi t2, t0, 3        # t2 = t0 + 3
 mul  t2, t2, t1       # t2 = t2 * t1
 ```
@@ -299,7 +299,7 @@ of this value, together with the original number.
 {% if site.solutions.show_session_1 %}
 #### Solution
 ```c
-{% include_relative c-asm-basics/sol1.c %}
+{% include_relative 1-c-asm-basics/sol1.c %}
 ```
 {% endif %}
 
@@ -406,7 +406,7 @@ We can visualize the memory layout the following way (ignore `x` for now):
 </center>
 
 In the picture, each cell represents a location in memory, the addresses of these locations are
-displayed in gray in the top right corner. When we create a variable in C (identifier in blue, bottom left),
+displayed in gray in the top right corner. When we create a variable in C (identifier in blue, bottom right),
 it will get assigned to one of these locations. The contents of the memory location are displayed in the middle.
 
 Integer values are displayed in green, while pointers are in shades of red. Pointing to a memory location (visualized
@@ -453,19 +453,19 @@ remaining, so we know x points to an integer pointer (<code class="language-plai
 </details>
 
 
-# Memory segments in assembly
+# Memory sections in assembly
 
 So far, we have only used registers to store values in assembly. But in many cases, we want to store
 values in memory (e.g., if we have more variables than the number of available registers). This is of
 course also possible in assembly.
 
-A program is made up of multiple **memory segments**. The C compiler manages this for us transparently,
+A program is made up of multiple **memory sections**. The C compiler manages this for us transparently,
 but when writing assembly, we need to note these explicitly. If you go back to the [first assembly example](#compiling-c)
 we've seen, you'll see the string `"Hello world"` is stored in `.section .rodata`.
 
 ## The `.text` section
 
-In RISC-V assembly, we will make use of two segments. The program code (the instructions) are
+In RISC-V assembly, we will make use of two sections. The program code (the instructions) are
 stored in the `.text` section. If you only write instructions in RARS, it will automatically put
 them in this section, this is why the warm-up program worked as it did. But it's good practice to always define it:
 
@@ -482,7 +482,7 @@ but also `.LC0:`, which points to the string literal.
 
 `main:` is a special label, RARS will start execution from here if it can find it. This is useful if you have
 a longer file, and you don't necessarily want RARS to start executing from the first line. (This will be useful
-for example when you will define multiple functions in the same file).
+for example when you define multiple functions in the same file).
 
 To enable external programs to also use these labels, you can use the `.globl` directive. For example,
 writing `.globl main` will allow other programs to start executing your program from the `main:` label.
@@ -497,7 +497,7 @@ main:
 
 ## The `.data` section
 
-We can store variables in the `.data` section. These will work very similar to C variables, but there is
+We can store variables in the `.data` section. These will work very similarly to C variables, but there is
 a weaker notion of data types in assembly. For integers, we will usually reserve a word (32 bits) of memory,
 which corresponds to the size of `int` in C in most cases (an `int` in C does not have a concretely defined
 size in the specification).
@@ -509,10 +509,10 @@ refer back to it.
 .data
     a: .word 5
 .text
-    la t0, a
-    lw t1, (t0)
+    la t0, a       # load address of `a` into `t0`
+    lw t1, (t0)    # load value at address `t0` into `t1`
     addi t1, t1, 3
-    sw t1, (t0)
+    sw t1, (t0)    # store value from `t1` to address `t0`
 ```
 
 When reserving a `word`, we can also give it an initial value in memory. In the above example,
@@ -523,8 +523,8 @@ into `t1`. After increasing this value by 3, we write it back to the original me
 If you want to reserve space in the data section with a byte granularity (not full words),
 you can use the `.space N` directive, where `N` is the number of bytes you want to reserve.
 For example, you can reserve 4 bytes of space with `empty: .space 4`. In this case,
-you can't provide initial values for the memory, you need to store a value in it
-from your program.
+you can't provide initial values for the memory, you need to store a value to it
+from your program explicitly.
 
 ### Exercise 2
 
@@ -536,7 +536,7 @@ that your program works as intended!
 {% if site.solutions.show_session_1 %}
 #### Solution
 ```armasm
-{% include_relative c-asm-basics/sol2.S %}
+{% include_relative 1-c-asm-basics/sol2.S %}
 ```
 {% endif %}
 
@@ -576,7 +576,7 @@ they should be at least 2 bytes long. This program will tell you exactly how man
 bytes these types use on your computer.
 
 ```c
-{% include_relative c-asm-basics/sol3.c %}
+{% include_relative 1-c-asm-basics/sol3.c %}
 ```
 {% endif %}
 
@@ -590,7 +590,7 @@ factorial of this integer.
 {% if site.solutions.show_session_1 %}
 #### Solution
 ```c
-{% include_relative c-asm-basics/sol4.c %}
+{% include_relative 1-c-asm-basics/sol4.c %}
 ```
 {% endif %}
 
@@ -651,7 +651,7 @@ store the input integer in the data section.
 {% if site.solutions.show_session_1 %}
 #### Solution
 ```armasm
-{% include_relative c-asm-basics/sol5.S %}
+{% include_relative 1-c-asm-basics/sol5.S %}
 ```
 {% endif %}
 
@@ -663,6 +663,6 @@ Make sure that your solution works for all `b >= 0`!
 {% if site.solutions.show_session_1 %}
 #### Solution
 ```armasm
-{% include_relative c-asm-basics/sol6.S %}
+{% include_relative 1-c-asm-basics/sol6.S %}
 ```
 {% endif %}

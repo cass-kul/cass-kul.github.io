@@ -20,7 +20,7 @@ has_toc: false
 # Introduction
 
 In this session you will make one big exercise as a recap of everything that you have learned about RISC-V and C up to now.
-In [Session 4](https://cass-kul.github.io/exercises/dynamic-memory/#dynamic-data-structures), we already briefly discussed the concept of a linked list. Now, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session), and on the discussion forum.
+In [Session 4](https://cass-kul.github.io/exercises/4-dynamic-memory/#dynamic-data-structures), we already briefly discussed the concept of a linked list. Now, you will implement an interface with a number of operations on linked lists in C, and you will translate the C code to RISC-V code. You will start working on this implementation in the current exercise session. However, to fully complete the assignment will take more time than just one session. You can, if you choose, work on this interface for the rest of the semester, at your own pace. Questions can be asked in the current session, in the last session of the semester (this will also be a revision session), and on the discussion forum.
 
 Implementing the full interface is a great way to prepare yourself for the RISC-V programming part of the exam. C programming will not be
 evaluated on the exam. However, you will need to translate C code to RISC-V code. Therefore, we recommend to also implement the C part. Furthermore, implementing the interface in RISC-V will be a lot easier when you have C code that you can translate, especially if you wrote that C code yourself.
@@ -32,7 +32,7 @@ evaluated on the exam. However, you will need to translate C code to RISC-V code
 # Dynamic memory
 
 Sometimes we want to use a data structure, but we do not know how big it might become before running the program. To solve this problem, we can use dynamic memory to define data structures that might grow or shrink during runtime. The space reserved for dynamic allocation of memory is called **the heap**.
-In session 4, we implemented a [stack structure](https://cass-kul.github.io/exercises/dynamic-memory/#exercise-3) by using the heap. We will now use the same concepts to create a list that is not limited in size before execution, as opposed to a regular array in C.
+In session 4, we implemented a [stack structure](https://cass-kul.github.io/exercises/4-dynamic-memory/#exercise-3) by using the heap. We will now use the same concepts to create a list that is not limited in size before execution, as opposed to a regular array in C.
 
 ## Linked list
 
@@ -41,13 +41,13 @@ Simply put, a linked list is a data structure that allows to link different node
 Let's have a look at an example of how linked lists work:
 
 1. **Initalization of the list**: We create an empty list where the pointer to the first element has the value `NULL`.
-![Empty memory with list pointer](/exercises/linked-lists/images/linked_list_1.png)
+![Empty memory with list pointer](/exercises/6-linked-lists/images/linked_list_1.png)
 2. **Adding an element to the list**: We add the value `5` to the linked list. We can do this by allocating some space on the heap for our new node and setting the value of the `first` pointer to the allocated memory. We can then write our value in memory and let the next pointer of the node point to `NULL`.
-![Adding first node](/exercises/linked-lists/images/linked_list_2.png)
+![Adding first node](/exercises/6-linked-lists/images/linked_list_2.png)
 3. **Adding a second node to the list**: We now want to add a second node with the value `3` to the list. We can do this in the same way as the previous step. Note that we want to change the value of the `next` pointer of the previous node to point to our new node.
-![Adding a second node](/exercises/linked-lists/images/linked_list_3.png)
+![Adding a second node](/exercises/6-linked-lists/images/linked_list_3.png)
 4. **Removing a node**: We want to delete the previously added node with value `3`. In order to do this we need to free the space used for the node we want to delete and make sure that the `next` pointer of the node with value `5` is changed to have the `NULL` value, since there will be no longer a next node in the list.
-![Removing a node](/exercises/linked-lists/images/linked_list_4.png)
+![Removing a node](/exercises/6-linked-lists/images/linked_list_4.png)
 
 Now that you understand the basics, we can move on to the exercise.
 
@@ -57,7 +57,7 @@ Before you begin, make sure that RARS is configured correctly. Open the `Setting
 
 # Linked lists interface
 
-To get started, download the file [linked_list.zip](/exercises/linked-lists/exercise-files.zip). Inside, you will find the following files:
+To get started, download the file [linked_list.zip](/exercises/6-linked-lists/exercise-files.zip). Inside, you will find the following files:
 
 * `c/linked_list.h`: header file containing the definition of the interface functions
 * `c/linked-list.c +`: the template in which you need to implement all function definitions
@@ -171,13 +171,13 @@ We provide a partial solution to the first two functions (`list-create` and `lis
 ### list_create
 
 ```armasm
-{% include_relative linked-lists/partial-solutions/list-create.asm %}
+{% include_relative 6-linked-lists/partial-solutions/list-create.asm %}
 ```
 
 ### list_append
 
 ```armasm
-{% include_relative linked-lists/partial-solutions/list-append.asm %}
+{% include_relative 6-linked-lists/partial-solutions/list-append.asm %}
 ```
 
 {% endif %}

@@ -36,7 +36,7 @@ While these are an important piece of the optimization puzzle, we will not look 
 
 Going down the stack, two performance improvements happen at the programming language level.
 The choice of programming language and the optimizations that are done at the assembly level by the compiler may have great impact on the runtime of a function.
-You have already seen glimpses of this when doing [tail recursion in session 3](/exercises/functions-stack/#excursion-tail-recursion).
+You have already seen glimpses of this when doing [tail recursion in session 3](/exercises/3-functions-stack/#excursion-tail-recursion).
 Smart choices on assembly level may have great impact on the performance of the code, even if on the higher level, the algorithm may stay the same.
 
 **In this session**, we will focus on three topics that go across different layers in the abstraction:
