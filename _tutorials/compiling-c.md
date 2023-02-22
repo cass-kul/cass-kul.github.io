@@ -17,7 +17,7 @@ Programs written in C can not directly be executed. Instead, they have to be *co
 For [Java](https://www.javatpoint.com/is-java-interpreted-or-compiled) and [Python](https://www.geeksforgeeks.org/python-compiled-or-interpreted/) the compilation step is mostly hidden from the developer, and a simple command is enough to execute the code.
 Thus, to compile C programs, we need to install a set of tools (a compiler) that allows us to run the generated *executable* code.
 
-Below, we show you three options of how to work with C from the browser, from Windows, and from Linux.
+Below, we show you three options of how to work with C from the browser, from Windows, from Linux, and from Mac.
 For the first few sessions, compiling the rare C programs in the browser may be enough for you, but later we will rely on you having access to a compiler. This is because compiling in the browser does not work with bigger projects like we will have for exercise session 6.
 
 ## A simple test program
@@ -64,6 +64,10 @@ In essence, you only need to:
 ![Opening Ubuntu](/tutorials/img/ubuntu.png "Screenshot to show how to open the Ubuntu app")
 
 At this point, you have a fully functional Ubuntu virtual machine (VM) on your Windows system. There is no graphical interface, but we also do not need that for our purposes. You can always access the current folder that is open in Ubuntu by executing the command `explorer.exe .` in the Ubuntu VM. This will open a Windows Explorer window with the folder as it is stored in Ubuntu. You can use this to work on files from Windows and then execute the compiler from the Ubuntu Terminal.
+
+You can edit your `.c` files in any text editor (like Notepad). However, your default text editor might not be very convenient to write programs, for instance because it does not have syntax highlightning. If you want a lightweight editor with syntax highlightning you can install [Notepad++](https://notepad-plus-plus.org/).
+
+> :bulb: In Windows, you can access the files stored in your ubuntu virtual machine and open them in your favorite text editor. Your can run `explorer.exe .` in the Ubuntu VM to access them and they should be located in `Linux > Ubuntu > home`. Note however that it is not as easy to access your windows files from your Ubuntu VM!
 
 Now you are set up with a Linux VM to work with. Keep reading below of how to set up Ubuntu to compile C programs.
 
@@ -114,6 +118,14 @@ Hello world!
 ```
 
 If you see the `Hello world!` output, you are done with the setup! :tada:
+
+## Compiling C in Mac
+
+In a Terminal, first check whether the `gcc` compiler is installed by entering `gcc --version`.
+
+If `gcc` is not installed, you can install it, via the [Homebrew](https://brew.sh/) package manager, with the command `brew install gcc`. (If you don't have `brew` installed, follow the [tutorial](https://brew.sh/) to install it first.)
+
+Now that you have installed `gcc`, you can follow the previous section *"Compiling C in Linux"* (omitting the part about installing `gcc`) to learn how to compile programs!
 
 ## Alternative: Compiling C in Windows with MinGW
 
