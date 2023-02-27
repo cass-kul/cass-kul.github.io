@@ -38,7 +38,7 @@ switch (operation) {
 ```
 
 Convert this code into RISC-V assembly!
-Assume that the variables `operation`, `a`, and `b` are integers stored in memory (the data segment).
+Assume that the variables `operation`, `a`, and `b` are integers stored in memory (the data section).
 You can store the result in the `a0` register.
 
 > :bulb: Tip: If at first you're scared of the `switch` statement, don't be!
@@ -143,7 +143,7 @@ are going to be placed in consecutive memory by the compiler, but sometimes the 
 leaves some empty space between the different fields (e.g., for optimization reasons). This is called
 **padding**.
 
-If you have a pointer to a struct, you can still refer to the fields of the pointed object:
+If you have _a pointer_ to a struct, you can still refer to the fields of the pointed object:
 
 ```c
 void birthday(struct person *sp) {
@@ -285,7 +285,7 @@ This notation is a bit verbose, so C allows us to shorten it using the index not
 classes[3] = 5;
 ```
 
-Of course, you can also use a variable to index into an array. If you want to iterate over all
+Of course, you can also use a variable as an index for an array. If you want to iterate over all
 the elements of the array, this is a very handy way of doing it (keep in mind that
 the first element is at index `0`!):
 
