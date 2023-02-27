@@ -44,7 +44,7 @@ You can store the result in the `a0` register.
 > :bulb: Tip: If at first you're scared of the `switch` statement, don't be!
 > Think about how you would convert it into consecutive `if` statements in C.
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```armasm
 {% include_relative 2-advanced-c-asm/sol1.S %}
@@ -109,7 +109,7 @@ has to go above the other!)
 Write a C program that computes the factorial of every number between 1 and 10.
 Avoid duplicating code (use loops and functions where applicable).
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```c
 {% include_relative 2-advanced-c-asm/sol2.c %}
@@ -181,7 +181,7 @@ and print the addresses of each field. Draw the memory layout chosen by
 the compiler. Did the compiler introduce padding? If so, where and how
 much?
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```c
 {% include_relative 2-advanced-c-asm/sol3.c %}
@@ -318,7 +318,7 @@ a function to print the array to avoid duplicating your code. Don’t hardcode t
 
 Hint: Don't be discouraged if your solution looks ugly, you can ask the teaching assistant whether it's correct! :)
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```c
 {% include_relative 2-advanced-c-asm/sol4.c %}
@@ -364,7 +364,7 @@ declared in the header `string.h`. Then create a second version where `strlen`
 is not used. Note that the last character of the string will be the line feed
 (hex `0x0a`).
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```c
 {% include_relative 2-advanced-c-asm/sol5.c %}
@@ -378,7 +378,7 @@ representation of each character in the string in order. Verify the
 output using an ASCII table. Hint: use the format
 string `%02x`.
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 
 We add one extra line in our function:
@@ -405,7 +405,7 @@ words in memory:
 Write a RISC-V program that multiplies all numbers in an
 array with a constant number without using the `mul` instruction.
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 
 In this program, we move in reverse order of the elements to avoid explicitly
@@ -434,7 +434,7 @@ Translate the C program calculating the length of a string without `strlen` from
 to RISC-V. The string can be provided in the data section. The resulting
 length can be stored in register `a0`.
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 ```armasm
 {% include_relative 2-advanced-c-asm/sol8.S %}
@@ -450,7 +450,7 @@ a solution assuming that the characters of the string are 32-bit words (use
 `.word` instead of `.string`). What changes if the characters are bytes (using
 `.string`)?
 
-{% if site.solutions.show_session_1 %}
+{% if site.solutions.show_session_2 %}
 #### Solution
 
 A possible solution for comparing strings:
