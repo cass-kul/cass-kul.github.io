@@ -438,7 +438,7 @@ Consider the following recursive function which calculates `n!`.
 
 1. Convert this function to RISC-V.
 1. Consider the call `fact(3)`. What is the state of stack when it reaches its maximum size (at the deepest level of recursion)?
-1. In [exercise 4 of the first session](/exercises/c-asm-basics/#exercise-4) you implemented an iterative factorial function. Compare both factorial implementations in terms of memory usage. Which implementation do you prefer?
+1. In [exercise 4 of the first session](/exercises/1-c-asm-basics/#exercise-4) you implemented an iterative factorial function. Compare both factorial implementations in terms of memory usage. Which implementation do you prefer?
 
 {% if site.solutions.show_session_3 %}
 

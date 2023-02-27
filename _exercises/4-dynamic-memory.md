@@ -33,11 +33,11 @@ that can be resized at runtime (for instance, Python lists or Java
 `ArrayList`s).
 
 ## Recap: pointers in C
-In the [first exercise session](/exercises/c-asm-basics/#pointers-in-c), you had
+In the [first exercise session](/exercises/1-c-asm-basics/#pointers-in-c), you had
 an introduction to pointers in C. This is a quick reminder about how to use
 pointers. In this session we will use pointers a lot, so, if necessary, you can
 come back to the explanations in the [first exercise
-session](/exercises/c-asm-basics/#pointers-in-c) or ask your teaching assistant
+session](/exercises/1-c-asm-basics/#pointers-in-c) or ask your teaching assistant
 for more explanations.
 
 Variables are stored in memory and have an **address**. The address of a
