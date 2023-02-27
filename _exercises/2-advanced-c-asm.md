@@ -314,7 +314,7 @@ Write a C program that prints the array `1, 2, 3, 4, 5` on a single
 line separated by spaces, together with the addresses of the elements.
 Ask the user for an integer, multiply all elements
 of the original array with this integer and print the array again. Now, define
-a function to print the array to avoid duplicating your code. Don’t hardcode the size of the array in the code!
+a function to print the array to avoid duplicating your code. Don’t hardcode the size of the array in the function: your function should work with various array sizes!
 
 Hint: Don't be discouraged if your solution looks ugly, you can ask the teaching assistant whether it's correct! :)
 
