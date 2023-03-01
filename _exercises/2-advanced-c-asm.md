@@ -252,8 +252,9 @@ or pass it to a function expecting a pointer argument:
 
 ```c
 int classes[7] = {4, 3, 1, 4, 2, 0, 0};
-int *copy = classes;
+int *copy = classes; // Note: only the pointer is copied, not the entire array!
 ```
+At the end of this example, `classes` and `copy` will refer to the same memory location, namely the beginning of the array, which contains the value 4.
 
 ## Elements of the array
 
