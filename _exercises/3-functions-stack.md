@@ -30,8 +30,8 @@ gallery_images:
 
 # Introduction
 
-In the last sessions you have already gained first experience with assembly code in RISC-V and by now also have a basic understanding of C code.
-In this session, we will dive deeper into what difficulties arise when writing larger programs, how we can extend our registers by using memory, and how this helps us to also write code elements that resemble functions as you know them from higher-level languages.
+In the last sessions, you have already gained some experience with assembly code in RISC-V and, by now, also have a basic understanding of C code.
+In this session, we will dive deeper into what difficulties arise when writing larger programs, how we can extend our registers by using memory, and how this helps us to write code elements that resemble functions as you know them from higher-level languages.
 
 ## Recap: Functions in C
 
@@ -121,7 +121,7 @@ resume:
 > having to change any registers. If the address of the start of the (integer) array is stored in `t0`, you can
 > overwrite different elements of the array by changing this offset:
 > ```armasm
-li t3, 5  # we want to overwrite the first 3 elements of the array with 5
+li t3, 5  # we want to overwrite the first three elements of the array with 5
 sw t3, 0(t0)  # array[0] = 5
 sw t3, 4(t0)  # array[1] = 5
 sw t3, 8(t0)  # array[2] = 5
@@ -155,7 +155,7 @@ different roles for different registers:
 Register number             | Register name | Use                   | Note
 --------:------             | ------:------ | :------------         | :-------------
 `x0`                        | `zero`        | Always zero           | -
-`x1 - x4`                   | `ra,sp, gp, tp`| Various uses         | Partially explained below
+`x1 - x4`                   | `ra, sp, gp, tp`| Various uses         | Partially explained below
 `x5 - x7` and `x28-x31`     | `t0 - t6`     | Temporary registers   | **Caller** must save these registers before calling a function it they need them later. Functions may at any time overwrite these registers!
 `x8 - x9` and `x18 - x27`   | `s0 - s11`    | Saved registers       | **Callee** must save these registers. Thus, you can safely use these registers in your code and any function that you call **must** back them up and restore them if they decide to use them too.
 `x10 - x17`                 | `a0 - a7`     | Function arguments    | Function arguments to called functions. Used as input parameters.
@@ -193,7 +193,7 @@ The official calling conventions talk about passing some function parameters via
 
 It is easy to think of cases where the 32 registers we have are not enough. You may already have come to a situation where this is the case, but for any larger program, we definitely need to store data in memory. Similarly, if the calling conventions only define 8 registers to pass function arguments, what happens if we want to pass more data to a function than fits into these 8 registers?
 You already worked with variables stored in the `.data` section: in a similar way, we could declare a region in memory that we use to back up or restore data from. However, defining specific variables is still not enough for cases where we do not know how many variables we will need.
-In this case, what we need is a data structure where we *dynamically* add and remove data from, depending on what we need.
+In this case, what we need is a data structure where we *dynamically* add and remove data, depending on what we need.
 
 ## Understanding the stack
 
@@ -219,7 +219,7 @@ Now to use this stack, we would do the following actions:
     1. Decrement the pointer by the size of the last data element
     1. Read the content of the data stored at the current stack pointer
 
-If you are now unsure about what the size of the data is that you want to put or retrieve from the stack, take a look again at the calling conventions or at the RISC-V sheet, both contain a list of common data types and their size in bytes in our 32-bit RISC-V configuration.
+If you are now unsure about the size of the data that you want to put or retrieve from the stack, take a look again at the calling conventions or at the RISC-V sheet, both contain a list of common data types and their size in bytes in our 32-bit RISC-V configuration.
 
 > :fire: Warm-up 4: Expand the example above with simple code that loads the address of the stack into a register, pushes two integers (4 and 5 for example) and then pops these integers again.
 
@@ -235,17 +235,17 @@ If you are now unsure about what the size of the data is that you want to put or
 
 This simple stack that you have written can already help you to overcome all challenges that we described above:
 
-- If we run out of registers, we can temporarily push the variables onto the stack. As long as we as developers remember where we can find the data and how many variables we pushed after this variable, we can always find it again.
+- If we run out of registers, we can temporarily push the variables onto the stack. As long as we remember where we can find the data and how many variables we pushed after this variable, we can always find it again.
 - If we want to send complex data to a function or want to exceed the 8 registers that we can use to send function arguments, we can use such a stack and simply pass the pointer to the data on the stack.
-- One additional issue we did not discuss yet is the problem of **program control flow**. Where should the function jump at the end? What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. This is handled by the *return address* register (`ra` / `x1`), which also needs to backed up to the stack during nested function calls.
+- One additional issue we did not discuss yet is the problem of **program control flow**. Where should the function jump at the end? What happens on recursion? Or if a function wants to call another function? The functions should always remember who called them and where to *return* to. This is handled by the *return address* register (`ra` / `x1`), which also needs to be backed up to the stack during nested function calls.
 
 ## Manipulating the stack in RISC-V
 
-At this point, it may not surprise you anymore to hear that RISC-V actually has a dedicated register called the **stack pointer**, and that the calling conventions heavily rely on these mechanisms:
+At this point, it may not surprise you anymore to hear that RISC-V actually has a dedicated register called the **stack pointer**, and that the calling conventions heavily rely on the mechanisms mentioned above:
 
 - The **stack pointer** (`sp` / `x2`) is already set up for you to point to the CPU stack. You can use it in your programs freely.
-- In RISC-V (and other architectures) the stack however grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excursion below for more details.
-- To **push** data (e.g. `t0`) to the stack: first use `addi sp, sp, −4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, 0(sp)` to write `t0` to the stack.
+- In RISC-V (and other architectures) the stack grows **downwards**. Thus, instead of increasing the pointer as you did in the warm-up above, you **decrement** it. See the excursion below for more details.
+- To **push** data (e.g. `t0`) to the stack: first use `addi sp, sp, −4` (decrement the stack pointer to allocate space on the stack); then use `sw t0, 0(sp)` to write `t0` to the stack. The stack pointer should always point to the last pushed value (not to the empty space below it).
 - To **pop** data from the stack (e.g. in `t0`): first load the data at the top
   of the stack using `lw t0, 0(sp)`; then update the stack pointer using `addi sp, sp, 4`.
 
@@ -273,17 +273,17 @@ If you want to understand more about this, read through the excursion below.
   </summary>
   {: .text-gamma .text-blue-000 }
 
-There is no *technical* reason for this, this is just **convention**. You could equally well define that the stack grows upwards in the direction that is probably more intuitive to you. However, this decision may make more sense when looking at the general memory layout that we use for *all* the uses of the memory in RISC-V.
+There is no *technical* reason for this, this is just **convention**. You could equally well define that the stack grows upwards in the direction that is probably more intuitive to you. However, this decision may make more sense when looking at the general, complete memory layout of RISC-V.
 
 Since RISC-V is based on a Von Neumann architecture, the memory is used to store *both* instructions and data. Take a look at the memory overview below. You will see that in the memory, we need to store (from bottom to top, low address to high):
 
-1. Reserved memory at the very first addresses (bottom in the graphic, but address 0x00
-1. Text section, i.e., the instructions that are kept in memory. For programs you write with RARS, this means all instructions you write as RARS simulates a memory layout for you.
-1. Data section where all static data is kept
+1. Reserved memory at the very first addresses (bottom in the graphic, from address 0x00).
+1. Text section, i.e., instructions that are kept in memory (your program).
+1. Data section where all static data is kept.
 1. Heap data for dynamic memory. You will learn more about this in the next session.
-1. Stack
+1. Stack.
 
-Both the stack and the heap can grow during the execution of programs. Since we may not always know how large both can get during execution, it is simpler to just have them share a big block of memory and let them grow towards each other. Then, we only need to make sure they never cross each other but until that happens, both can grow and shrink however they want.
+Both the stack and the heap can grow during the execution of programs. Since we may not always know how large both can get during execution, it is simpler to just have them share a big block of memory and let them grow towards each other. Then, we only need to make sure they never cross each other, but until that happens, both can grow and shrink however they want.
 
 ![Memory Layout in RISC-V](memory-layout.png "Memory Layout in RISC-V")
 
@@ -295,12 +295,12 @@ Both the stack and the heap can grow during the execution of programs. Since we 
 
 Calling a function means multiple things at once:
 
-1. We jump to a new address (or label) and expect the code there to execute for a few instructions
-1. We may want to provide some input to the called function
-1. We may expect some return values from the called function
-1. The function is expected to jump back, also called *return*, to the code that originally called it
-1. Any registers that are marked as caller-save must be saved before the function call and restored afterwards (if we want to preserve their value)
-1. Any registers that are marked as callee-save must remain untouched by the called function
+1. We jump to a new address (or label) and expect the code there to execute.
+1. We may want to provide some input to the called function.
+1. We may expect some return values from the called function.
+1. The function is expected to jump back (i.e., *return*), to the code that originally called it.
+1. Any registers that are marked as caller-save must be saved before the function call and restored afterwards (if we want to preserve their value).
+1. Any registers that are marked as callee-save must remain untouched by the called function.
 
 We have already discussed which registers are callee- and caller-saved. However, we did not discuss how these registers should be saved on the stack or in what order we should save them.
 The first thing to do when calling a function is to save the caller-saved registers on the stack.
@@ -314,19 +314,19 @@ Before jumping to the function, we fill the `ra` register with the return addres
 
 > The complete list of things to do when calling a function is as follows:
 >
-> 1. Push caller-saved registers that you need to reuse to the stack (e.g. if you only reuse `t0` and `t1` you need to save them but you don't need to save `t2-7`)
-> 1. Push function parameters that do not fit in registers onto the stack
-> 1. Place all function parameters that belong into registers in the registers `a0` to `a7`
-> 1. Call the function either via `jal` (or via another instruction as long as you make sure to store the return address to `ra`)
+> 1. Push caller-saved registers that you need to reuse to the stack (e.g. if you only reuse `t0` and `t1` you need to save them but you don't need to save `t2-7`).
+> 1. Place all function parameters that fit into registers in `a0` to `a7`.
+> 1. Push remaining function parameters onto the stack.
+> 1. Call the function either via `jal` or via another instruction as long as you make sure to store the return address to `ra`.
 >
 > In the called function, do the following:
 >
-> 1. Back up the return address register `ra` as a first thing on the stack (if we're planning to overwrite it either directly or by calling another function with `jal` from within the function)
-> 1. Back up other callee-saved registers that will be used by this function (e.g. if we do not touch `s0-s7`, we can skip saving them)
-> 1. Perform function tasks
+> 1. Back up the return address register `ra` on the stack (if we're planning to overwrite it either directly or by calling another function with `jal` from within the function).
+> 1. Back up other callee-saved registers that will be used by this function (e.g. if we do not touch `s0-s7`, we can skip saving them).
+> 1. Perform function tasks.
 > 1. Place function return in `a0` and `a1`.
-> 1. Restore callee-saved registers and `ra`
-> 1. Return to parent function via `ret` (or simply jump to `ra`)
+> 1. Restore callee-saved registers and `ra`.
+> 1. Return to parent function via `ret` (or simply jump to `ra`).
 
 With this complete calling conventions list, you should now understand the call stack diagram, which you can also find on the RISC-V card:
 
@@ -456,7 +456,7 @@ A [*tail call*](https://en.wikipedia.org/wiki/Tail_call) occurs whenever the las
 Compilers can take advantage of tail calls to reduce memory usage. This is because for tail calls, no additional stack frame needs to be entered. Instead, we can simply overwrite the function parameters, jump to the function and execute from there by reusing the original function stack frame.
 This is possible since we do not expect to be returned to and instead refer to our original caller that is on our stack frame. Thus, when the (tail-) called function returns, it will not return to us but directly to the original code that called us.
 
-The benefit of tail calls is that they are very light on stack usage. While non-tail recursion add a stack frame for each recursion depth, tail recursion only use a single stack frame for any recursion depth.
+The benefit of tail calls is that they are very light on stack usage. While non-tail recursion adds a stack frame for each recursion depth, tail recursion only uses a single stack frame for any recursion depth.
 
 > :bulb: The call `fact(n-1)` in the previous exercise is **not** a tail call. Why not?
 
