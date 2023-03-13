@@ -46,7 +46,7 @@ You can store the result in the `a0` register.
 
 {% if site.solutions.show_session_2 %}
 #### Solution
-```armasm
+```text
 {% include_relative 2-advanced-c-asm/sol1.S %}
 ```
 {% endif %}
@@ -396,7 +396,7 @@ know that arrays are just consecutive values in memory, we can implement them th
 same way in assembly as they work in C. You can use comma-separated values to reserve consecutive
 words in memory:
 
-```armasm
+```text
 .data
     array: .word 1, 2, 3, 4
 ```
@@ -412,7 +412,7 @@ array with a constant number without using the `mul` instruction.
 In this program, we move in reverse order of the elements to avoid explicitly
 needing to take care of which element we're dealing with.
 
-```armasm
+```text
 {% include_relative 2-advanced-c-asm/sol7.S %}
 ```
 {% endif %}
@@ -421,7 +421,7 @@ needing to take care of which element we're dealing with.
 
 For strings, we again have special syntax:
 
-```armasm
+```text
 .data
     str: .string "hello"
 ```
@@ -437,7 +437,7 @@ length can be stored in register `a0`.
 
 {% if site.solutions.show_session_2 %}
 #### Solution
-```armasm
+```text
 {% include_relative 2-advanced-c-asm/sol8.S %}
 ```
 {% endif %}
@@ -456,7 +456,7 @@ a solution assuming that the characters of the string are 32-bit words (use
 
 A possible solution for comparing strings:
 
-```armasm
+```text
 {% include_relative 2-advanced-c-asm/sol9.S %}
 ```
 

@@ -232,7 +232,7 @@ at the corresponding memory locations.
 
 In contrast, in RISC-V assembly we can only perform arithmetic operations on values stored in registers:
 
-```armasm
+```text
 addi t0, zero, 4      # t0 = zero + 4 (zero is a special register containing the value 0)
 addi t1, zero, 5      # t1 = zero + 5
 addi t2, t0, 3        # t2 = t0 + 3
@@ -354,7 +354,7 @@ detail in later sessions.
 
 We have already seen an example of RISC-V assembly:
 
-```armasm
+```text
 addi t2, t0, 3        # t2 = t0 + 3
 mul  t2, t2, t1       # t2 = t2 * t1
 ```
@@ -469,7 +469,7 @@ In RISC-V assembly, we will make use of two sections. The program code (the inst
 stored in the `.text` section. If you only write instructions in RARS, it will automatically put
 them in this section, this is why the warm-up program worked as it did. But it's good practice to always define it:
 
-```armasm
+```text
 .text
 main:
     addi t2, t0, 3
@@ -488,7 +488,7 @@ To enable external programs to also use these labels, you can use the `.globl` d
 writing `.globl main` will allow other programs to start executing your program from the `main:` label.
 We will always add this directive when working in RARS.
 
-```armasm
+```text
 .globl main
 .text
 main:
@@ -505,7 +505,7 @@ size in the specification).
 We also use a label (`a:`) to give a name to our word in memory, otherwise it would be difficult to
 refer back to it.
 
-```armasm
+```text
 .data
     a: .word 5
 .text
@@ -535,7 +535,7 @@ that your program works as intended!
 
 {% if site.solutions.show_session_1 %}
 #### Solution
-```armasm
+```text
 {% include_relative 1-c-asm-basics/sol2.S %}
 ```
 {% endif %}
@@ -616,7 +616,7 @@ In assembly, constructing these control structures is a bit more tricky. We will
 once again need to make use of the labels that were previously introduced.
 In the branch and jump instructions we include these labels as jump targets.
 
-```armasm
+```text
 loop:
     addi t0, t0, 1
     j loop
@@ -629,7 +629,7 @@ until the heat death of the universe.
 This is of course not very useful, so there are many instructions that perform
 conditional branching.
 
-```armasm
+```text
     mv t0, zero
     addi t1, zero, 5
 loop:
@@ -650,7 +650,7 @@ store the input integer in the data section.
 
 {% if site.solutions.show_session_1 %}
 #### Solution
-```armasm
+```text
 {% include_relative 1-c-asm-basics/sol5.S %}
 ```
 {% endif %}
@@ -662,7 +662,7 @@ Make sure that your solution works for all `b >= 0`!
 
 {% if site.solutions.show_session_1 %}
 #### Solution
-```armasm
+```text
 {% include_relative 1-c-asm-basics/sol6.S %}
 ```
 {% endif %}

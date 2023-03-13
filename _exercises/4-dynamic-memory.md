@@ -260,7 +260,7 @@ to arrays of `n` integers. What does the function do? Translate this function to
 {% if site.solutions.show_session_4 %}
 #### Solution
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/sol1.asm %}
 ```
 {% endif %}
@@ -277,7 +277,7 @@ Translate this function to RISC-V.
 {% if site.solutions.show_session_4 %}
 #### Solution
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/sol2.asm %}
 ```
 {% endif %}
@@ -306,7 +306,7 @@ to any dynamic data structures.
 
 ## Linked lists
 Assume that a program reserves a big chunk of memory that it can use to store several lists:
-``` armasm
+``` text
 .data
     list_memory: .space 1000000
 ```
@@ -342,7 +342,7 @@ address of the next free memory location. (This is a bit similar to the stack po
 Let us now see how to implement this in RISC-V.
 
 First, we need to store the list pointer in a register. Let us (randomly) pick `s9`.
-```armasm
+```text
 la s9, list_memory
 ```
 
@@ -352,7 +352,7 @@ Then, to create a list we need to:
   the size of the array (40);
 - Return a pointer to the newly allocated array (i.e. the old value of `s9`).
 
-``` armasm
+``` text
 allocate_list:          # Assume s9 keeps track of next free memory location
     mv    a0, s9        # Return old value of s9 as a pointer to new list
     addi  s9, s9, 40    # Update the value of list pointer in s9
@@ -371,7 +371,7 @@ When the list is full, we need to:
   in the last cell of the previous array.
 Assuming the pointer to the previous list is located in `s0`, this can be achieved with the following code:
 
-```armasm
+```text
 jal allocate_list   # Allocate new array
 sw a0, 36(s0)       # Link the second part of the list to the first one
 ```
@@ -386,7 +386,7 @@ sw a0, 36(s0)       # Link the second part of the list to the first one
   </summary>
   {: .text-gamma .text-blue-000 }
 
-``` armasm
+``` text
 {% include_relative 4-dynamic-memory/warm-up3.asm %}
 ```
 </details>
@@ -404,7 +404,7 @@ segment holds dynamically allocated data structures like lists, trees, etc.
 ![Memory Layout in RISC-V](/exercises/img/memory-layout.png "Memory Layout in RISC-V")
 
 In the next session, you will see how to actually ask the operating to dynamically allocate memory for your program. For now, we will adopt a simpler approach and consider that we have a dedicated space for the heap in the `.data` section:
-``` armasm
+``` text
 .data
     heap: .space 1000000
 ```
@@ -420,7 +420,7 @@ generalize the allocator that we defined before (`allocate_list`) to allocate
 arbitrary large chunks. This is simple, we can just add the size as a parameter
 to the function:
 
-``` armasm
+``` text
 allocate_space:      # Assume that s9 keeps track of the next free memory location in the heap
     mv    t0, a0     # The size to allocate is provided as an argument to the function
     mv    a0, s9     # Return old value of s9 as a pointer to the new allocated space
@@ -431,7 +431,7 @@ allocate_space:      # Assume that s9 keeps track of the next free memory locati
 Finally, we can re-implement our simple list allocator using our new
 `allocate_space`:
 
-``` armasm
+``` text
 allocate_list:
     addi   sp, sp, -4
     sw     ra, (sp)
@@ -482,7 +482,7 @@ Don't forget the calling conventions!
 <img src="/exercises/img/stack_representation.png" alt="Illustration of a stack with three elements. Every square corresponds to a 32-bit region on the heap." />
 </center> -->
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/ex3.asm %}
 ```
 
@@ -490,7 +490,7 @@ Don't forget the calling conventions!
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/sol3.asm %}
 ```
 
@@ -503,7 +503,7 @@ a linked list, on the call stack? The following code provides a suggestion for a
 simple allocator that tries to do exactly this. Can you see any problems with
 this approach?
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/ex4.asm %}
 ```
 
@@ -540,7 +540,7 @@ metadata.
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 4-dynamic-memory/sol5.asm %}
 ```
 

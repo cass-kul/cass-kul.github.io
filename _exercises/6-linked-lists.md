@@ -170,13 +170,13 @@ We provide a partial solution to the first two functions (`list-create` and `lis
 
 ### list_create
 
-```armasm
+```text
 {% include_relative 6-linked-lists/partial-solutions/list-create.asm %}
 ```
 
 ### list_append
 
-```armasm
+```text
 {% include_relative 6-linked-lists/partial-solutions/list-append.asm %}
 ```
 

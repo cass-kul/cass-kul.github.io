@@ -70,7 +70,7 @@ The following example shows how a system call can be used in RARS to print the `
 </tr>
 <tr>
 <td>
-{% highlight armasm %}
+{% highlight text %}
 .globl main
 .text
 
@@ -98,7 +98,7 @@ Write a user program that uses system calls to read two numbers from the user’
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 5-os/sol1.asm %}
 ```
 
@@ -113,7 +113,7 @@ The next example shows how a number, which was given by the user, can be printed
 </tr>
 <tr>
 <td>
-{% highlight armasm %}
+{% highlight text %}
 .data
 str: .string "You entered: "
 .globl main
@@ -150,7 +150,7 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 
 > :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and are simply ending with a zero byte (0x00). This is because Strings are simply a group of characters (1 byte each). However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word has 32 byte. Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
 > When you place a string before data that should be word aligned, you may encounter an error when you want to access this data. The solution to this error is an [assembler directive](https://github.com/TheThirdOne/rars/wiki/Assembler-Directives) to tell the assembler to align the next item in the data section according to the word boundary like this:
-> ```armasm
+> ```text
 > .data
 > str1: .string "Message 1" # May exceed word boundary
 > str2: .string "Message 2" # May exceed word boundary
@@ -162,7 +162,7 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 5-os/sol2.asm %}
 ```
 
@@ -173,7 +173,7 @@ During the last session, you learned how to *dynamically allocate memory* on the
 
 In order to tackle this problem, a big chunk of memory was reserved in the `.data` section that could be used to dynamically request and allocate memory. We used register `s9` to keep track of the next free memory location in the heap. A simple allocator function could be used to request memory from the *heap* and increase the address of the first free memory location with the amount of bytes that was requested:
 
-``` armasm
+``` text
 .data
   heap: .space 100000
 .text
@@ -200,7 +200,7 @@ The `.text` sections contains the program's code. Every *jump* or *branch* that 
 ### Dynamically allocating memory
 The RARS OS provides a system call `sbrk` (system call number 9) to dynamically request memory. When you request `n` bytes with `sbrk`, the OS will increase the heap region with `n` bytes towards the stack and returns an address, pointing inside the heap region, that can be used to store `n` bytes. This system call replaces the use of the simple allocator function. Following code snippet shows how `sbrk` can be used to dynamically allocate 8 bytes and store two integers in this newly allocated heap region.
 
-``` armasm
+``` text
 .globl main
 .text
 main:
@@ -227,7 +227,7 @@ It is possible to pass a negative integer to the `sbrk` system call in RARS. Thi
 </tr>
 <tr>
 <td>
-{% highlight armasm %}
+{% highlight text %}
 
 .globl main
 .text
@@ -366,7 +366,7 @@ It is not possible to use *regular* instructions to change the content of CSRs. 
 
 System call that are requested in user mode, are handled by the trap handler in supervisor mode in RARS. Therefore, we do not have access to the supervisor trap handler. It is however possible to add a custom trap handler in user mode. This requires that interrupts in user mode are enabled before the trap is raised. This can be done by changing the value of `ustatus`. Following example shows how a custom trap handler can be used:
 
-```armasm
+```text
 .globl main
 .text
 handler:
@@ -395,7 +395,7 @@ Write a custom user-mode exception handler. The exception handler should do noth
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 5-os/sol3.asm %}
 ```
 
@@ -418,7 +418,7 @@ Make sure to restore all register values before returning from the trap handler.
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 5-os/sol4.asm %}
 ```
 
@@ -435,7 +435,7 @@ Use following skeleton as a starting point and proceed as follow:
 - Implement `play_song` by iterating over the null-terminated song string and making use of the `next_tone_from_string` and `play_tone` helper functions. Make sure to adhere to the calling conventions.
 - Now implement `play_tone` by making use of system calls 31 (MIDI out) and 32 (sleep). Make sure to first read the [documentation](https://github.com/TheThirdOne/rars/wiki/Environment-Calls) for system call 31 (MIDI out). How many parameters are required? Which parameters are provided as global constants in the code skeleton and which parameters vary depending on the music string?
 
-```armasm
+```text
 .data
 song: .string "CCisCCesC CCGGAAG FFEEDDC" #The song string itself.
 # Any note (A-G) can be raised half a pitch (sharpened) with suffix is (e.g. Ais -> A sharp)
@@ -546,7 +546,7 @@ main:
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 5-os/sol5.asm %}
 ```
 

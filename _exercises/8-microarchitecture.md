@@ -267,7 +267,7 @@ In short:
 
 Consider the following RISC-V program:
 
-```armasm
+```text
 addi t0, zero, 10
 sw zero, 4(t1)
 lw t2, 10(t3)
@@ -342,7 +342,7 @@ There are three basic data dependencies that indicate a data hazard:
 
 Recall the RISC-V program from above.
 
-```armasm
+```text
 addi t0, zero, 10
 sw zero, 4(t1)
 lw t2, 10(t3)
@@ -383,7 +383,7 @@ Simply said, if the information becomes available in the same cycle that it is n
 ## Exercise 3 - Forwarding
 The code below describes a simple function in RISC-V assembly.
 
-```armasm
+```text
 or t1, t2, t3
 or t2, t1, t4
 or t1, t1, t2
@@ -426,7 +426,7 @@ As register values are read in the ID stage, that means that instructions (2)-(3
 
 In this case, we manually stall instructions by inserting nops to mitigate the two RAW hazards:
 
-```armasm
+```text
 or t1, t2, t3
 nop
 nop
@@ -562,7 +562,7 @@ different prediction mechanisms.
 The code below describes a simple function in RISC-V assembly (`A = B + E; C = B +
 F`).
 
-```armasm
+```text
 lw t1, 0(t0)
 lw t2, 4(t0)
 add t3, t1, t2
@@ -597,7 +597,7 @@ Reorganize the code to optimize the performance. (Hint: try to remove the stalls
 
 If we avoid using a register value in an instruction that is loaded from memory in the previous instruction (without changing the result of the program), we can eliminate the stalls.
 
-```armasm
+```text
 lw t1, 0(t0)
 lw t2, 4(t0)
 lw t4, 8(t0)
@@ -612,7 +612,7 @@ sw t5, 16(t0)
 ## Exercise 5 - Branching
 The code below describes a simple function in RISC-V assembly.
 
-```armasm
+```text
       add t0, zero, zero
 bar:
       bne t0, zero, exit

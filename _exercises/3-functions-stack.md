@@ -92,7 +92,7 @@ The answer is simple and slightly difficult at the same time:
 If the above explanation did not fully click for you yet, don't worry. Let's go step by step and understand why conventions are useful and help us write code that can be used across programs and teams.
 Let's take a look at the partial assembly code below. We already created a `main` and a `sum` label:
 
-```armasm
+```text
 .globl main
 .data
     a: .word 1
@@ -120,7 +120,7 @@ resume:
 > for iterating over arrays. Using this technique, you can iterate over a fixed-length array without
 > having to change any registers. If the address of the start of the (integer) array is stored in `t0`, you can
 > overwrite different elements of the array by changing this offset:
-> ```armasm
+> ```text
 li t3, 5  # we want to overwrite the first three elements of the array with 5
 sw t3, 0(t0)  # array[0] = 5
 sw t3, 4(t0)  # array[1] = 5
@@ -135,7 +135,7 @@ sw t3, 8(t0)  # array[2] = 5
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/warmup1.asm %}
 ```
 
@@ -161,7 +161,7 @@ Register number             | Register name | Use                   | Note
 `x10 - x17`                 | `a0 - a7`     | Function arguments    | Function arguments to called functions. Used as input parameters.
 `x10` and `x11`             | `a0` and `a1` | Return values         | Since the input to a function is not useful anymore on return, `a0` and `a1` have a dual use as registers for the return values.
 
-```armasm
+```text
 addi s0, zero, 5
 addi t0, zero, 5
 jal fact         # function call!
@@ -179,7 +179,7 @@ If you take a look at the [RISC-V card linked at the top of the website](/files/
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/warmup2.asm %}
 ```
 
@@ -200,7 +200,7 @@ In this case, what we need is a data structure where we *dynamically* add and re
 A stack is a simple data structure that grows in one direction and that works according to the Last-in-First-Out (LIFO) principle. The idea is as simple as a tower of books where you are only ever able to pick up the top-most book. You can place more books on top of the tower, but have to pick them up again to reach the books at the bottom.
 To realize a simple stack in assembly, we can just define a large memory region in the data section like this:
 
-```armasm
+```text
 .globl main
 .data
     stack: .space 500
@@ -227,7 +227,7 @@ If you are now unsure about the size of the data that you want to put or retriev
 
 #### Solution
 
-```armasm
+```riscvasm
 {% include_relative 3-functions-stack/warmup4.asm %}
 ```
 
@@ -255,7 +255,7 @@ At this point, it may not surprise you anymore to hear that RISC-V actually has 
 
 #### Solution
 
-```armasm
+```riscvasm
 {% include_relative 3-functions-stack/warmup5.asm %}
 ```
 
@@ -342,7 +342,7 @@ Below, you can find a series of images that walk you through an example program 
   </summary>
   {: .text-delta .text-blue-000 }
 
-```armasm
+```riscvasm
 {% include_relative 3-functions-stack/stack-example.asm %}
 ```
 
@@ -362,7 +362,7 @@ Why is this assumption necessary right now?
 
 #### Solution
 
-```armasm
+```riscvasm
 {% include_relative 3-functions-stack/sol1.asm %}
 ```
 
@@ -389,7 +389,7 @@ Follow the calling conventions to pass all arguments correctly.
 {% include_relative 3-functions-stack/ex2.c %}
 ```
 
-```armasm
+```text
 {% include_relative 3-functions-stack/ex2.asm %}
 ```
 
@@ -397,7 +397,7 @@ Follow the calling conventions to pass all arguments correctly.
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/sol2.asm %}
 ```
 
@@ -414,7 +414,7 @@ Note that `sum_fixme` acts both as a caller and a callee at different times. You
 - the value 3 in `a0`;
 - the value `0xdeadbeef` in `s0`.
 
-```armasm
+```text
 {% include_relative 3-functions-stack/ex3.asm %}
 ```
 
@@ -422,7 +422,7 @@ Note that `sum_fixme` acts both as a caller and a callee at different times. You
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/sol3.asm %}
 ```
 
@@ -444,7 +444,7 @@ Consider the following recursive function which calculates `n!`.
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/sol4.asm %}
 ```
 
@@ -484,7 +484,7 @@ Try to avoid using the call stack during the `fact_tail` implementation. Why is 
 
 #### Solution
 
-```armasm
+```text
 {% include_relative 3-functions-stack/sol5.asm %}
 ```
 
