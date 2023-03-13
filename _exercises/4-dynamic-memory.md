@@ -27,16 +27,16 @@ ex3_images:
 
 # Introduction
 In the previous sessions, you have seen how to allocate fixed (*static*) amounts of
-memory to store programs variables or arrays in the `.data` section. In this
+memory to store program variables or arrays in the `.data` section. In this
 session, you will learn how to *dynamically allocate memory* for data structures
 that can be resized at runtime (for instance, Python lists or Java
 `ArrayList`s).
 
 ## Recap: pointers in C
 In the [first exercise session](/exercises/1-c-asm-basics/#pointers-in-c), you had
-an introduction to pointers in C. This is a quick reminder about how to use
-pointers. In this session we will use pointers a lot, so, if necessary, you can
-come back to the explanations in the [first exercise
+an introduction to pointers in C. We'll now give a quick reminder about how to use
+pointers. In this session we will use pointers a lot; if necessary, you can
+go back to the explanations in the [first exercise
 session](/exercises/1-c-asm-basics/#pointers-in-c) or ask your teaching assistant
 for more explanations.
 
@@ -99,7 +99,7 @@ Using the information that was printed, we can reconstruct the memory layout of 
 | ...        | ...        |                  |
 
 > :warning: Notice that the order of variables in memory chosen by the compiler
-> is not necessary the same as the order you declared your variables in the
+> is not necessarily the same as the order you declared your variables in the
 > program.
 
 ## Pointer arithmetic
@@ -174,7 +174,7 @@ of the array, just like with a pointer! In that sense, an array is a bit similar
 to a pointer to the first element of the array.
 
 > :warning: Contrary to pointers, arrays variables cannot be modified (they are
-> immutable). Hence, you can not do `a = a + 1`.
+> immutable). Hence, you cannot do `a = a + 1`.
 
 However, it is possible to define a pointer `int *p = a` to iterate through the
 array:
@@ -288,14 +288,14 @@ at compile time. This comes with some limitations, for instance if the **size is
 not known at compile time** but only determined at runtime, or when the size
 **grows dynamically** (the size increases or decreases at runtime).
 
-Dynamic (i.e. resizeable) data structures come by default with many high-level
+Dynamic (i.e., resizeable) data structures come by default with many high-level
 programming languages, such as `List` in Python or `ArrayList` in Java, but not
 in C. Then how can we create the equivalent of a Python `List` in C?
 
 A possible solution is to reserve a very large static array for every list.
 
 **Problem**:
-- We have to allocate more than we actually need and the extra-allocated memory
+- We have to allocate more than we actually need and the extra allocated memory
   is wasted;
 - What if the list grows even bigger?
 
@@ -350,7 +350,7 @@ Then, to create a list we need to:
 - Reserve space for a new array and update the list pointer in `s9` to point to
   the next free memory location. This means increasing the value of `s9` by
   the size of the array (40);
-- Return a pointer to the newly allocated array (i.e. the old value of `s9`).
+- Return a pointer to the newly allocated array (i.e., the old value of `s9`).
 
 ``` armasm
 allocate_list:          # Assume s9 keeps track of next free memory location
@@ -397,7 +397,7 @@ while there are many more useful data structures. Let's see how we can extend
 our solution to work with other data structures.
 
 ## Generalize to all data structures: the heap
-In the RISC-V memory layout, illustrated below, the `.data` segment is used to
+In the RISC-V memory layout, illustrated below, the `.data` section is used to
 store statically allocated data (such as C arrays or constants) while the `heap`
 segment holds dynamically allocated data structures like lists, trees, etc.
 
@@ -453,13 +453,13 @@ on the heap (see the illustration below for an example). Use the simple
 allocator `allocate_space` given below and write the following functions in
 RISC-V (consider that `stack_pointer` is the type of the pointer to the `top`
 pointer):
-- `stack_pointer stack_create(void)`: Creates a new, empty stack: basically it
-  allocate space for the `top` pointer.
-  1. Allocates enough heap memory to store a pointer to the top of the stack.
+- `stack_pointer stack_create(void)`: Creates a new, empty stack: it
+  allocates space for the `top` pointer.
+  1. Allocate enough heap memory to store a pointer to the top of the stack.
   2. Since the stack is empty, initialize this `top` pointer to `0`: (this is
   called a *null pointer*).
   3. Return the address of this `top` pointer in `a0`. This can be considered the
-  address of the stack (in the main you should keep this pointer in a safe
+  address of the stack (in `main` you should keep this pointer in a safe
   place, it is the pointer that you will use to reconstruct the whole stack!).
 - `void stack_push(stack_pointer, int)`: Adds a new element at the top of the
   stack.
@@ -528,7 +528,7 @@ Allocating dynamic memory on the stack is not possible:
 
 ### Exercise 5
 Can you come up with an allocator function that allows you to free previously
-allocated memory? The allocator should re-use previously freed memory. The
+allocated memory? The allocator should reuse previously freed memory. The
 following steps might help:
 1. Store the address of the first empty (free) heap region in a global variable,
 1. Allocate space for metadata when creating chunks,
