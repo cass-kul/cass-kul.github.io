@@ -18,7 +18,7 @@ stack_pop:      #TODO
 main:
     la s9, heap
 
-  	#Test code
+    #Test code
     jal stack_create    #Create stack -> top pointer in a0
 
     addi sp, sp, -4
@@ -39,11 +39,7 @@ main:
     jal stack_push
 
     #Verify the state of the stack using the single step function!
-    #At this point, the top pointer should point to the value 3.
-    #The next word in memory is a pointer to the value 2.
-    #At that location, 2 is stored.
-    #The next word in memory is then a pointer to the value 1.
-    #The next word in memory after value 1 should be the value 0.
+    #It should look like the picture below.
 
     #Pop 3 from stack
     lw a0, 4(sp)

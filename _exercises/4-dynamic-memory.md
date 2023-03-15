@@ -449,29 +449,25 @@ main:
 ### Exercise 3
 Create a dynamic [stack data
 structure](https://www.tutorialspoint.com/data_structures_algorithms/stack_algorithm.htm)
-on the heap (see the illustration below for an example). Use the simple
-allocator `allocate_space` given below and write the following functions in
-RISC-V (consider that `stack_pointer` is the type of the pointer to the `top`
-pointer):
+on the heap (see the illustration below for an example). Complete the gaps (cf. `#TODO`) in the RISC-V program below. Use the simple allocator `allocate_space` and write the following missing functions in RISC-V (consider that `stack_pointer` is the type of the pointer to the `top` pointer):
 - `stack_pointer stack_create(void)`: Creates a new, empty stack: it
   allocates space for the `top` pointer.
-  1. Allocate enough heap memory to store a pointer to the top of the stack.
+  1. Allocates enough heap memory to store the `top` pointer.
   2. Since the stack is empty, initialize this `top` pointer to `0`: (this is
   called a *null pointer*).
   3. Return the address of this `top` pointer in `a0`. This can be considered the
   address of the stack (in `main` you should keep this pointer in a safe
   place, it is the pointer that you will use to reconstruct the whole stack!).
-- `void stack_push(stack_pointer, int)`: Adds a new element at the top of the
-  stack.
+- `void stack_push(stack_pointer, int)`: Adds a new element on the stack.
   1. The function takes the address of the `top` pointer in `a0` and the value to
   be pushed on the stack in `a1`.
   2. It allocates enough heap memory to store the new value and to store a
-  reference to the previous top.
-  3. It initializes the newly allocated element (first word to value, second word to address of previous top)
+  reference to the previous top element.
+  3. It initializes the newly allocated element (first word to value, second word to address of previous top element).
   4. It updates the `top` pointer to point to the newly allocated element.
 - `int stack_pop(stack_pointer)`: Removes and returns the top element from a stack.
   1. The function takes the `top` pointer in `a0`.
-  2. It updates the `top` pointer to point to the element before the actual top
+  2. It updates the `top` pointer to point to the element before the current top
      element.
   3. Finally, it return the value of the popped element in `a0`.
 Don't forget the calling conventions!
@@ -485,6 +481,8 @@ Don't forget the calling conventions!
 ```text
 {% include_relative 4-dynamic-memory/ex3.asm %}
 ```
+
+![Representation of the stack in the memory](/exercises/img/rars-stack-ex3-drawio.png)
 
 {% if site.solutions.show_session_4 %}
 
