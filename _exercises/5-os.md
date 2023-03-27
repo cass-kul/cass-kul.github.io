@@ -292,6 +292,43 @@ int main() {
 
 Note that `malloc` may return a *null pointer*. This happens when it was unable to allocate the amount of requested bytes. Therefore, it is important to check whether `malloc` returned a *null pointer* or not.
 
+### Excurse: Allocating memory in Python
+
+In Python the developer never has to manage memory themselves. Does this mean that Python needs no memory management?
+
+**Wrong:** Python just hides most memory management from the developers to be more developer-friendly. However, behind the scenes, Python still has to manage its own memory. Let's take a look at a Python code piece and how it is handled behind the scenes:
+
+```python3
+a = []
+a.append(1)
+a.append(2)
+print(a)
+```
+
+One very common Python implementation is `CPython`, a Python interpreter implemented in the C language. This means that you write programs in Python and execute them with a program that has itself been written (and compiled) in C. If you used Python before, the chances are high that you used CPython as it is the reference implementation for Python. The great thing is that CPython is fully open-source, so you can take a look at [the source code on GitHub](https://github.com/python/cpython).
+
+Now what exactly happens for our code above? There are too many details to discuss them here in-depth, but a very short explanation of an interpreter like CPython is this:
+
+1. Parse the program line by line, starting from the entry into the program
+2. For each line, *interpret* what is supposed to happen
+3. Execute the corresponding C function for this specific line of code
+4. Continue with 2 until the program is being exited (which, itself, is a C function `exit` being called)
+
+For the code above, we first create a list `a = []`. This will execute the C function `PyList_New` which creates a new list. It does several other things, but one important piece [is this code part here](https://github.com/python/cpython/blob/2cdc5189a6bc3157fddd814662bde99ecfd77529/Objects/listobject.c#L189):
+
+```c
+op->ob_item = (PyObject **) PyMem_Calloc(size, sizeof(PyObject *));
+if (op->ob_item == NULL) {
+	Py_DECREF(op);
+	return PyErr_NoMemory();
+}
+```
+
+To create a new list, a function named `PyMem_Calloc` is called (see its [implementation here](https://github.com/python/cpython/blob/2cdc5189a6bc3157fddd814662bde99ecfd77529/Objects/obmalloc.c#L591)). Obviously the code is more complex than our example code above since it has to handle a lot of edge cases and difficulties. But at the core of it, Python itself calls some malloc function (here called `calloc`), which internally will make a system call to get more memory if needed.
+
+> :bulb: malloc and the `SBRK` system call may seem unimportant, but no modern program can go without it, even if it looks to the end developer as if memory magically appears out of nowhere.
+
+
 # Interrupts and exceptions
 Suppose you press a key on your keyboard which is connected to your computer. The OS has to be aware that a key has been pressed, in order to pass it on to an application. An OS is continuously executing different processes. It does not only wait and listen for these key-presses. Hence, an **interrupt** of the current process is required in order to handle the key-press. When such an interrupt takes place, a flag will be raised in order to alert the OS that an interrupt has been requested. The OS checks this flag when it has found the right moment. Following table lists the different kind of interrupts in RARS:
 
