@@ -298,7 +298,7 @@ In Python the developer never has to manage memory themselves. Does this mean th
 
 **Wrong:** Python just hides most memory management from the developers to be more developer-friendly. However, behind the scenes, Python still has to manage its own memory. Let's take a look at a Python code piece and how it is handled behind the scenes:
 
-```python3
+```python
 a = []
 a.append(1)
 a.append(2)
