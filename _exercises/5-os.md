@@ -15,16 +15,16 @@ has_toc: false
 {:toc}
 
 # Introduction
-During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **Operating System (OS)** in order to interact with any hardware (E.g.: a mouse or keyboard).
+During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **operating system (OS)** in order to interact with any hardware (e.g.: a mouse or keyboard).
 
-## The Operating System
+## The operating system
 The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
 
 <center>
 <img src="/exercises/5-os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
 </center>
 
-The OS also provides a form of security. Different program processes are isolated form each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
+The OS also provides a form of security. Different program processes are isolated from each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
 
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
@@ -48,7 +48,7 @@ RISC-V offers three privilege levels or *modes*:
 > in RARS.
 
 ## Requesting OS services
-The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (environment call in RISC-V). A system call is similar to a function call. The difference is that the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level.
+The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call. The difference is that the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level.
 
 A system call can be invoked by using the `ecall` instruction in RARS. The system call number has to be placed in `a7` prior to invoking the `ecall` instruction. Some system calls take some input in specific registers and may produce some output. Following table lists a few examples of system calls that are provided by the OS of RARS. The full list is available on [GitHub](https://github.com/TheThirdOne/rars/wiki/Environment-Calls).
 
@@ -148,7 +148,7 @@ You entered: 2
 
 Write a program which reads the name of the user from the keyboard. Afterwards, display a greeting message dialog with content *“Welcome [name]”*. Make sure your program does not crash when the user presses cancel or gives long inputs. Instead, display an appropriate error message dialog. *Hint*: Take a look at system calls 54, 55 and 59.
 
-> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and are simply ending with a zero byte (0x00). This is because Strings are simply a group of characters (1 byte each). However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word has 32 byte. Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
+> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and simply end with a zero byte (0x00). This is because strings are simply an array of characters, 1 byte each. However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word contains 32 bits (4 bytes). Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
 > When you place a string before data that should be word aligned, you may encounter an error when you want to access this data. The solution to this error is an [assembler directive](https://github.com/TheThirdOne/rars/wiki/Assembler-Directives) to tell the assembler to align the next item in the data section according to the word boundary like this:
 > ```text
 > .data
@@ -168,8 +168,8 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 
 {% endif %}
 
-# The Heap - Revisited
-During the last session, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
+# The heap - revisited
+During the last session, you learned how to *dynamically allocate memory* on the *heap*. Dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
 
 In order to tackle this problem, a big chunk of memory was reserved in the `.data` section that could be used to dynamically request and allocate memory. We used register `s9` to keep track of the next free memory location in the heap. A simple allocator function could be used to request memory from the *heap* and increase the address of the first free memory location with the amount of bytes that was requested:
 
@@ -260,7 +260,7 @@ main:
 Suppose you also want to *free* `3` from the heap, but would like to keep `6` on the heap. The only way to *free* it, is by passing `-8` bytes to `sbrk`. This would however also *free* `6` and you would no longer be able to use it.
 
 ### (De)allocating memory in C
-One of the disadvantages of `sbrk` in RARS is that it is not possible to *free* *any* chunk of memory that you want. Another disadvantage is that system calls, like `sbrk`, have some overhead. A system call consists of multiple instructions that have to be executed. The kernel has to manage the allocation of memory, which will require a switch from *user mode* to another mode with a higher privilege level.
+One of the disadvantages of `sbrk` in RARS is that it is not possible to free *any* chunk of memory that you want. Another disadvantage is that system calls, like `sbrk`, have some overhead. A system call consists of multiple instructions that have to be executed. The kernel has to manage the allocation of memory, which will require a switch from *user mode* to another mode with a higher privilege level.
 
 Programming languages sometimes offer complex functions to handle the (de)allocation of memory. In C, this functionality is provided by [`malloc`](https://www.tutorialspoint.com/c_standard_library/c_function_malloc.htm) and [`free`](https://www.tutorialspoint.com/c_standard_library/c_function_free.htm) (provided in `stdlib.h`). `malloc` is a function which allows to dynamically allocate a number of bytes. It returns a pointer to the allocated memory. A pointer can be passed as an argument to `free` to *free* the memory that was previously allocated for the data the pointer is pointing to. Following code snippet shows how `free` and `malloc` can be used:
 
@@ -292,7 +292,7 @@ int main() {
 
 Note that `malloc` may return a *null pointer*. This happens when it was unable to allocate the amount of requested bytes. Therefore, it is important to check whether `malloc` returned a *null pointer* or not.
 
-### Excurse: Allocating memory in Python
+### Excursion: Allocating memory in Python
 
 In Python the developer never has to manage memory themselves. Does this mean that Python needs no memory management?
 
