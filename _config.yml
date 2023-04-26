@@ -87,8 +87,8 @@ solutions:
   show_session_1: true
   show_session_2: true
   show_session_3: true
-  show_session_4: false
-  show_session_5: false
+  show_session_4: true
+  show_session_5: true
   show_session_6: false
   show_session_7: false
   show_session_8: false

@@ -15,16 +15,16 @@ has_toc: false
 {:toc}
 
 # Introduction
-During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **Operating System (OS)** in order to interact with any hardware (E.g.: a mouse or keyboard).
+During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **operating system (OS)** in order to interact with any hardware (e.g.: a mouse or keyboard).
 
-## The Operating System
+## The operating system
 The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
 
 <center>
 <img src="/exercises/5-os/kernel.drawio.png" alt="The kernel connects applications to hardware" />
 </center>
 
-The OS also provides a form of security. Different program processes are isolated form each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
+The OS also provides a form of security. Different program processes are isolated from each other when they are running at the same time. It is also not possible to overwrite the code of your OS.
 
 A **Central Processing Unit (CPU)** usually offers different *modes*. These modes have different levels of privileges. The most privileged mode has unrestricted access to all resources and instructions. Less privileged modes have a limited set of instructions that they can use and usually do not have direct access to resources. The amount of modes depends on the CPU's architecture. The OS provides different services by using these modes: isolation of processes, scheduling of processes, communication between different processes, file systems...
 
@@ -48,7 +48,7 @@ RISC-V offers three privilege levels or *modes*:
 > in RARS.
 
 ## Requesting OS services
-The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (environment call in RISC-V). A system call is similar to a function call with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers must be saved and restored by the OS, even the callee-saved registers (except for the registers `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
+The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call, but with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers are saved and restored by the OS, even the callee-saved registers (except for the registers `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
 
 A system call can be invoked by using the `ecall` instruction in RARS. The system call number has to be placed in `a7` prior to invoking the `ecall` instruction. Some system calls take some input in specific registers and may produce some output. Following table lists a few examples of system calls that are provided by the OS of RARS. The full list is available on [GitHub](https://github.com/TheThirdOne/rars/wiki/Environment-Calls).
 
@@ -148,7 +148,7 @@ You entered: 2
 
 Write a program which reads the name of the user from the keyboard. Afterwards, display a greeting message dialog with content *“Welcome [name]”*. Make sure your program does not crash when the user presses cancel or gives long inputs. Instead, display an appropriate error message dialog. *Hint*: Take a look at system calls 54, 55 and 59.
 
-> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and are simply ending with a zero byte (0x00). This is because Strings are simply a group of characters (1 byte each). However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word has 32 byte. Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
+> :bulb: Everything placed in the `.data` section is placed in memory right after each other and in the same order that you put it. Remember that strings have an arbitrary length and simply end with a zero byte (0x00). This is because strings are simply an array of characters, 1 byte each. However, we also work with data that is organized in groups of bytes, such as a **word**. In a 32-bit architecture such as the one we are using here, a word contains 32 bits (4 bytes). Whenever you are using the instructions `lw`, `sw` etc, you are instructing to access 4 bytes at a time. To speed up these accesses, the architecture relies on word-aligned memory. That means that these `w` instructions expect the address to be divisible by the word size (4).
 > When you place a string before data that should be word aligned, you may encounter an error when you want to access this data. The solution to this error is an [assembler directive](https://github.com/TheThirdOne/rars/wiki/Assembler-Directives) to tell the assembler to align the next item in the data section according to the word boundary like this:
 > ```text
 > .data
@@ -168,8 +168,8 @@ Write a program which reads the name of the user from the keyboard. Afterwards, 
 
 {% endif %}
 
-# The Heap - Revisited
-During the last session, you learned how to *dynamically allocate memory* on the *heap*. The dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
+# The heap - revisited
+During the last session, you learned how to *dynamically allocate memory* on the *heap*. Dynamic allocation is required when data structures have to be allocated that can shrink or grow in size at runtime; it is not known prior to compilation how much memory should be allocated for these data structures.
 
 In order to tackle this problem, a big chunk of memory was reserved in the `.data` section that could be used to dynamically request and allocate memory. We used register `s9` to keep track of the next free memory location in the heap. A simple allocator function could be used to request memory from the *heap* and increase the address of the first free memory location with the amount of bytes that was requested:
 
@@ -260,7 +260,7 @@ main:
 Suppose you also want to *free* `3` from the heap, but would like to keep `6` on the heap. The only way to *free* it, is by passing `-8` bytes to `sbrk`. This would however also *free* `6` and you would no longer be able to use it.
 
 ### (De)allocating memory in C
-One of the disadvantages of `sbrk` in RARS is that it is not possible to *free* *any* chunk of memory that you want. Another disadvantage is that system calls, like `sbrk`, have some overhead. A system call consists of multiple instructions that have to be executed. The kernel has to manage the allocation of memory, which will require a switch from *user mode* to another mode with a higher privilege level.
+One of the disadvantages of `sbrk` in RARS is that it is not possible to free *any* chunk of memory that you want. Another disadvantage is that system calls, like `sbrk`, have some overhead. A system call consists of multiple instructions that have to be executed. The kernel has to manage the allocation of memory, which will require a switch from *user mode* to another mode with a higher privilege level.
 
 Programming languages sometimes offer complex functions to handle the (de)allocation of memory. In C, this functionality is provided by [`malloc`](https://www.tutorialspoint.com/c_standard_library/c_function_malloc.htm) and [`free`](https://www.tutorialspoint.com/c_standard_library/c_function_free.htm) (provided in `stdlib.h`). `malloc` is a function which allows to dynamically allocate a number of bytes. It returns a pointer to the allocated memory. A pointer can be passed as an argument to `free` to *free* the memory that was previously allocated for the data the pointer is pointing to. Following code snippet shows how `free` and `malloc` can be used:
 
@@ -291,6 +291,43 @@ int main() {
 ```
 
 Note that `malloc` may return a *null pointer*. This happens when it was unable to allocate the amount of requested bytes. Therefore, it is important to check whether `malloc` returned a *null pointer* or not.
+
+### Excursion: Allocating memory in Python
+
+In Python the developer never has to manage memory themselves. Does this mean that Python needs no memory management?
+
+**Wrong:** Python just hides most memory management from the developers to be more developer-friendly. However, behind the scenes, Python still has to manage its own memory. Let's take a look at a Python code piece and how it is handled behind the scenes:
+
+```python
+a = []
+a.append(1)
+a.append(2)
+print(a)
+```
+
+One very common Python implementation is `CPython`, a Python interpreter implemented in the C language. This means that you write programs in Python and execute them with a program that has itself been written (and compiled) in C. If you used Python before, the chances are high that you used CPython as it is the reference implementation for Python. The great thing is that CPython is fully open-source, so you can take a look at [the source code on GitHub](https://github.com/python/cpython).
+
+Now what exactly happens for our code above? There are too many details to discuss them here in-depth, but a very short explanation of an interpreter like CPython is this:
+
+1. Parse the program line by line, starting from the entry into the program
+2. For each line, *interpret* what is supposed to happen
+3. Execute the corresponding C function for this specific line of code
+4. Continue with 2 until the program is being exited (which, itself, is a C function `exit` being called)
+
+For the code above, we first create a list `a = []`. This will execute the C function `PyList_New` which creates a new list. It does several other things, but one important piece [is this code part here](https://github.com/python/cpython/blob/2cdc5189a6bc3157fddd814662bde99ecfd77529/Objects/listobject.c#L189):
+
+```c
+op->ob_item = (PyObject **) PyMem_Calloc(size, sizeof(PyObject *));
+if (op->ob_item == NULL) {
+	Py_DECREF(op);
+	return PyErr_NoMemory();
+}
+```
+
+To create a new list, a function named `PyMem_Calloc` is called (see its [implementation here](https://github.com/python/cpython/blob/2cdc5189a6bc3157fddd814662bde99ecfd77529/Objects/obmalloc.c#L591)). Obviously the code is more complex than our example code above since it has to handle a lot of edge cases and difficulties. But at the core of it, Python itself calls some malloc function (here called `calloc`), which internally will make a system call to get more memory if needed.
+
+> :bulb: malloc and the `SBRK` system call may seem unimportant, but no modern program can go without it, even if it looks to the end developer as if memory magically appears out of nowhere.
+
 
 # Interrupts and exceptions
 Suppose you press a key on your keyboard which is connected to your computer. The OS has to be aware that a key has been pressed, in order to pass it on to an application. An OS is continuously executing different processes. It does not only wait and listen for these key-presses. Hence, an **interrupt** of the current process is required in order to handle the key-press. When such an interrupt takes place, a flag will be raised in order to alert the OS that an interrupt has been requested. The OS checks this flag when it has found the right moment. Following table lists the different kind of interrupts in RARS:
@@ -442,23 +479,24 @@ song: .string "CCisCCesC CCGGAAG FFEEDDC" #The song string itself.
 # Any note (A-G) can be lowered half a pitch (flattened) with suffix es (e.g. Des -> D flat)
 # A space equals a rest
 
-scale_base: .word 57 #leave this value unless you want to transpose the base scale
-bpm: .word 100 # Beats per minute of the song
-duration: .space 4 # Calculated in main (from bpm)
-instrument: .word 1 # Change to whatever instrument you like
-volume: .word 127 # Choose value between 0 and 127
+scale_base: .word 57  # leave this value unless you want to transpose the base scale
+bpm: .word 100        # Beats per minute of the song
+duration: .space 4    # Calculated in main (from bpm)
+instrument: .word 1   # Change to whatever instrument you like
+volume: .word 127     # Choose value between 0 and 127
 .globl main
 .text
 
-#next_tone_from_string - begin
+# next_tone_from_string - begin
+
 # Reads the first tone from a string of music letters
 # a0 should contain the address of the string
 # In a0 the tone number (which can be provided to play_tone) is returned
 # In a1 the amount of bytes used from the input string is returned
 #    e.g. C -> 1 byte, Cis -> 3 bytes
 next_tone_from_string:
-	li  t0, 0x41  #A
-	mv  t2, a0    #t2 now holds address of string
+	li  t0, 0x41  # A
+	mv  t2, a0    # t2 now holds address of string
 	lb  t1, 0(t2)
 	beq t1, t0, ret_A
 	li  t0, 0x42
@@ -498,10 +536,10 @@ ret_G:
 	li a0, 10
 	j adjust
 adjust:
-	lb t1, 1(t2) #See if we encounted sharp or flat
-	li t0, 0x65 #e
+	lb t1, 1(t2) # See if we encounted sharp or flat
+	li t0, 0x65  # e
 	beq t0, t1, flat
-	li t0, 0x69 #i
+	li t0, 0x69  # i
 	beq t0, t1, sharp
 	li a1, 1
 	ret
@@ -513,26 +551,27 @@ flat:
 	addi a0, a0, -1
 	li a1, 3
 	ret
+
 #next_tone_from_string end
 
 
-#Plays the song given in a0
+# Plays the song given in a0
 #  a0 contains a pointer to the song string
 #  tip: Use the functions next_tone_from_string and play_tone to play all tones in the input string
 play_song:
-	#TODO implement
+	# TODO implement
 
-#Plays the tone given in a0
-#if a0 is zero, a pause is expected (of duration "duration")
-#otherwise, play the tone with pitch $a0 + scale_base (also with duration "duration")
+# Plays the tone given in a0
+#  if a0 is zero, a pause is expected (of duration "duration")
+#  otherwise, play the tone with pitch a0 + scale_base (also with duration "duration")
 play_tone:
-	#TODO implement
+	# TODO implement
 
 main:
 	li t0, 60000
 	lw t1, bpm
-	div t2, t0, t1  #60000/bpm = ms delay
-	sw t2, duration, t3 #t2: duration of note/delay
+	div t2, t0, t1      # 60000/bpm = ms delay
+	sw t2, duration, t3 # t2: duration of note/delay
 
 	la a0, song
 	jal play_song
