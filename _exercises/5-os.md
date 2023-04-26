@@ -48,7 +48,7 @@ RISC-V offers three privilege levels or *modes*:
 > in RARS.
 
 ## Requesting OS services
-The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call. The difference is that the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level.
+The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call, but with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers are saved and restored by the OS, even the callee-saved registers (except for the registers `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
 
 A system call can be invoked by using the `ecall` instruction in RARS. The system call number has to be placed in `a7` prior to invoking the `ecall` instruction. Some system calls take some input in specific registers and may produce some output. Following table lists a few examples of system calls that are provided by the OS of RARS. The full list is available on [GitHub](https://github.com/TheThirdOne/rars/wiki/Environment-Calls).
 
@@ -381,7 +381,7 @@ A **trap handler** comes in action whenever a trap is raised. It's a set of inst
 A **Control Status Register** (CSR) is special purpose register for trap handling. It contains information specific to trap handling:
 - `ustatus`: keeps track of and controls the current operating state of the CPU.
 - `utvec`: Contains the base address of the user trap handler. The CPU will jump to this address when a trap should be handled in user mode.
-- `uscratch`: A temporary scratch register that can be used by the user trap handler. The *normal* registers cannot be used during trap handling. The trap handler might resume the execution of the program, which requires that the *normal* registers persist their values. It is not possible to temporarily backup these registers on the stack, because the stack pointer (`sp`) might be corrupted (point to a random or invalid place in memory).
+- `uscratch`: A temporary scratch register that can be used by the user trap handler. Note that all *normal* registers must be restored after the trap handler: the trap handler might resume the execution of the program. However, it is not possible to temporarily backup these registers on the stack, because the stack pointer (`sp`) might be corrupted (point to a random or invalid place in memory). For instance, `uscratch` can be used as a backup for a normal register!
 - `uepc`: The user exception program counter contains the address of the instruction that caused the trap. This allows to jump back to the point where the trap was raised after the trap has been handled.
 - `ucause`: This register contains the cause of the raised trap. This corresponds to the codes listed in previous tables. E.g.: `ucause` will have value `4` in case of a load address was misaligned.
 - `utval`: This register contains a bad address or the address of an illegal instruction when applicable. E.g.: `utval` contains the faulty address when a load access fault occurs ot the address of an illegal instruction when it was not valid.
@@ -394,12 +394,12 @@ It is not possible to use *regular* instructions to change the content of CSRs. 
 
 | Example usage | Description |
 |:-:|:-|
-| csrrc t0, fcsr, t1 | Atomic Read/Clear CSR: read from the CSR into t0 and clear bits of the CSR according to t1 |
-| csrrci t0, fcsr, 10 | Atomic Read/Clear CSR Immediate: read from the CSR into t0 and clear bits of the CSR according to a constant |
-| csrrs t0, fcsr, t1 | Atomic Read/Set CSR: read from the CSR into t0 and logical or t1 into the CSR  |
-| csrrsi t0, fcsr, 10 | Atomic Read/Set CSR Immediate: read from the CSR into t0 and logical or a constant into the CSR |
-| csrrw t0, fcsr, t1 | Atomic Read/Write CSR: read from the CSR into t0 and write t1 into the CSR |
-| csrrwi t0, fcsr, 10 | Atomic Read/Write CSR Immediate: read from the CSR into t0 and write a constant into the CSR |
+| `csrrc t0, fcsr, t1` | Atomic Read/Clear CSR: read from the CSR `fcsr` into `t0` and clear bits of the CSR according to `t1` |
+| `csrrci t0, fcsr, 10` | Atomic Read/Clear CSR Immediate: read from the CSR  `fcsr` into `t0` and clear bits of `fcsr` according to a constant |
+| `csrrs t0, fcsr, t1` | Atomic Read/Set CSR: read from the CSR `fcsr` into `t0` and logical or `t1` into the CSR  |
+| `csrrsi t0, fcsr, 10` | Atomic Read/Set CSR Immediate: read from the CSR `fcsr` into `t0` and logical or a constant into the CSR |
+| `csrrw t0, fcsr, t1` | Atomic Read/Write CSR: read from the CSR `fcsr` into `t0` and write `t1` into the CSR |
+| `csrrwi t0, fcsr, 10` | Atomic Read/Write CSR Immediate: read from the CSR `fcsr` into `t0` and write a constant into the CSR |
 
 System call that are requested in user mode, are handled by the trap handler in supervisor mode in RARS. Therefore, we do not have access to the supervisor trap handler. It is however possible to add a custom trap handler in user mode. This requires that interrupts in user mode are enabled before the trap is raised. This can be done by changing the value of `ustatus`. Following example shows how a custom trap handler can be used:
 
