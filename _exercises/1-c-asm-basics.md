@@ -100,7 +100,7 @@ contain a lot fewer instructions and are easier to write by hand and understand.
 worse performance however! Apple's M1 processor also uses a RISC ISA (ARMv8) and outperforms many other
 commercial CPUs.
 
-RISC-V is an open standard, both the [specification](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) of the ISA and many of the development tools and
+RISC-V is an open standard, both the [specification](https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf) of the ISA and many of the development tools and
 reusable components are open-source, which makes using the ISA, experimenting with it, and extending
 it easier. These days it is being increasingly used not only in academia, but also in industry.
 
@@ -307,7 +307,7 @@ of this value, together with the original number.
 
 RISC-V is actually a collection of ISAs, it has different variants
 and extensions for different purposes. You can find the descriptions of all base ISA variants and the
-extensions in the [RISC-V specification](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf).
+extensions in the [RISC-V specification](https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf).
 
 In CASS, we will use the RV32I (32-bit integer) instruction set. This specifies a total of 32 32-bit
 registers and 47 instructions. The instructions are also encoded as 32-bit words.
