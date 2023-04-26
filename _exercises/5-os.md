@@ -48,7 +48,7 @@ RISC-V offers three privilege levels or *modes*:
 > in RARS.
 
 ## Requesting OS services
-The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (environment call in RISC-V). A system call is similar to a function call. The difference is that the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level.
+The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (environment call in RISC-V). A system call is similar to a function call with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers must be saved and restored by the OS, even the callee-saved registers (except for the registers `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
 
 A system call can be invoked by using the `ecall` instruction in RARS. The system call number has to be placed in `a7` prior to invoking the `ecall` instruction. Some system calls take some input in specific registers and may produce some output. Following table lists a few examples of system calls that are provided by the OS of RARS. The full list is available on [GitHub](https://github.com/TheThirdOne/rars/wiki/Environment-Calls).
 
