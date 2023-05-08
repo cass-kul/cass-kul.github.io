@@ -243,7 +243,7 @@ main:
     sw    t2, 8(a0) # store int 7
     # We no longer need '7' and 'free' it
     li    a7, 9 # sbrk
-    add    a0, -4 # 'free' 4 bytes
+    li    a0, -4 # 'free' 4 bytes
     ecall
 
 {% endhighlight %}
