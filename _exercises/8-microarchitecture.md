@@ -69,21 +69,22 @@ Improving the performance runtime of a program can now be done by decreasing eit
 
 ## Designing an ISA
 
-When creating a new ISA, one design principle decision comes at the very beginning of the process: should programs consist of
+When creating a new ISA, a design principle decision comes at the very beginning of the process: should programs consist of
 
-1. only very few, specialized instructions or
-1. many, more general, instructions that are less specialized?
+1. few specialized instructions or
+1. many instructions that are more general?
 
-In short, should the ISA provide a smaller set of instructions that are also faster to execute or should it provide a large number of specialized instructions that may execute for a longer time?
+In short, should the ISA provide *(1)* a large number of specialized, but complex, instructions that may execute for a longer time or *(2)* a small set of simple and general instructions that are also faster to execute?
 This design decision stands behind the difference between RISC vs CISC.
+
 CISC (**Complex** instruction set computer) designs have been the dominant design for a large time of computing history, mostly because of the popular x86 ISA which is used by Intel and AMD.
 CISC instructions can be very specialized but also take a longer time to execute.
 One good example is the x86 instruction `REPNE SCASB`.
 This complicated instruction can be used to calculate the size of a string with one line of assembly code.
 However, the runtime of this instruction obviously depends on the size of the string.
 
-RISC (**Reduced** instruction set computer) designs like RISC-V or ARM decided that it is better to have a smaller number of instructions available that then run faster.
-Programs in RISC will then consist of more instructions to achieve the same functionality that a program written in a CISC ISA provides.
+RISC (**Reduced** instruction set computer) designs like RISC-V or ARM decided that it is better to have a smaller number of instructions that run faster.
+Programs in RISC will therefore consist of more instructions to achieve the same functionality than a program written in a CISC ISA.
 For example, to calculate the size of a string in a RISC program, you would loop over the string manually and compare each new character to the null byte.
 In RISC ISAs, each instruction often takes the same number of cycles to complete, which allows for many simplifications in the CPU and along the data path.
 
@@ -95,17 +96,17 @@ In the end, the details of CISC vs RISC are only important to you if you want to
 
 > :fire: The recent ARM chips [developed by Apple](https://screenrant.com/apple-silicon-m1-mac-risc-faster-than-intel/) are RISC CPUs that in some ways outperform their CISC competition from Intel. This means that the battle of CISC vs RISC is definitely not decided yet and will stay relevant over the next years.
 
-# Microarchitectural awareness
+# Microarchitectural awareness: Pipelining
 
 RISC-V instructions typically take 5 steps to execute:
-1. Instruction fetch: fetch the instruction from memory and increment the program
+1. Instruction **fetch**: fetch the instruction from memory and increment the program
    counter so that it points to next instruction (`pc = pc + 4`)
-1. Instruction decode: decode the instruction and read the operand registers
-1. Execute: execute the operation or calculate the address (for a memory operation)
-1. Memory access: when needed, reads operand values from the data memory
-1. Write back: write the result into a register
+1. Instruction **decode**: decode the instruction and read the operand registers
+1. **Execute**: execute the operation or calculate the address (for a memory operation)
+1. **Memory access**: when needed, reads operand values from the data memory
+1. **Write back**: write the result into a register
 
-In a *single cycle processor implementation*, illustrated below, each
+In a **single cycle processor implementation**, illustrated below, each
 instruction is executed in *one* cycle, meaning that these 5 steps happen in a
 single clock cycle. This also means that the clock cycle must have the same
 length for all instructions, since the clock frequency cannot dynamically change for
@@ -313,10 +314,10 @@ In short:
 
 {% endif %}
 
-# Hazards
+# Microarchitectural awareness: Hazards
 
 While pipelining is great for parallelizing operations and speeding up instructions by performing multiple operations in a single clock cycle, it may also lead to problems.
-Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a hazard.
+Specifically, when an operation that we want to perform relies on an operation that has not happened yet or that has only just completed, we speak of a **hazard**.
 There are three types of hazards:
 
 - **Structural hazards** occur when instructions in different stages of the pipeline need access to the same resource in the same cycle, for example, if the instruction fetch stage uses the same memory bus as the memory stage. In pipelined RISC-V processors this hazard usually doesn't occur (e.g., instructions can be fetched in the same cycle as when memory loads are executing).
@@ -337,6 +338,9 @@ There are three basic data dependencies that indicate a data hazard:
 - Write after write (WAW): Two writes may conflict with each other.
 
 ![Read after write data hazard](/exercises/8-microarchitecture/data-hazard.drawio.svg){: .center-image }
+
+![Stalling to resolve read after write data hazard](/exercises/8-microarchitecture/data-hazard-stalling.drawio.svg){: .center-image }
+
 
 ### Exercise 2.5
 
@@ -364,7 +368,7 @@ In the pipelined design, changing the first instruction like this would create a
 Data hazards can be a big problem if not accounted for. The simplest way to deal with them is to add enough `nop` instructions before each data hazard to ensure that the information is available before the hazard may occur.
 Another approach is to cleverly reorder instructions so that hazards can be avoided. This must obviously be done in a way that does not change the result of the computation and can only work in a limited subset of occasions.
 
-To tackle data hazards more structurally, a CPU pipeline can *forward* information once it becomes available to the next or an earlier stage.
+To tackle data hazards more structurally, a CPU pipeline can **forward** information once it becomes available to the next or an earlier stage.
 This prevents specific data hazards from occurring.
 Below, you see a simple forwarding mechanism from the EX stage to the EX stage that forwards the new value of a register to immediately be available for the `lw` instruction in the next cycle.
 
@@ -374,7 +378,7 @@ While forwarding like this has many benefits, it also has limitations. Below, yo
 
 ![Problems with forwarding](/exercises/8-microarchitecture/forwarding-problems.drawio.svg){: .center-image }
 
-The only way to deal with this is to stall the current execution (add a `nop` instruction), and let the processor wait until the information becomes available.
+The only way to deal with this is to **stall** the current execution (also called inserting a **bubble**), and let the processor wait until the information becomes available. This is equivalent to inserting a `nop` (no operation) instruction between the instructions causing the hazard.
 Simply said, if the information becomes available in the same cycle that it is needed, there is nothing we can do with forwarding and we instead have to stall. Below you see a solution to this problem with stalling and a forwarding from the MEM stage to the EX stage.
 
 ![Forwarding with stalling](/exercises/8-microarchitecture/forwarding-stall.drawio.svg){: .center-image }
@@ -404,7 +408,7 @@ after write (WAW).
 {% endif %}
 
 ### Exercise 3.2
-Assume there is no forwarding in the pipelined processor. Indicate hazards and add `nop` (no operation) instructions to eliminate them.
+Assume there is no forwarding in the pipelined processor. Indicate hazards and add `nop` instructions in the program to eliminate them.
 
 {% if site.solutions.show_session_8 %}
 #### Solution
@@ -440,7 +444,7 @@ or t1, t1, t2
 
 ### Exercise 3.3
 Assume there is full forwarding in the pipelined processor.
-Indicate the remaining hazards and add `nop` (no operation) instructions to eliminate them.
+Indicate the remaining hazards and add `nop` instructions to eliminate them.
 Compared the speedup achieved by adding full forwarding to a pipeline with no forwarding.
 
 Assume the following cycle times for two processors with different forwarding strategies:
@@ -450,11 +454,11 @@ Assume the following cycle times for two processors with different forwarding st
 {% if site.solutions.show_session_8 %}
 #### Solution
 
-With full forwarding, register values that are calculated in the EX stage can be forwarded to the following instruction's EX stage, which eliminates the hazards in this code. This means that we don't need to add any nop instructions.
+With full forwarding, register values that are calculated in the EX stage can be forwarded to the following instruction's EX stage, which eliminates the hazards in this code. This means that we don't need to add any `nop` instructions.
 
 The execution time for this program is 7 cycles, 5 to execute the first instruction and 2 to finish the other two. With the increased cycle time, this amounts to `7 * 300ps = 2100ps`.
 
-Without forwarding, we are forced to add the 4 nop instructions, which adds 4 additional cycles to the execution time. Even with the shorter cycle times, this is `(7+4) * 250ps = 2750ps`, which is 1.3 times longer than with full forwarding.
+Without forwarding, we are forced to add the 4 `nop` instructions, which adds 4 additional cycles to the execution time. Even with the shorter cycle times, this is `(7+4) * 250ps = 2750ps`, which is 1.3 times longer than with full forwarding.
 
 {% endif %}
 
