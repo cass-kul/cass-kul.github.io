@@ -634,7 +634,8 @@ exit:
 ```
 
 Fill out the following instruction/time diagram for this program until the instruction on line 13 (`xor`) fully executes and commits.
-Execution starts from line 1.
+Assume that the processor features data forwarding but does not feature branch prediction: it simply continues executing instructions that follow a branch until the target of the branch is known.
+Execution starts from the first `add` instruction with `PC=0x2000`.
 
 ![Instruction time diagram](/exercises/8-microarchitecture/instruction-time-diagram.png){: .center-image }
 
