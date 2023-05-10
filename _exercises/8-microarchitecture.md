@@ -550,7 +550,13 @@ void spectre_gadget(int i) {  // The attacker calls the function with i=260
    the condition `(i < 4)` to be true;
 1. The attacker prepares the cache (e.g., by flushing the content of `tab2`);
 1. The attacker calls the victim with a value `i` such that `tab[i]` returns the
-   secret. The processor predicts the branch to be true, accesses the secret and
+   secret. Remember how [pointer arithmetic
+   works](/exercises/4-dynamic-memory/#pointer-arithmetic): `tab[i] = tab + i *
+   4`. Additionally, notice that `secret` is located at address `tab + 1024 +
+   4*4`. Hence, we need to find `i` such that `tab + i * 4 = tab + 1024 + 4*4`,
+   which is achieved with `i = 260`. In other words, `index = tab[260]` will
+   load `secret` in `index` if the branch is mispredicted to be true!
+1. The processor predicts the branch to be true, accesses the secret and
    uses it as an index to access `tab2`, which brings `tab2[secret]` into
    the cache. The processor eventually realizes that the prediction is incorrect
    and flushes the pipeline, but the state of the cache is not reverted.
