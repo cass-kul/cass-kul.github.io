@@ -75,7 +75,7 @@ When creating a new ISA, a design principle decision comes at the very beginning
 1. many instructions that are more general?
 
 In short, should the ISA provide *(1)* a large number of specialized, but complex, instructions that may execute for a longer time or *(2)* a small set of simple and general instructions that are also faster to execute?
-This design decision stands behind the difference between RISC vs CISC.
+This design decision stands behind the difference between CISC vs RISC.
 
 CISC (**Complex** instruction set computer) designs have been the dominant design for a large time of computing history, mostly because of the popular x86 ISA which is used by Intel and AMD.
 CISC instructions can be very specialized but also take a longer time to execute.

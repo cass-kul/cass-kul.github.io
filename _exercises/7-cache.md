@@ -179,7 +179,7 @@ called **timing attacks**, which exploit *timing variations* of a system to
 leak secret data.
 
 > :crystal_ball: We will see two different examples of cache attacks later in the session.
-> But first, let's illustrate basic timing attack with some exercises.
+> But first, let's illustrate basic timing attacks with some exercises.
 
 <!-- TODO!!! Do the programs in this session still work on the M1? -->
 
@@ -278,7 +278,7 @@ to guess the entire password, we need a total of `N * 10` guesses. Compare this
 with `10^N` guesses if we could not guess one-by-one, but would have to iterate
 over every possible combination!
 
-``` bash -->
+``` bash
 Enter super secret password ('q' to exit): 200
 time (med clock cycles): 372
 Enter super secret password ('q' to exit): 300
@@ -337,15 +337,15 @@ each item number corresponds to a slide in the slideshow below):
 1. Consider that an attacker and a victim share some memory so that a variable
    `a` is accessible to both the attacker and the victim;
 2. **Flush:** the attacker flushes the address `&a` from the cache;
-3. **Victim executes:** The attacker lets the victim execute. If `secret = 1`, the victim
+3. **Victim executes:** The attacker lets the victim execute. If `secret == 1`, the victim
    requests the address `&a`, which produces a cache miss;
 4. The address `&a` is then requested from DRAM and placed in the cache;
 5. **Reload:** The attacker tries to access again the address `&a` and *times the memory
    access*. If the access is fast (cache hit) then the attacker can infer that
-   the value has been accessed by the victim, and therefore that `secret = 1`;
+   the value has been accessed by the victim, and therefore that `secret == 1`;
 6. Alternatively, the attacker can try to access the variable `b`. Because the
    access is slow (cache miss), the attacker can infer that the value has *not*
-   been accessed by the victim, and again conclude that `secret = 1`.
+   been accessed by the victim, and again conclude that `secret == 1`.
 
 {% include gallery.html images=page.flush_reload  ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
 
@@ -775,13 +775,13 @@ a victim memory accesses without requiring shared memory (unlike Flush+Reload):
    cache line;
 2. The attacker evicts the address `&a` from the cache by accessing the address
    `&c`;
-3. The attacker lets the victim execute. Assuming `secret = 1`, the victim
+3. The attacker lets the victim execute. Assuming `secret == 1`, the victim
    requests the address `&a`, which produces a cache miss;
 4. The address `&a` is then requested from DRAM and placed in the cache,
    evicting the attacker's data `c`;
 5. The attacker tries to access again the address `&c` and *times the memory
    access*. If the access is slow (cache miss) then the attacker can infer that
-   `a` has been accessed by the victim, and therefore that `secret = 1`;
+   `a` has been accessed by the victim, and therefore that `secret == 1`;
 
 {% include additional_gallery.html images=page.prime_probe ratio_image="/exercises/7-cache/flush_reload/ratio.png" %}
 
