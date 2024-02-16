@@ -30,15 +30,15 @@ The 9 sessions will have the following contents:
 
 | Week   | Session name |
 | :----- | :----------- |
-| Feb 20 | C & assembly basics |
-| Feb 27 | Advanced C & assembly |
-| Mar 6  | Functions and the stack |
-| Mar 13 | Dynamic memory |
-| Mar 27 | Operating systems |
-| Apr 24 | Large exercise: linked lists |
-| May 1  | Caches |
-| May 8  | Microarchitecture |
-| May 15 | Recap and Q&A |
+| Feb 19 | C & assembly basics |
+| Feb 26 | Advanced C & assembly |
+| Mar 4  | Functions and the stack |
+| Mar 11 | Dynamic memory |
+| Mar 25 | Operating systems |
+| Apr 22 | Large exercise: linked lists |
+| Apr 29  | Caches |
+| May 6  | Microarchitecture |
+| May 13 | Recap and Q&A |
 
 ## YouTube videos
 

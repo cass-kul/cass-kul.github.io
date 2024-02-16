@@ -3,3 +3,5 @@ gem "github-pages"
 gem "just-the-docs"
 gem "jekyll-remote-theme"
 gem 'jemoji'
+
+gem "webrick", "~> 1.8"
