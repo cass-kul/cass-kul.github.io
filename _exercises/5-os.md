@@ -42,13 +42,13 @@ RISC-V offers three privilege levels or *modes*:
 > :bulb: The RISC-V architecture only requires that machine mode is available on a CPU.
 > Therefore, not all three modes are available on all CPUs.
 
-> :pencil: The RARS emulater that you have been using during previous sessions does not only emulate a RISCV-V processor.
+> :pencil: The RARS emulator that you have been using during previous sessions does not only emulate a RISCV-V processor.
 > It also simulates a tiny OS with its own set of services. All the programs that you assembled and executed in RARS were
 > running on this OS in user mode. This means that it's not possible by default to use all instructions of the RISC-V instruction set
 > in RARS.
 
 ## Requesting OS services
-The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call, but with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers are saved and restored by the OS, even the callee-saved registers (except for the registers `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
+The OS offers different services to user programs. Such a service can be requested by invoking a **system call** (also named environment call in RISC-V). A system call is similar to a function call, but with two main differences. First, the level of privilege changes: the system call requests a service from the OS, which in turn takes control and fulfills the request in a different *mode* with a higher privilege level. Second, all registers are saved and restored by the OS, even the callee-saved registers (except for the register `a0` that holds the return value of the system call). Therefore, there is no need to save callee-saved registers before a system call, contrary to a normal function call (cf. [calling conventions](../3-functions-stack/#summary-complete-calling-conventions)).
 
 A system call can be invoked by using the `ecall` instruction in RARS. The system call number has to be placed in `a7` prior to invoking the `ecall` instruction. Some system calls take some input in specific registers and may produce some output. Following table lists a few examples of system calls that are provided by the OS of RARS. The full list is available on [GitHub](https://github.com/TheThirdOne/rars/wiki/Environment-Calls).
 
@@ -75,7 +75,7 @@ The following example shows how a system call can be used in RARS to print the `
 .text
 
 main:
-  li    a0 ,666
+  li    a0, 666
   li    a7, 1 # PrintInt
   ecall
 {% endhighlight %}
@@ -195,7 +195,7 @@ For every program that you run in RARS, a fixed address space is provided by the
 <img src="/exercises/5-os/process_layout.drawio.png" alt="32bit RARS process layout" />
 </center>
 
-The `.text` sections contains the program's code. Every *jump* or *branch* that you write will land in this section. The `.data` section contains the global variables that you declared in advance. The *heap* and *stack* are both dynamic regions: their size can grow and shrink when required. The OS reserves just enough memory for the program to run. When the processes requires more memory, more memory can dynamically be requested from the *heap* region, which is initially empty, through a system call. This is in contrast with our approach that reserved a *heap* in the `.data` section: we might have reserved a lot of bytes that the process would never even use or need, which would be a waste of memory.
+The `.text` sections contains the program's code. Every *jump* or *branch* that you write will land in this section. The `.data` section contains the global variables that you declared in advance. The *heap* and *stack* are both dynamic regions: their size can grow and shrink when required. The OS reserves just enough memory for the program to run. When the processes require more memory, more memory can dynamically be requested from the *heap* region, which is initially empty, through a system call. This is in contrast with our approach that reserved a *heap* in the `.data` section: we might have reserved a lot of bytes that the process would never even use or need, which would be a waste of memory.
 
 ### Dynamically allocating memory
 The RARS OS provides a system call `sbrk` (system call number 9) to dynamically request memory. When you request `n` bytes with `sbrk`, the OS will increase the heap region with `n` bytes towards the stack and returns an address, pointing inside the heap region, that can be used to store `n` bytes. This system call replaces the use of the simple allocator function. Following code snippet shows how `sbrk` can be used to dynamically allocate 8 bytes and store two integers in this newly allocated heap region.
@@ -283,7 +283,7 @@ int main() {
     }
 
     p->name = "Dave";
-    p-> age = 20;
+    p->age = 20;
 
     // we no longer need 'p', so we free it
     free(p);
@@ -378,13 +378,13 @@ A **trap handler** comes in action whenever a trap is raised. It's a set of inst
 - `stvec`: Supervisor Trap Vector (supervisor mode)
 - `mtvec`: Machine Trap Vector (machine mode)
 
-A **Control Status Register** (CSR) is special purpose register for trap handling. It contains information specific to trap handling:
+Trap handling is managed by **Control Status Registers** (CSRs), which are special purpose registers. The following CSRs contain information specific to trap handling:
 - `ustatus`: keeps track of and controls the current operating state of the CPU.
 - `utvec`: Contains the base address of the user trap handler. The CPU will jump to this address when a trap should be handled in user mode.
 - `uscratch`: A temporary scratch register that can be used by the user trap handler. Note that all *normal* registers must be restored after the trap handler: the trap handler might resume the execution of the program. However, it is not possible to temporarily backup these registers on the stack, because the stack pointer (`sp`) might be corrupted (point to a random or invalid place in memory). For instance, `uscratch` can be used as a backup for a normal register!
 - `uepc`: The user exception program counter contains the address of the instruction that caused the trap. This allows to jump back to the point where the trap was raised after the trap has been handled.
 - `ucause`: This register contains the cause of the raised trap. This corresponds to the codes listed in previous tables. E.g.: `ucause` will have value `4` in case of a load address was misaligned.
-- `utval`: This register contains a bad address or the address of an illegal instruction when applicable. E.g.: `utval` contains the faulty address when a load access fault occurs ot the address of an illegal instruction when it was not valid.
+- `utval`: This register contains a bad address or the address of an illegal instruction when applicable. E.g.: `utval` contains the faulty address when a load access fault occurs, or the address of an illegal instruction when it was not valid.
 - `uip`: The user interrupt pending register tells whether the trap was raised by an interrupt (*1*) or exception (*0*).
 
 > :bulb: Traps are handled in machine mode by default in RISC-V. It is however possible to delegate the trap handling to another mode that has a lower privilege level. This can be done by using *deleg* registers. E.g.: `medeleg` can be used to forward exceptions or interrupts from machine mode to the next privilege level and `sedeleg` delegates from supervisor mode to user mode.
@@ -415,7 +415,7 @@ main:
  	la t0, handler
  	csrrw zero, utvec, t0 # set utvec so it points to our custom trap handler
  	csrrsi zero, ustatus, 1 # set interrupt enable in use mode
- 	lw t0, 1          # trigger trap (misaligned, no multiple of 4)
+ 	lw t0, 1          # trigger trap (misaligned load, address isn't multiple of 4)
  	li a7, 10
  	ecall		   # exit (0)
 end:
@@ -465,8 +465,8 @@ Make sure to restore all register values before returning from the trap handler.
 System calls can also be used in [RARS to play music](https://github.com/TheThirdOne/rars/wiki/Environment-Calls#using-midi-output). The RARS OS interacts with the sound card of you system in order to play tones.
 
 ## Exercise 5
-Create a RARS program that plays music notes using the RARS system calls `MidiOut` (number 31) and `Sleep` (number 32).
-Use following skeleton as a starting point and proceed as follow:
+Create a RARS program that plays musical notes using the RARS system calls `MidiOut` (number 31) and `Sleep` (number 32).
+Use the following skeleton as a starting point and proceed as follows:
 - Read through the provided skeleton code. How is the music represented as a string?
 - Read through the code for the provided function `next_tone_from_string` which converts a given string element into a MIDI tone value. Which values are returned in the `a0` and `a1` registers? How can they be used?
 - Implement `play_song` by iterating over the null-terminated song string and making use of the `next_tone_from_string` and `play_tone` helper functions. Make sure to adhere to the calling conventions.
