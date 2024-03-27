@@ -399,8 +399,8 @@ It is not possible to use *regular* instructions to change the content of CSRs. 
 |:-:|:-|
 | `csrrc t0, fcsr, t1` | Atomic Read/Clear CSR: read from the CSR `fcsr` into `t0` and clear bits of the CSR according to `t1` |
 | `csrrci t0, fcsr, 10` | Atomic Read/Clear CSR Immediate: read from the CSR  `fcsr` into `t0` and clear bits of `fcsr` according to a constant |
-| `csrrs t0, fcsr, t1` | Atomic Read/Set CSR: read from the CSR `fcsr` into `t0` and logical or `t1` into the CSR  |
-| `csrrsi t0, fcsr, 10` | Atomic Read/Set CSR Immediate: read from the CSR `fcsr` into `t0` and logical or a constant into the CSR |
+| `csrrs t0, fcsr, t1` | Atomic Read/Set CSR: read from the CSR `fcsr` into `t0` and bitwise `or` `t1` into the CSR  |
+| `csrrsi t0, fcsr, 10` | Atomic Read/Set CSR Immediate: read from the CSR `fcsr` into `t0` and bitwise `or` a constant into the CSR |
 | `csrrw t0, fcsr, t1` | Atomic Read/Write CSR: read from the CSR `fcsr` into `t0` and write `t1` into the CSR |
 | `csrrwi t0, fcsr, 10` | Atomic Read/Write CSR Immediate: read from the CSR `fcsr` into `t0` and write a constant into the CSR |
 
