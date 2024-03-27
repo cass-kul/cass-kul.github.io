@@ -15,7 +15,10 @@ has_toc: false
 {:toc}
 
 # Introduction
+
 During previous sessions, you learned how to write small functions and programs. Some of these programs required some user input. Until now, the only way to provide this input was by declaring it in the data section. This limits the different kinds of programs we can write: it is for example not possible to write a program that interacts with the user. During this session, you will learn how to interact with the **operating system (OS)** in order to interact with any hardware (e.g.: a mouse or keyboard).
+
+> :warning: The interactions with the operating system (through environment calls) are **not** part of the RISC-V specification and should be expected to be different on different platforms. For this reason, **this exercise session can only be followed with RARS, not with the RISC-V Venus Simulator of Visual Studio**. The Venus Simulator has different conventions for environment calls and does not implement all the environment calls used in this session. If you're interested, you can take a look at the different environment calls supported by [RARS](https://github.com/TheThirdOne/rars/wiki/Environment-Calls) and by the [Venus simulator](https://github.com/ThaumicMekanism/venus/wiki/Environmental-Calls).
 
 ## The operating system
 The OS is a piece of software that acts as a layer between programs and the hardware. It manages resources and provides an interface with a set of services such as input and output, and memory allocation. The kernel is the core of an OS. It controls all hardware resources with the aid of device drivers. The kernel acts as a *layer* for input and output requests from software and handles memory.
