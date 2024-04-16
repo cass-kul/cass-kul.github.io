@@ -543,6 +543,7 @@ list_delete_test:
 	lw s0, 4(sp)
 	lw s1, 8(sp)
 	addi sp, sp, 12
+	ret
 
 list_insert_test:
 	#Register allocation
