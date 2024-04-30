@@ -356,7 +356,7 @@ and hence is only applicable in a limited number of scenarios.
 
 ### Exercise 2: Mount a Flush+Reload attack
 
-The `flush-and-reload.c` of the [code.zip](/exercises/7-cache/code.zip) archive
+The `flush_and_reload.c` of the [code.zip](/exercises/7-cache/code.zip) archive
 file contains the following function:
 
 ``` c
@@ -398,7 +398,7 @@ Using the Flush+Reload technique, we (as the attacker) need to take the followin
 Of course, the above process could be executed with `votes_b` in place of `votes_a`. Since there are only two candidates, it suffices to check whether one of the two variables has been accessed.
 </details>
 
-Edit the `main` function in `flush-and-reload.c` to implement the missing
+Edit the `main` function in `flush_and_reload.c` to implement the missing
 *flush* and *reload* attacker phases. You can use the provided
 `void flush(void *adrs)` and `int reload(void *adrs)` functions. The latter
 returns the number of CPU cycles needed for the reload. If necessary,
@@ -409,7 +409,7 @@ or average.
 You can compile and run the program with:
 
 ```bash
-$ gcc flush-and-reload.c -o fnr
+$ gcc flush_and_reload.c -o fnr
 $ ./fnr
 ```
 
@@ -446,7 +446,7 @@ printf("A avg: %llu, B avg: %llu\n", time_a / SAMPLES, time_b / SAMPLES);
 This will provide us with an output from which it is clear to see which candidate has been voted for:
 
 ``` bash
-$ gcc flush-and-reload.c -o fnr
+$ gcc flush_and_reload.c -o fnr
 $ ./fnr
 A avg: 419, B avg: 120
 ```
